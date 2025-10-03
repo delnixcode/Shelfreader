@@ -1,0 +1,25 @@
+# P1 - MVP Desktop Requirements
+# Core dependencies for basic OCR + API + Streamlit interface
+
+# OCR and Computer Vision
+torch>=2.0.0
+torchvision>=0.15.0
+torchaudio>=2.0.0
+easyocr>=1.7.0
+opencv-python>=4.8.0
+Pillow>=10.0.0
+
+# API Client
+requests>=2.31.0
+
+# Web Interface
+streamlit>=1.28.0
+
+# Development and Testing
+pytest>=7.4.0
+black>=23.0.0
+flake8>=6.0.0
+
+# Optional: GPU support (uncomment if needed)
+# torch with CUDA support (Linux/Windows)
+# torch>=2.0.0 --index-url https://download.pytorch.org/whl/cu118

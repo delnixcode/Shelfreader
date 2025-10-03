@@ -1,0 +1,43 @@
+# P4 - Mobile Real-time Requirements
+# Final AR real-time application with maximum performance
+
+# Core ML/AI (optimized for mobile)
+torch>=2.0.0
+torchvision>=0.15.0
+ultralytics>=8.0.0  # YOLOv8
+easyocr>=1.7.0
+opencv-python>=4.8.0
+opencv-contrib-python>=4.8.0
+Pillow>=10.0.0
+requests>=2.31.0
+
+# Mobile AR and Real-time Processing
+tensorflow>=2.13.0  # For TensorFlow Lite conversion
+tensorflow-lite>=2.13.0
+
+# Advanced Caching and Performance
+redis>=4.5.0
+sqlite3  # Built-in Python
+psutil>=5.9.0
+
+# Async and Concurrent Processing
+asyncio  # Built-in Python
+concurrent.futures  # Built-in Python
+
+# Real-time Optimization
+numpy>=1.24.0
+scipy>=1.11.0  # For advanced signal processing
+
+# Development and Testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-benchmark>=4.0.0  # Performance testing
+black>=23.0.0
+flake8>=6.0.0
+
+# Optional: GPU acceleration for development
+# torch with CUDA support (Linux/Windows)
+# torch>=2.0.0 --index-url https://download.pytorch.org/whl/cu118
+
+# Note: Mobile-specific dependencies (ARCore, ARKit) are platform-specific
+# and handled in the mobile application (React Native/Flutter)

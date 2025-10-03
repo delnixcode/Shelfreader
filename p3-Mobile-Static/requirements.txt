@@ -1,0 +1,26 @@
+# P3 - Mobile Static Requirements
+# Mobile port with native UI and offline capabilities
+
+# Python core (for bridge with mobile)
+torch>=2.0.0
+torchvision>=0.15.0
+easyocr>=1.7.0
+opencv-python>=4.8.0
+Pillow>=10.0.0
+requests>=2.31.0
+
+# Mobile development (if using Kivy/Python for mobile)
+kivy>=2.2.0  # Alternative to React Native/Flutter
+kivy-garden>=0.1.5
+
+# Offline storage
+sqlite3  # Built-in Python
+
+# Development and Testing
+pytest>=7.4.0
+black>=23.0.0
+flake8>=6.0.0
+
+# Note: For React Native/Flutter development, see mobile/ directory
+# React Native dependencies would be in package.json
+# Flutter dependencies would be in pubspec.yaml

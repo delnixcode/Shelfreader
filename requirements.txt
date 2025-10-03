@@ -1,8 +1,18 @@
 # ============================================
-# SHELFREADER - COMPLETE REQUIREMENTS FOR ALL PROJECTS
+# SHELFREADER - COMPLETE REQUIREMENTS FOR # ============================================
+# P4 - MOBILE REAL-TIME (TENSORFLOW + AR)
+# ============================================
+tensorflow<2.16.0,>=2.13.0  # Compatible Python 3.11
+# tensorflow-lite non disponible - à installer séparément si nécessaire pour P4
+numpy>=1.24.0
+pytest-benchmark>=4.0.0JECTS
 # ============================================
 # This file contains ALL dependencies from all 4 projects + existing environment
 # Install with: pip install -r requirements.txt
+#
+# CONFIGURED FOR PYTHON 3.11
+# For Python 3.13: change tensorflow to tensorflow-cpu and remove tensorflow-lite
+# ============================================
 
 # ============================================
 # EXISTING ENVIRONMENT DEPENDENCIES (PRESERVED)
@@ -20,7 +30,7 @@ opencv-python-headless==4.12.0.88
 packaging==25.0
 pandas==2.3.3
 pillow==11.3.0
-protobuf==6.32.1
+protobuf>=3.20.0,<7  # Compatible avec streamlit et tensorflow
 pyarrow==21.0.0
 pyclipper==1.3.0.post6
 pydeck==0.9.1
@@ -72,7 +82,7 @@ flake8>=6.0.0
 # P2 - ENHANCED DESKTOP (YOLOv8 + CACHE)
 # ============================================
 opencv-contrib-python>=4.8.0
-ultralytics>=8.0.0
+ultralytics>=8.0.0,<8.1.0  # Compatible Python 3.11
 redis>=4.5.0
 psutil>=5.9.0
 pytest-asyncio>=0.21.0
@@ -86,9 +96,8 @@ kivy-garden>=0.1.5
 # ============================================
 # P4 - MOBILE REAL-TIME (TENSORFLOW + AR)
 # ============================================
-tensorflow>=2.13.0
-tensorflow-lite>=2.13.0
-numpy>=1.24.0
+tensorflow<2.16.0,>=2.13.0  # Compatible Python 3.11
+numpy>=1.21.0  # Version minimale compatible avec toutes les libs
 pytest-benchmark>=4.0.0
 
 # ============================================

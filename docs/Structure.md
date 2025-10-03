@@ -83,10 +83,10 @@ Chaque projet contient :
 
 | Projet | Focus | Technologies clés | Durée estimée |
 |--------|-------|-------------------|---------------|
-| **🏗️ [Projet 1 : MVP Desktop](docs/project1/)** | OCR + API + Interface | EasyOCR, OpenCV, Streamlit | 2-3 semaines |
-| **⚡ [Projet 2 : Enhanced Desktop](docs/project2/)** | YOLOv8 + Optimisations | YOLOv8, Redis, Métriques | 3-4 semaines |
-| **📱 [Projet 3 : Mobile Static](docs/project3/)** | Portage mobile + Native UI | React Native/Flutter, SQLite | 4-5 semaines |
-| **🚀 [Projet 4 : Mobile Real-time](docs/project4/)** | AR temps réel + Performance | ARCore/ARKit, TensorFlow Lite | 5-6 semaines |
+| **🏗️ [Projet 1 : MVP Desktop](p1-MVP-Desktop.md)** | OCR + API + Interface | EasyOCR, OpenCV, Streamlit | 2-3 semaines |
+| **⚡ [Projet 2 : Enhanced Desktop](p2-Enhanced-Desktop.md)** | YOLOv8 + Optimisations | YOLOv8, Redis, Métriques | 3-4 semaines |
+| **📱 [Projet 3 : Mobile Static](p3-Mobile-Static.md)** | Portage mobile + Native UI | React Native/Flutter, SQLite | 4-5 semaines |
+| **🚀 [Projet 4 : Mobile Real-time](p4-Mobile-Real-time.md)** | AR temps réel + Performance | ARCore/ARKit, TensorFlow Lite | 5-6 semaines |
 
 ### 🎯 Approche pédagogique
 
@@ -97,7 +97,7 @@ Chaque projet contient :
 
 ### 📖 Comment utiliser cette documentation
 
-1. **Pour débuter** : Commencer par le [Projet 1](project1.md) pour les bases
+1. **Pour débuter** : Commencer par le [Projet 1](p1-MVP-Desktop.md) pour les bases
 2. **Pour approfondir** : Suivre la séquence 1→2→3→4 pour une progression complète
 3. **Pour référence** : Consulter n'importe quel projet selon les besoins spécifiques
 4. **Pour contribution** : Chaque projet peut être développé indépendamment
@@ -332,10 +332,10 @@ Le projet est divisé en **4 projets progressifs** pour apprendre pas à pas :
 
 | Projet | Nom | Description | Statut | Durée | Fichier |
 |--------|-----|-------------|--------|-------|---------|
-| **1** | ✅ MVP Desktop | OCR + API + Interface web | EN COURS | 2 semaines | [project1.md](project1.md) |
-| **2** | Enhanced Desktop | YOLOv8 + Orientation + Cache | À FAIRE | 3 semaines | [project2.md](project2.md) |
-| **3** | Mobile Static | Portage mobile + Hors-ligne | À FAIRE | 4 semaines | [project3.md](project3.md) |
-| **4** | 🚀 Mobile Real-time | AR temps réel + Performance | OBJECTIF | 5 semaines | [project4.md](project4.md) |
+| **1** | ✅ MVP Desktop | OCR + API + Interface web | EN COURS | 2 semaines | [p1-MVP-Desktop.md](p1-MVP-Desktop.md) |
+| **2** | Enhanced Desktop | YOLOv8 + Orientation + Cache | À FAIRE | 3 semaines | [p2-Enhanced-Desktop.md](p2-Enhanced-Desktop.md) |
+| **3** | Mobile Static | Portage mobile + Hors-ligne | À FAIRE | 4 semaines | [p3-Mobile-Static.md](p3-Mobile-Static.md) |
+| **4** | 🚀 Mobile Real-time | AR temps réel + Performance | OBJECTIF | 5 semaines | [p4-Mobile-Real-time.md](p4-Mobile-Real-time.md) |
 
 Chaque projet est documenté dans son propre fichier pour une lecture autonome.
 

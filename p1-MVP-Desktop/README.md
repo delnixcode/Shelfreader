@@ -153,11 +153,11 @@ python src/ocr_trocr.py test_images/books1.jpg --gpu --preprocess
 - `--confidence X.X` : Seuil de confiance minimum (défaut: 0.2)
 
 #### **Comparaison des moteurs OCR**
-| Moteur | GPU Support | Vitesse | Précision | Usage recommandé |
-|--------|-------------|---------|-----------|------------------|
-| **EasyOCR** | ✅ Excellent | 🚀 Rapide | 🟢 Bonne | **Défaut - Usage général** |
-| **Tesseract** | ❌ Aucun | ⚡ Très rapide | 🟡 Moyenne | Textes simples, CPU limité |
-| **TrOCR** | ✅ Bon | 🐌 Lent | 🟢🟢 Excellente | **Précision maximale** |
+| Moteur | GPU Support | Vitesse | Précision | Usage |
+|--------|-------------|---------|-----------|-------|
+| **EasyOCR** | ✅ Excellent | 🚀 Rapide | 🟢 Bonne | **Défaut** |
+| **Tesseract** | ❌ Aucun | ⚡ Très rapide | 🟡 Moyenne | CPU limité |
+| **TrOCR** | ✅ Bon | 🐌 Lent | 🟢🟢 Excellente | Précision max |
 
 ### 🖥️ **Interface Web (Streamlit)**
 ```

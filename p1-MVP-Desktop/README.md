@@ -155,7 +155,7 @@ python -c "import torch; print('GPU:', torch.cuda.is_available())"
 
 ## 💻 **Utilisation**
 
-### **Démarrage Rapide**
+### **🚀 Démarrage Rapide**
 ```bash
 # Activer l'environnement
 source env-p1/bin/activate
@@ -167,90 +167,227 @@ python ocr_easyocr.py test_images/books1.jpg --gpu
 streamlit run app.py
 ```
 
-### **Scripts OCR Individuels**
+### **📋 Arguments et Options Détaillés**
 
-#### **🔍 EasyOCR (Recommandé)**
+#### **Syntaxe Générale**
 ```bash
-# Usage de base
+python [script_ocr].py [image] [options]
+```
+
+#### **Arguments Positionnels**
+- `image` : Chemin vers l'image à analyser (obligatoire)
+  - Formats supportés : JPG, PNG, BMP, TIFF
+  - Exemples : `test_images/books1.jpg`, `photos/etagere.jpg`, `/chemin/absolu/image.png`
+
+#### **Options Communes à Tous les Scripts**
+| Option | Type | Défaut | Description | Exemple |
+|--------|------|--------|-------------|---------|
+| `--gpu` | flag | `False` | Utiliser GPU NVIDIA (accélère EasyOCR/TrOCR) | `--gpu` |
+| `--confidence X.X` | float | `0.2` | Seuil de confiance (0.0-1.0) | `--confidence 0.5` |
+| `--output FILE` | string | `[moteur]_results.txt` | Fichier de sortie personnalisé | `--output mes_livres.txt` |
+| `--lang CODE` | string | `eng` | Langue pour Tesseract uniquement | `--lang fra` |
+
+#### **Valeurs du Seuil de Confiance**
+- `0.1` : **Très tolérant** - Beaucoup de résultats, plus de faux positifs
+- `0.2` : **Équilibre recommandé** - Bon compromis pour débuter
+- `0.3` : **Moyen** - Moins de bruit, bonne précision
+- `0.5` : **Strict** - Résultats fiables, moins de détections
+- `0.7` : **Très strict** - Seulement les meilleurs résultats
+
+### **🔧 Scripts OCR Individuels - Utilisation Directe**
+
+#### **🔍 EasyOCR (Recommandé - GPU/CPU)**
+```bash
+# USAGE DE BASE (sans options)
 python ocr_easyocr.py test_images/books1.jpg
 
-# Avec GPU (recommandé)
+# AVEC GPU (recommandé - accélère considérablement)
 python ocr_easyocr.py test_images/books1.jpg --gpu
 
-# Options avancées
-python ocr_easyocr.py test_images/books1.jpg --gpu --confidence 0.3 --output mes_livres.txt
+# SEUIL DE CONFIANCE PERSONNALISÉ
+python ocr_easyocr.py test_images/books1.jpg --gpu --confidence 0.3
+
+# FICHIER DE SORTIE PERSONNALISÉ
+python ocr_easyocr.py test_images/books1.jpg --gpu --output mes_resultats_easyocr.txt
+
+# COMBINAISON COMPLÈTE
+python ocr_easyocr.py test_images/books1.jpg --gpu --confidence 0.4 --output analyse_etagere.txt
+
+# EXEMPLES AVANCÉS
+python ocr_easyocr.py photos/ma_bibliotheque.jpg --gpu --confidence 0.2
+python ocr_easyocr.py /home/user/images/livres_scan.jpg --gpu --confidence 0.5 --output scan_bibliotheque.txt
 ```
 
-#### **⚡ Tesseract (Rapide)**
+#### **⚡ Tesseract (Rapide - CPU seulement)**
 ```bash
-# Usage de base (CPU uniquement)
+# USAGE DE BASE (CPU uniquement, très rapide)
 python ocr_tesseract.py test_images/books1.jpg
 
-# Avec langue française
+# AVEC LANGUE FRANÇAISE
 python ocr_tesseract.py test_images/books1.jpg --lang fra
 
-# Options avancées
-python ocr_tesseract.py test_images/books1.jpg --lang eng --confidence 0.5 --output rapide.txt
+# AVEC LANGUE ALLEMANDE
+python ocr_tesseract.py test_images/books1.jpg --lang deu
+
+# SEUIL DE CONFIANCE ÉLEVÉ (moins de faux positifs)
+python ocr_tesseract.py test_images/books1.jpg --confidence 0.5
+
+# FICHIER DE SORTIE PERSONNALISÉ
+python ocr_tesseract.py test_images/books1.jpg --output tesseract_rapide.txt
+
+# COMBINAISON COMPLÈTE
+python ocr_tesseract.py test_images/books1.jpg --lang eng --confidence 0.4 --output scan_anglais.txt
+
+# EXEMPLES AVANCÉS
+python ocr_tesseract.py photos/livres_francais.jpg --lang fra --confidence 0.3
+python ocr_tesseract.py images/bibliotheque_allemande.jpg --lang deu --confidence 0.5 --output livres_de.txt
 ```
 
-#### **🎯 TrOCR (Haute Précision)**
+#### **🎯 TrOCR (Haute Précision - GPU recommandé)**
 ```bash
-# Usage de base
+# USAGE DE BASE
 python ocr_trocr.py test_images/books1.jpg
 
-# Avec GPU (recommandé)
+# AVEC GPU (recommandé pour les performances)
+python ocr_trocr.py test_images/books1.jpg --gpu
+
+# HAUTE PRÉCISION (seuil strict)
+python ocr_trocr.py test_images/books1.jpg --gpu --confidence 0.7
+
+# SEUIL MOYEN (bon équilibre)
 python ocr_trocr.py test_images/books1.jpg --gpu --confidence 0.5
 
-# Haute précision
-python ocr_trocr.py test_images/books1.jpg --gpu --confidence 0.7 --output precision.txt
+# FICHIER DE SORTIE PERSONNALISÉ
+python ocr_trocr.py test_images/books1.jpg --gpu --output trocr_precision.txt
+
+# COMBINAISON COMPLÈTE
+python ocr_trocr.py test_images/books1.jpg --gpu --confidence 0.6 --output haute_precision.txt
+
+# EXEMPLES AVANCÉS
+python ocr_trocr.py photos/textes_difficiles.jpg --gpu --confidence 0.8 --output textes_complexes.txt
+python ocr_trocr.py images/livres_anciens.jpg --gpu --confidence 0.7 --output livres_anciens.txt
 ```
 
-### **Options Communes à Tous les Scripts**
+### **📊 Comparaisons Pratiques**
 
-| Option | Description | Valeur par défaut | Exemple |
-|--------|-------------|-------------------|---------|
-| `--gpu` | Utiliser GPU NVIDIA | `False` | `--gpu` |
-| `--confidence X.X` | Seuil confiance (0.0-1.0) | `0.2` | `--confidence 0.5` |
-| `--output FILE` | Fichier de sortie | `[moteur]_results.txt` | `--output resultats.txt` |
-| `--lang CODE` | Langue (Tesseract) | `eng` | `--lang fra` |
-
-### **Exemples d'Utilisation Avancée**
-
-#### **🔄 Traitement par Lot**
+#### **Par Usage**
 ```bash
-# Traiter toutes les images du dossier
+# 🧪 TESTS RAPIDES (Tesseract - CPU seulement)
+python ocr_tesseract.py image.jpg --confidence 0.3
+
+# 🏭 PRODUCTION STANDARD (EasyOCR + GPU)
+python ocr_easyocr.py image.jpg --gpu --confidence 0.2
+
+# 🔬 PRÉCISION MAXIMALE (TrOCR + GPU)
+python ocr_trocr.py image.jpg --gpu --confidence 0.7
+```
+
+#### **Par Performance**
+```bash
+# ⚡ LE PLUS RAPIDE (Tesseract)
+python ocr_tesseract.py image.jpg
+
+# 🚀 RAPIDE ET PRÉCIS (EasyOCR GPU)
+python ocr_easyocr.py image.jpg --gpu
+
+# 🐌 LE PLUS LENT MAIS ULTRA-PRÉCIS (TrOCR GPU)
+python ocr_trocr.py image.jpg --gpu --confidence 0.7
+```
+
+### **🔄 Utilisation Avancée**
+
+#### **Traitement par Lot (Bash)**
+```bash
+# Traiter toutes les images JPG du dossier
 for img in test_images/*.jpg; do
     echo "=== Analyse de $(basename "$img") ==="
     python ocr_easyocr.py "$img" --gpu --confidence 0.3
 done
+
+# Avec noms de fichiers personnalisés
+for img in photos/*.jpg; do
+    filename=$(basename "$img" .jpg)
+    python ocr_easyocr.py "$img" --gpu --output "resultats_${filename}.txt"
+done
 ```
 
-#### **📊 Comparaison de Moteurs**
+#### **Comparaison de Moteurs**
 ```bash
 # Tester tous les moteurs sur la même image
 IMAGE="test_images/books1.jpg"
 
-echo "=== EASYOCR ==="
+echo "=== EASYOCR (GPU) ==="
 python ocr_easyocr.py "$IMAGE" --gpu --confidence 0.2
 
-echo "=== TESSERACT ==="
+echo "=== TESSERACT (CPU) ==="
 python ocr_tesseract.py "$IMAGE" --confidence 0.3
 
-echo "=== TROCR ==="
+echo "=== TROCR (GPU) ==="
 python ocr_trocr.py "$IMAGE" --gpu --confidence 0.5
 ```
 
-#### **🎯 Optimisation par Usage**
+#### **Scripts Personnalisés**
 ```bash
-# Pour tests rapides (Tesseract)
-python ocr_tesseract.py image.jpg --confidence 0.3
+# Script de traitement automatique
+#!/bin/bash
+IMAGE=$1
+CONFIDENCE=${2:-0.2}
 
-# Pour production (EasyOCR + GPU)
-python ocr_easyocr.py image.jpg --gpu --confidence 0.2
-
-# Pour précision maximale (TrOCR + GPU)
-python ocr_trocr.py image.jpg --gpu --confidence 0.7
+echo "Traitement de $IMAGE avec confiance $CONFIDENCE"
+python ocr_easyocr.py "$IMAGE" --gpu --confidence "$CONFIDENCE" --output "auto_$(basename "$IMAGE" .jpg).txt"
 ```
+
+### **📁 Gestion des Résultats**
+
+#### **Dossier de Sortie Automatique**
+```
+result-ocr/
+├── easyocr_results.txt      # Résultats EasyOCR par défaut
+├── tesseract_results.txt    # Résultats Tesseract par défaut
+├── trocr_results.txt        # Résultats TrOCR par défaut
+└── [nom_personnalisé].txt   # Fichiers avec --output
+```
+
+#### **Format des Résultats Détaillé**
+```
+=== RÉSULTATS OCR - test_images/books1.jpg ===
+Date: 2025-10-04 12:34:56
+Moteur: EasyOCR (GPU)
+Nombre de textes détectés: 11
+Confiance moyenne: 0.885
+Temps de traitement: 3.2s
+
+TEXTE COMPLET:
+[LE PETIT PRINCE] | [HARRY POTTER] | [1984] | ...
+
+DÉTAIL PAR TEXTE:
+--- Texte 1 ---
+Confiance: 0.703
+Texte: "LE PETIT PRINCE"
+Position: x=45, y=120, w=180, h=25
+
+--- Texte 2 ---
+Confiance: 0.892
+Texte: "HARRY POTTER"
+Position: x=45, y=160, w=195, h=28
+
+[... détails pour chaque texte détecté ...]
+```
+
+### **🎯 Recommandations d'Usage**
+
+| Scénario | Script Recommandé | Arguments | Raison |
+|----------|-------------------|-----------|---------|
+| **Premiers tests** | `ocr_easyocr.py` | `--gpu --confidence 0.2` | Équilibre parfait |
+| **Traitement rapide** | `ocr_tesseract.py` | `--confidence 0.3` | Ultra rapide |
+| **Haute précision** | `ocr_trocr.py` | `--gpu --confidence 0.7` | Maximum de fiabilité |
+| **CPU limité** | `ocr_tesseract.py` | `--lang fra --confidence 0.4` | Pas de GPU requis |
+| **Images difficiles** | `ocr_trocr.py` | `--gpu --confidence 0.8` | IA avancée |
+| **Traitement par lot** | `ocr_easyocr.py` | `--gpu --confidence 0.3` | Bon compromis |
+
+---
+
+## 🎨 **Interface Web**
 
 ---
 
@@ -683,26 +820,9 @@ python ocr_trocr.py test_images/books1.jpg --gpu --confidence 0.7
 streamlit run app.py
 ```
 
-### 📁 **Résultats**
-Les résultats sont sauvegardés automatiquement dans `result-ocr/`.
+---
 
-**Format des fichiers de résultats :**
-```
-=== RÉSULTATS OCR - test_images/books1.jpg ===
-Date: 2025-10-04 12:34:56
-Nombre de textes détectés: 11
-Confiance moyenne: 0.885
-
-TEXTE COMPLET:
-[Tous les textes détectés séparés par |]
-
-DÉTAIL PAR LIVRE:
---- Livre 1 ---
-Confiance: 0.703
-Texte: [Titre du livre 1]
---- Livre 2 ---
-...
-```
+## 🎨 **Interface Web**
 
 ### 🧪 **Tests**
 ```bash

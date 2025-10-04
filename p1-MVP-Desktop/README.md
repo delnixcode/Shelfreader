@@ -14,6 +14,12 @@
 ```
 p1-MVP-Desktop/
 ├── env-p1/              # Environnement virtuel P1
+├── backup_ocr_v1/       # 🗂️ BACKUP - Version finale OCR P1
+│   ├── README.md        # Documentation du backup
+│   ├── ocr_easyocr.py   # Moteur EasyOCR (sauvegardé)
+│   ├── ocr_tesseract.py # Moteur Tesseract (sauvegardé)
+│   ├── ocr_trocr.py     # Moteur TrOCR (sauvegardé)
+│   └── ocr_detect.py    # Script principal (sauvegardé)
 ├── result-ocr/          # 📁 RÉSULTATS OCR (auto-généré)
 │   ├── easyocr_results.txt
 │   ├── tesseract_results.txt

@@ -1,442 +1,206 @@
-# 🧪 **Tests - Suite de Tests ShelfReader P1**
+# 🧪 **Tests ShelfReader P1**
 
-[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
 [![pytest](https://img.shields.io/badge/pytest-7.0+-green.svg)](https://pytest.org/)
-[![EasyOCR](https://img.shields.io/badge/EasyOCR-1.7+-green.svg)](https://github.com/JaidedAI/EasyOCR)
 
-### 📋 **Table des Matières**
+**Suite de tests pour valider les fonctionnalités OCR avancées**
+
+---
+
+## 📋 **Sommaire**
+
 - [🎯 Vue d'ensemble](#-vue-densemble)
-- [🚀 Exécution des tests](#-exécution-des-tests)
-- [📁 Structure des tests](#-structure-des-tests)
-- [🧪 Description des tests](#-description-des-tests)
-- [📊 Métriques de couverture](#-métriques-de-couverture)
-- [🔧 Configuration des tests](#-configuration-des-tests)
-- [📈 Benchmarks de performance](#-benchmarks-de-performance)
-- [🐛 Debug et dépannage](#-debug-et-dépannage)
+- [🚀 Démarrage rapide](#-démarrage-rapide)
+- [📁 Fichiers de test](#-fichiers-de-test)
+- [📊 Résultats attendus](#-résultats-attendus)
+- [🔧 Configuration](#-configuration)
+- [ Dépannage](#-dépannage)
 
 ---
 
 ## 🎯 **Vue d'ensemble**
 
-La suite de tests de **ShelfReader P1** assure la qualité et la fiabilité du système OCR avancé. Elle couvre tous les aspects critiques : performance GPU, précision OCR, validation de similarité, et algorithmes de détection shelfie.
+Cette suite de tests valide les **améliorations OCR avancées** de ShelfReader P1 :
+- Algorithme shelfie (détection de lignes de séparation)
+- Validation de similarité Jaccard
+- Accélération GPU PyTorch
+- Robustesse et performance
 
-### **Objectifs des Tests**
-- ✅ **Validation fonctionnelle** : Vérifier que toutes les fonctionnalités OCR fonctionnent
-- ✅ **Performance GPU** : Mesurer l'accélération et la stabilité GPU
-- ✅ **Précision OCR** : Évaluer la qualité de détection et de reconnaissance
-- ✅ **Robustesse** : Tester les cas limites et la gestion d'erreurs
-- ✅ **Régression** : Prévenir les régressions lors des mises à jour
-
-### **Technologies de Test**
-- **pytest** : Framework de test principal
-- **unittest** : Tests unitaires classiques
-- **timeit** : Mesure de performance
-- **subprocess** : Tests d'intégration système
-- **threading** : Tests de surveillance GPU
+**ℹ️ Note :** Pour les informations générales sur ShelfReader, consultez le [README principal](../README.md).
 
 ---
 
-## 🚀 **Exécution des Tests**
+## 🚀 **Démarrage rapide**
 
-### **Prérequis**
+### **Exécution complète (recommandé)**
 ```bash
 # Activer l'environnement virtuel
 source ../env-p1/bin/activate
 
-# Installer pytest si nécessaire
-pip install pytest
-```
-
-### **Exécution Complète**
-```bash
-# Tous les tests
+# Lancer tous les tests
 python -m pytest tests/ -v
-
-# Avec couverture
-python -m pytest tests/ --cov=src --cov-report=html
-
-# Tests spécifiques
-python -m pytest tests/test_easyocr_improvements.py -v
 ```
 
-### **Exécution Individuelle**
+### **Démonstration interactive**
 ```bash
-# Démo des améliorations OCR
+# Voir les améliorations OCR en action
 python demo_ocr_improvements.py
+```
 
+### **Tests individuels**
+```bash
 # Tests OCR avancés
 python test_easyocr_improvements.py
 
 # Tests performance GPU
 python test_gpu_usage.py
 
-# Tests séparation textes
+# Tests séparation de textes
 python test_separation.py
 ```
 
-### **Tests Automatisés**
-```bash
-# Script de test complet (recommandé)
-./run_all_tests.sh
+---
 
-# Tests de régression quotidiens
-python -m pytest tests/ --tb=short --durations=10
-```
+## 📁 **Fichiers de test**
+
+| Fichier | Description | Durée |
+|---------|-------------|-------|
+| `demo_ocr_improvements.py` | **Démonstration interactive** des améliorations OCR | ~10s |
+| `test_easyocr_improvements.py` | **Tests unitaires** OCR avancé + shelfie + validation | ~5s |
+| `test_gpu_usage.py` | **Tests performance** GPU vs CPU | ~30s |
+| `test_separation.py` | **Tests algorithmes** de groupement de textes | ~3s |
+
+### **Organisation**
+- **`demo_*.py`** : Démonstrations et exemples pratiques
+- **`test_*.py`** : Tests automatisés avec assertions
 
 ---
 
-## 📁 **Structure des Tests**
+## 📊 **Résultats attendus**
 
+### **Démonstration OCR (`demo_ocr_improvements.py`)**
+
+**Avant améliorations :**
 ```
-tests/
-├── __init__.py                    # Package tests
-├── README.md                      # Cette documentation
-├── demo_ocr_improvements.py       # Démonstration améliorations
-├── test_easyocr_improvements.py   # Tests OCR avancés
-├── test_gpu_usage.py              # Tests performance GPU
-└── test_separation.py             # Tests séparation textes
+OCR Classique: 59 textes détectés en 3.2s
 ```
 
-### **Organisation par Responsabilité**
-- **`demo_*.py`** : Démonstrations et exemples d'usage
-- **`test_*.py`** : Tests unitaires et d'intégration
-- **`__init__.py`** : Configuration du package de tests
+**Après améliorations :**
+```
+OCR + Shelfie: 11 livres identifiés (81% d'amélioration)
+OCR + Validation: 13/14 titres corrects (93% de précision)
+```
+
+### **Tests automatisés**
+
+**✅ Tests réussis attendus :**
+- Initialisation EasyOCRProcessor ✓
+- Détection shelfie fonctionnelle ✓
+- Validation Jaccard opérationnelle ✓
+- Performance GPU > 2x plus rapide ✓
+- Gestion d'erreurs robuste ✓
+
+**📈 Métriques de performance :**
+- **Couverture code** : >85%
+- **Accélération GPU** : ~3x
+- **Précision titres** : 93%
+- **Réduction fragmentation** : 81%
 
 ---
 
-## 🧪 **Description des Tests**
+## � **Configuration**
 
-### **1. `demo_ocr_improvements.py`**
-**🎯 Démonstration des améliorations OCR**
-
-#### **Fonctionnalités testées**
-- Détection OCR de base vs améliorée
-- Algorithme shelfie (lignes de séparation)
-- Validation de similarité Jaccard
-- Comparaison GPU vs CPU
-
-#### **Exécution**
+### **Prérequis**
 ```bash
-python demo_ocr_improvements.py
+# Environnement virtuel activé
+source ../env-p1/bin/activate
+
+# Dépendances installées
+pip install pytest torch torchvision
 ```
 
-#### **Sortie attendue**
-```
-=== DÉMO AMÉLIORATIONS OCR ===
-Image: test_images/books1.jpg
-
-1. OCR Classique:
-   - Textes détectés: 59
-   - Temps: 3.2s
-
-2. OCR avec Shelfie:
-   - Livres identifiés: 11
-   - Amélioration: 81%
-   - Temps: 4.1s
-
-3. OCR + Validation:
-   - Titres corrects: 13/14
-   - Précision: 93%
-   - Temps: 4.5s
-```
-
-### **2. `test_easyocr_improvements.py`**
-**🧪 Tests unitaires OCR avancés**
-
-#### **Tests couverts**
-- Initialisation EasyOCRProcessor
-- Détection de texte basique
-- Algorithme shelfie
-- Validation de similarité
-- Gestion d'erreurs
-- Formats de sortie
-
-#### **Exécution**
+### **Variables d'environnement**
 ```bash
-python test_easyocr_improvements.py
-```
-
-#### **Assertions principales**
-```python
-# Test détection shelfie
-assert len(books_spine) < len(texts_basic), "Shelfie doit réduire la fragmentation"
-
-# Test validation similarité
-assert corrected_title == "Ada 95", "Validation doit corriger les erreurs OCR"
-
-# Test performance
-assert gpu_time < cpu_time * 2, "GPU doit être significativement plus rapide"
-```
-
-### **3. `test_gpu_usage.py`**
-**⚡ Tests de performance GPU**
-
-#### **Fonctionnalités testées**
-- Détection automatique GPU
-- Accélération CUDA PyTorch
-- Fallback CPU
-- Surveillance utilisation GPU
-- Tests multi-moteurs
-
-#### **Exécution**
-```bash
-python test_gpu_usage.py
-```
-
-#### **Métriques collectées**
-- Utilisation GPU (%) pendant l'OCR
-- Temps de traitement par moteur
-- Accélération GPU vs CPU
-- Stabilité et consommation mémoire
-
-#### **Résultats typiques**
-```
-EasyOCR GPU: 3.2s (85% GPU util)
-EasyOCR CPU: 9.8s (0% GPU util)
-Accélération: 3.1x
-```
-
-### **4. `test_separation.py`**
-**📊 Tests de séparation de textes**
-
-#### **Algorithmes testés**
-- Analyse statistique des gaps verticaux
-- Groupement par proximité
-- Filtrage des chevauchements
-- Validation de cohérence
-
-#### **Exécution**
-```bash
-python test_separation.py
-```
-
-#### **Scénarios testés**
-- Textes bien séparés
-- Textes chevauchants
-- Bruit OCR (faux positifs)
-- Cas limites (textes trop proches)
-
----
-
-## 📊 **Métriques de Couverture**
-
-### **Couverture du Code**
-```bash
-# Générer rapport de couverture
-python -m pytest tests/ --cov=src --cov-report=html
-
-# Ouvrir le rapport
-open htmlcov/index.html
-```
-
-### **Métriques Actuelles**
-- **Lignes couvertes** : 85%
-- **Fonctions testées** : 92%
-- **Branches couvertes** : 78%
-
-### **Modules Critiques**
-| Module | Couverture | Statut |
-|--------|------------|--------|
-| `ocr_easyocr.py` | 95% | ✅ Excellent |
-| `api_client.py` | 80% | ✅ Bon |
-| `cli.py` | 70% | ⚠️ À améliorer |
-
----
-
-## 🔧 **Configuration des Tests**
-
-### **Variables d'Environnement**
-```bash
-# Activer logs détaillés
-export PYTHONPATH=/home/delart/Documents/dev/python/Shelfreader/p1-MVP-Desktop
+# Pour tests détaillés
 export TEST_VERBOSE=1
 
-# Configuration GPU
-export CUDA_VISIBLE_DEVICES=0  # GPU spécifique
-export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:512
+# Pour GPU spécifique
+export CUDA_VISIBLE_DEVICES=0
 ```
 
-### **Fichiers de Configuration**
-```python
+### **Configuration pytest** (optionnel)
+```ini
 # pytest.ini
 [tool:pytest]
 testpaths = tests
-python_files = test_*.py
-python_classes = Test*
-python_functions = test_*
 addopts = -v --tb=short --durations=10
-markers =
-    gpu: tests nécessitant GPU
-    slow: tests lents (>30s)
-    integration: tests d'intégration
-```
-
-### **Configuration GPU**
-```python
-# test_gpu_usage.py - Configuration
-GPU_TIMEOUT = 30  # secondes
-GPU_MEMORY_THRESHOLD = 0.8  # 80% utilisation max
-MONITOR_INTERVAL = 0.5  # secondes
 ```
 
 ---
 
-## 📈 **Benchmarks de Performance**
+## 🐛 **Dépannage**
 
-### **Performance OCR (test_images/books1.jpg)**
-
-| Configuration | Temps | CPU | GPU Util | Précision |
-|---------------|-------|-----|----------|-----------|
-| **EasyOCR + Shelfie + GPU** | 4.5s | 15% | 85% | 93% |
-| **EasyOCR + Shelfie + CPU** | 12.2s | 95% | 0% | 93% |
-| **EasyOCR Classique + GPU** | 3.2s | 10% | 80% | 89% |
-| **Tesseract** | 1.5s | 90% | 0% | 73% |
-| **TrOCR + GPU** | 8.5s | 25% | 70% | 81% |
-
-### **Évolutivité**
-- **Images 1MP** : ~3-5s (recommandé)
-- **Images 5MP** : ~8-12s
-- **Batch 10 images** : ~40s (GPU)
-- **Mémoire GPU** : ~2GB max
-
-### **Facteurs de Performance**
-- **GPU NVIDIA** : +300% performance
-- **CPU multi-core** : +50% sur CPU moderne
-- **Optimisations shelfie** : +20% précision
-- **Validation similarité** : +10% précision
-
----
-
-## 🐛 **Debug et Dépannage**
-
-### **Problèmes Courants**
-
-#### **❌ GPU non détecté**
-```python
-# Vérifier installation PyTorch CUDA
-python -c "import torch; print('CUDA:', torch.cuda.is_available())"
-
-# Forcer utilisation CPU
-export CUDA_VISIBLE_DEVICES=""
-```
-
-#### **❌ Tests lents**
+### **❌ "ModuleNotFoundError"**
 ```bash
-# Exécuter seulement tests rapides
-python -m pytest tests/ -m "not slow"
-
-# Augmenter timeout
-python -m pytest tests/ --timeout=60
-```
-
-#### **❌ Erreurs d'import**
-```bash
-# Vérifier PYTHONPATH
-echo $PYTHONPATH
+# Vérifier environnement virtuel
+source ../env-p1/bin/activate
 
 # Réinstaller dépendances
 pip install -r ../requirements.txt
 ```
 
-#### **❌ Mémoire GPU insuffisante**
+### **❌ GPU non détecté**
 ```bash
-# Réduire taille batch
-export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:256
+# Forcer CPU pour les tests
+export CUDA_VISIBLE_DEVICES=""
 
-# Forcer garbage collection
-torch.cuda.empty_cache()
+# Vérifier PyTorch CUDA
+python -c "import torch; print('GPU:', torch.cuda.is_available())"
 ```
 
-### **Logs de Debug**
+### **❌ Tests lents**
 ```bash
-# Activer logs détaillés
-python -c "
-import logging
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-# Exécuter test
-"
+# Exécuter seulement tests rapides
+python -m pytest tests/ -k "not gpu" --maxfail=3
 
-# Logs dans fichier
-python test_gpu_usage.py 2>&1 | tee test_debug.log
+# Augmenter timeout
+python -m pytest tests/ --timeout=60
 ```
 
-### **Outils de Diagnostic**
+### **Vérifications système**
 ```bash
-# Vérifier GPU
+# Python et environnement
+python --version
+which python  # Doit pointer vers env-p1/bin/python
+
+# GPU (si disponible)
 nvidia-smi
-
-# Monitor processus
-htop
-
-# Logs système
-dmesg | grep -i cuda
-
-# Test PyTorch
-python -c "import torch; torch.cuda.init(); print('CUDA OK')"
 ```
 
 ---
 
-## 📝 **Contribution aux Tests**
+## 📝 **Développement**
 
-### **Ajouter un Nouveau Test**
+### **Ajouter un test**
 ```python
-# tests/test_nouvelle_fonctionnalite.py
+# tests/test_nouvelle_fonction.py
 import pytest
 from src.ocr_easyocr import EasyOCRProcessor
 
-class TestNouvelleFonctionnalite:
-    def test_fonctionnalite_base(self):
-        processor = EasyOCRProcessor()
-        # Test implementation
-        assert True
-
-    @pytest.mark.gpu
-    def test_gpu_acceleration(self):
-        # Test nécessitant GPU
-        pass
+def test_nouvelle_fonction():
+    processor = EasyOCRProcessor()
+    # Votre test ici
+    assert True
 ```
 
-### **Bonnes Pratiques**
-- **Nommage** : `test_*` pour fonctions, `Test*` pour classes
-- **Isolation** : Chaque test indépendant
-- **Mocking** : Simuler APIs externes
-- **Performance** : Tests rapides (<30s)
-- **Documentation** : Docstrings complètes
-
-### **Marqueurs pytest**
-```python
-@pytest.mark.gpu          # Nécessite GPU
-@pytest.mark.slow         # Test lent
-@pytest.mark.integration  # Test d'intégration
-@pytest.mark.skip         # Test à ignorer
-```
+### **Bonnes pratiques**
+- **Nommage** : `test_*` pour les fonctions
+- **Isolation** : Tests indépendants
+- **Performance** : < 30 secondes par test
+- **Documentation** : Docstrings descriptives
 
 ---
 
-## 🔄 **Maintenance des Tests**
-
-### **Tâches Quotidiennes**
-- [ ] Exécution complète des tests
-- [ ] Vérification couverture >80%
-- [ ] Tests de performance GPU
-- [ ] Validation des métriques
-
-### **Tâches Hebdomadaires**
-- [ ] Analyse des logs d'erreur
-- [ ] Optimisation des tests lents
-- [ ] Mise à jour des benchmarks
-- [ ] Revue des nouveaux cas de test
-
-### **Tâches Mensuelles**
-- [ ] Audit de sécurité des tests
-- [ ] Mise à jour des dépendances de test
-- [ ] Revue de l'architecture de test
-- [ ] Documentation des nouvelles fonctionnalités
-
----
-
-*📊 **Dernière mise à jour** : Octobre 2025*
-*🎯 **Couverture** : 85%*
-*⚡ **Tests actifs** : 4 suites*</content>
+**🎯 Tests validés :** Octobre 2025
+**📊 Couverture :** 85%+
+**⚡ Performance :** GPU 3x plus rapide</content>
 <parameter name="filePath">/home/delart/Documents/dev/python/Shelfreader/p1-MVP-Desktop/tests/README.md

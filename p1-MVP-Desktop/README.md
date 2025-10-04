@@ -14,10 +14,12 @@
 p1-MVP-Desktop/
 ├── env-p1/              # Environnement virtuel P1
 ├── scripts/             # Scripts utilitaires
-│   └── ocr_detect.py    # Script de détection OCR
+│   └── ocr_detect.py    # Script de détection OCR (multi-moteurs)
 ├── src/                 # Code source P1
 │   ├── __init__.py      # Package initialization
-│   ├── ocr_processor.py # Module OCR de base
+│   ├── ocr_easyocr.py   # Module OCR EasyOCR (GPU/CPU)
+│   ├── ocr_tesseract.py # Module OCR Tesseract
+│   ├── ocr_trocr.py     # Module OCR TrOCR (Transformers)
 │   ├── api_client.py    # Client Open Library
 │   └── app.py           # Interface Streamlit
 ├── test_images/         # Images de test pour l'OCR
@@ -100,6 +102,66 @@ for img in test_images/*.jpg; do
 done
 ```
 
+### 🔧 **Utilisation des modules OCR individuels**
+
+Chaque moteur OCR peut être utilisé indépendamment pour des tests spécialisés ou des besoins spécifiques.
+
+#### **EasyOCR (Recommandé - GPU/CPU)**
+```bash
+# Test de base avec GPU (recommandé)
+python src/ocr_easyocr.py test_images/books1.jpg --gpu
+
+# Test avec CPU seulement
+python src/ocr_easyocr.py test_images/books1.jpg
+
+# Options avancées
+python src/ocr_easyocr.py test_images/books1.jpg --gpu --preprocess --vertical-only --max-results 20
+
+# Avec seuil de confiance personnalisé
+python src/ocr_easyocr.py test_images/books1.jpg --gpu --confidence 0.3
+```
+
+#### **Tesseract (Classique)**
+```bash
+# Test de base (CPU seulement - Tesseract ne supporte pas GPU)
+python src/ocr_tesseract.py test_images/books1.jpg
+
+# Avec prétraitement et langue française
+python src/ocr_tesseract.py test_images/books1.jpg --preprocess --lang fra
+
+# Seulement les textes verticaux
+python src/ocr_tesseract.py test_images/books1.jpg --vertical-only --max-results 15
+```
+
+#### **TrOCR (Transformers - Très précis)**
+```bash
+# Test avec GPU (recommandé pour les performances)
+python src/ocr_trocr.py test_images/books1.jpg --gpu
+
+# Test CPU (plus lent mais fonctionne)
+python src/ocr_trocr.py test_images/books1.jpg
+
+# Avec prétraitement avancé
+python src/ocr_trocr.py test_images/books1.jpg --gpu --preprocess
+```
+
+#### **Options communes à tous les modules**
+- `--gpu` : Utiliser le GPU (si disponible)
+- `--preprocess` : Appliquer le prétraitement d'image
+- `--vertical-only` : Afficher seulement les textes verticaux (titres de livres)
+- `--max-results N` : Limiter à N résultats (défaut: 10)
+- `--confidence X.X` : Seuil de confiance minimum (défaut: 0.2)
+
+#### **Comparaison des moteurs OCR**
+| Moteur | GPU Support | Vitesse | Précision | Usage recommandé |
+|--------|-------------|---------|-----------|------------------|
+| **EasyOCR** | ✅ Excellent | 🚀 Rapide | 🟢 Bonne | **Défaut - Usage général** |
+| **Tesseract** | ❌ Aucun | ⚡ Très rapide | 🟡 Moyenne | Textes simples, CPU limité |
+| **TrOCR** | ✅ Bon | 🐌 Lent | 🟢🟢 Excellente | **Précision maximale** |
+
+### 🖥️ **Interface Web (Streamlit)**
+```
+
 ### 🧪 **Tests**
 
 #### Tests unitaires
@@ -116,8 +178,13 @@ python -m pytest tests/ --cov=src --cov-report=html
 
 #### Tests OCR manuels
 ```bash
-# Test rapide avec image de démo
+# Test rapide avec image de démo - Script principal
 python scripts/ocr_detect.py --gpu test_images/books1.jpg
+
+# Test de chaque module individuellement
+python src/ocr_easyocr.py test_images/books1.jpg --gpu
+python src/ocr_tesseract.py test_images/books1.jpg
+python src/ocr_trocr.py test_images/books1.jpg --gpu
 
 # Test avec vos propres images
 python scripts/ocr_detect.py --gpu chemin/vers/votre/image.jpg
@@ -139,15 +206,15 @@ python scripts/ocr_detect.py --gpu chemin/vers/votre/image.jpg
 
 ### 🛠️ **Technologies**
 
-| Composant | Technologie | Version |
-|-----------|-------------|---------|
-| **OCR** | EasyOCR + PyTorch | GPU/CPU |
-| **OCR Alternative** | Tesseract | 5.0+ |
-| **OCR Avancé** | TrOCR (Transformers) | microsoft/trocr-base-printed |
-| **Computer Vision** | OpenCV | 4.8+ |
-| **API Client** | requests | 2.31+ |
-| **Interface** | Streamlit | 1.28+ |
-| **Langage** | Python | 3.8+ |
+| Composant | Technologie | Version | Support GPU |
+|-----------|-------------|---------|-------------|
+| **OCR Principal** | EasyOCR + PyTorch | GPU/CPU | ✅ Excellent |
+| **OCR Alternative** | Tesseract | 5.0+ | ❌ Aucun |
+| **OCR Avancé** | TrOCR (Transformers) | microsoft/trocr-base-printed | ✅ Bon |
+| **Computer Vision** | OpenCV | 4.8+ | ✅ |
+| **API Client** | requests | 2.31+ | - |
+| **Interface** | Streamlit | 1.28+ | - |
+| **Langage** | Python | 3.8+ | - |
 
 ### ⚠️ **Limitations connues**
 

@@ -1,20 +1,17 @@
 # 🏗️ **P1 - MVP Desktop**
-## OCR + API + Interface Web
-
-**ShelfReader MVP Desktop** - Extraire du texte des photos de tranches de livres avec intelligence artificielle.
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)](https://streamlit.io/)
 [![EasyOCR](https://img.shields.io/badge/EasyOCR-1.7+-green.svg)](https://github.com/JaidedAI/EasyOCR)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-## 📋 **Table des Matières**
+### 📋 **Table des Matières**
 - [🎯 Vue d'ensemble](#-vue-densemble)
-- [✨ Fonctionnalités](#-fonctionnalités)
+- [🚀 Installation](#-installation)
+- [⚡ Démarrage rapide](#-démarrage-rapide)
+- [💻 Utilisation détaillée](#-utilisation-détaillée)
 - [🏗️ Architecture](#️-architecture)
 - [📁 Structure du projet](#-structure-du-projet)
-- [🚀 Installation](#-installation)
-- [💻 Utilisation](#-utilisation)
 - [🎨 Interface Web](#-interface-web)
 - [📊 Résultats & Métriques](#-résultats--métriques)
 - [🧪 Tests](#-tests)
@@ -22,6 +19,8 @@
 - [📚 API & Dépendances](#-api--dépendances)
 - [❓ FAQ](#-faq)
 - [🤝 Contribution](#-contribution)
+- [📈 Roadmap P1](#-roadmap-p1)
+- [📞 Support](#-support)
 
 ---
 
@@ -37,83 +36,6 @@ Détecter et identifier automatiquement les titres de livres sur des photos d'é
 - 🏪 **Libraires** : Gestion rapide des stocks
 - 📖 **Étudiants** : Recherche de livres dans les bibliothèques
 - 🏛️ **Institutions** : Catalogage automatique de collections
-
----
-
-## ✨ **Fonctionnalités**
-
-### **OCR Multi-Moteurs**
-- 🔍 **EasyOCR** : Moteur principal (GPU/CPU, précision élevée)
-- ⚡ **Tesseract** : Moteur rapide (CPU uniquement, vitesse optimale)
-- 🎯 **TrOCR** : Moteur haute précision (GPU recommandé, IA avancée)
-
-### **Interface Utilisateur**
-- 🌐 **Web App** : Interface Streamlit moderne et intuitive
-- 📱 **Responsive** : Fonctionne sur desktop et mobile
-- 🎨 **Visualisation** : Aperçu des images avec zones détectées
-
-### **Enrichissement de Données**
-- 📖 **Open Library API** : Métadonnées complètes des livres
-- 🔗 **ISBN Detection** : Recherche par numéro ISBN
-- 📊 **Statistiques** : Métriques de confiance et performance
-
-### **Gestion des Résultats**
-- 💾 **Sauvegarde automatique** : Dossier `result-ocr/` organisé
-- 📄 **Formats multiples** : JSON, TXT, CSV
-- 📈 **Historique** : Traçabilité des analyses
-
----
-
-## 🏗️ **Architecture**
-
-```
-📁 P1-MVP-Desktop/
-├── 🔧 Scripts OCR (ocr_*.py)
-│   ├── ocr_easyocr.py     # Moteur principal
-│   ├── ocr_tesseract.py   # Moteur rapide
-│   └── ocr_trocr.py       # Moteur précision
-├── 🌐 Interface Web
-│   └── app.py            # Application Streamlit
-├── 🔗 API Clients
-│   └── api_client.py     # Open Library API
-├── 📊 Résultats
-│   └── result-ocr/       # Sorties automatiques
-└── 🧪 Tests
-    └── tests/            # Suite de tests
-```
-
-### **Flux de données**
-1. **Input** : Photo d'étagère (JPG/PNG)
-2. **OCR** : Extraction du texte par IA
-3. **Filtrage** : Seuil de confiance configurable
-4. **Enrichissement** : APIs externes (Open Library)
-5. **Output** : Résultats structurés + interface web
-
----
-
-## 📁 **Structure du projet**
-
-```
-p1-MVP-Desktop/
-├── 📂 env-p1/              # Environnement virtuel Python
-├── 📂 result-ocr/          # Résultats OCR (auto-généré)
-│   ├── easyocr_results.txt
-│   ├── tesseract_results.txt
-│   └── trocr_results.txt
-├── 🔧 ocr_easyocr.py       # Script OCR EasyOCR (principal)
-├── 🔧 ocr_tesseract.py     # Script OCR Tesseract (rapide)
-├── 🔧 ocr_trocr.py         # Script OCR TrOCR (précis)
-├── 🔗 api_client.py        # Client API Open Library
-├── 🌐 app.py               # Interface web Streamlit
-├── 🖼️ test_images/         # Images de test
-│   ├── books1.jpg
-│   └── books2.jpg
-├── 📋 requirements.txt     # Dépendances Python
-├── 📋 README.md           # Cette documentation
-└── 🧪 tests/              # Tests unitaires
-    ├── __init__.py
-    └── test_*.py
-```
 
 ---
 
@@ -153,241 +75,170 @@ python -c "import torch; print('GPU:', torch.cuda.is_available())"
 
 ---
 
-## 💻 **Utilisation**
+## ⚡ **Démarrage rapide**
 
-### **🚀 Démarrage Rapide**
+### **3 étapes pour commencer**
 ```bash
-# Activer l'environnement
+# 1. Activer l'environnement virtuel
 source env-p1/bin/activate
 
-# Test simple avec EasyOCR
+# 2. Tester avec une image d'exemple
 python ocr_easyocr.py test_images/books1.jpg --gpu
 
-# Interface web
+# 3. Lancer l'interface web (optionnel)
 streamlit run app.py
 ```
 
-### **📋 Arguments et Options Détaillés**
-
-#### **Syntaxe Générale**
-```bash
-python [script_ocr].py [image] [options]
-```
-
-#### **Arguments Positionnels**
-- `image` : Chemin vers l'image à analyser (obligatoire)
-  - Formats supportés : JPG, PNG, BMP, TIFF
-  - Exemples : `test_images/books1.jpg`, `photos/etagere.jpg`, `/chemin/absolu/image.png`
-
-#### **Options Communes à Tous les Scripts**
-| Option | Type | Défaut | Description | Exemple |
-|--------|------|--------|-------------|---------|
-| `--gpu` | flag | `False` | Utiliser GPU NVIDIA (accélère EasyOCR/TrOCR) | `--gpu` |
-| `--confidence X.X` | float | `0.2` | Seuil de confiance (0.0-1.0) | `--confidence 0.5` |
-| `--output FILE` | string | `[moteur]_results.txt` | Fichier de sortie personnalisé | `--output mes_livres.txt` |
-| `--lang CODE` | string | `eng` | Langue pour Tesseract uniquement | `--lang fra` |
-
-#### **Valeurs du Seuil de Confiance**
-- `0.1` : **Très tolérant** - Beaucoup de résultats, plus de faux positifs
-- `0.2` : **Équilibre recommandé** - Bon compromis pour débuter
-- `0.3` : **Moyen** - Moins de bruit, bonne précision
-- `0.5` : **Strict** - Résultats fiables, moins de détections
-- `0.7` : **Très strict** - Seulement les meilleurs résultats
-
-### **🔧 Scripts OCR Individuels - Utilisation Directe**
-
-#### **🔍 EasyOCR (Recommandé - GPU/CPU)**
-```bash
-# USAGE DE BASE (sans options)
-python ocr_easyocr.py test_images/books1.jpg
-
-# AVEC GPU (recommandé - accélère considérablement)
-python ocr_easyocr.py test_images/books1.jpg --gpu
-
-# SEUIL DE CONFIANCE PERSONNALISÉ
-python ocr_easyocr.py test_images/books1.jpg --gpu --confidence 0.3
-
-# FICHIER DE SORTIE PERSONNALISÉ
-python ocr_easyocr.py test_images/books1.jpg --gpu --output mes_resultats_easyocr.txt
-
-# COMBINAISON COMPLÈTE
-python ocr_easyocr.py test_images/books1.jpg --gpu --confidence 0.4 --output analyse_etagere.txt
-
-# EXEMPLES AVANCÉS
-python ocr_easyocr.py photos/ma_bibliotheque.jpg --gpu --confidence 0.2
-python ocr_easyocr.py /home/user/images/livres_scan.jpg --gpu --confidence 0.5 --output scan_bibliotheque.txt
-```
-
-#### **⚡ Tesseract (Rapide - CPU seulement)**
-```bash
-# USAGE DE BASE (CPU uniquement, très rapide)
-python ocr_tesseract.py test_images/books1.jpg
-
-# AVEC LANGUE FRANÇAISE
-python ocr_tesseract.py test_images/books1.jpg --lang fra
-
-# AVEC LANGUE ALLEMANDE
-python ocr_tesseract.py test_images/books1.jpg --lang deu
-
-# SEUIL DE CONFIANCE ÉLEVÉ (moins de faux positifs)
-python ocr_tesseract.py test_images/books1.jpg --confidence 0.5
-
-# FICHIER DE SORTIE PERSONNALISÉ
-python ocr_tesseract.py test_images/books1.jpg --output tesseract_rapide.txt
-
-# COMBINAISON COMPLÈTE
-python ocr_tesseract.py test_images/books1.jpg --lang eng --confidence 0.4 --output scan_anglais.txt
-
-# EXEMPLES AVANCÉS
-python ocr_tesseract.py photos/livres_francais.jpg --lang fra --confidence 0.3
-python ocr_tesseract.py images/bibliotheque_allemande.jpg --lang deu --confidence 0.5 --output livres_de.txt
-```
-
-#### **🎯 TrOCR (Haute Précision - GPU recommandé)**
-```bash
-# USAGE DE BASE
-python ocr_trocr.py test_images/books1.jpg
-
-# AVEC GPU (recommandé pour les performances)
-python ocr_trocr.py test_images/books1.jpg --gpu
-
-# HAUTE PRÉCISION (seuil strict)
-python ocr_trocr.py test_images/books1.jpg --gpu --confidence 0.7
-
-# SEUIL MOYEN (bon équilibre)
-python ocr_trocr.py test_images/books1.jpg --gpu --confidence 0.5
-
-# FICHIER DE SORTIE PERSONNALISÉ
-python ocr_trocr.py test_images/books1.jpg --gpu --output trocr_precision.txt
-
-# COMBINAISON COMPLÈTE
-python ocr_trocr.py test_images/books1.jpg --gpu --confidence 0.6 --output haute_precision.txt
-
-# EXEMPLES AVANCÉS
-python ocr_trocr.py photos/textes_difficiles.jpg --gpu --confidence 0.8 --output textes_complexes.txt
-python ocr_trocr.py images/livres_anciens.jpg --gpu --confidence 0.7 --output livres_anciens.txt
-```
-
-### **📊 Comparaisons Pratiques**
-
-#### **Par Usage**
-```bash
-# 🧪 TESTS RAPIDES (Tesseract - CPU seulement)
-python ocr_tesseract.py image.jpg --confidence 0.3
-
-# 🏭 PRODUCTION STANDARD (EasyOCR + GPU)
-python ocr_easyocr.py image.jpg --gpu --confidence 0.2
-
-# 🔬 PRÉCISION MAXIMALE (TrOCR + GPU)
-python ocr_trocr.py image.jpg --gpu --confidence 0.7
-```
-
-#### **Par Performance**
-```bash
-# ⚡ LE PLUS RAPIDE (Tesseract)
-python ocr_tesseract.py image.jpg
-
-# 🚀 RAPIDE ET PRÉCIS (EasyOCR GPU)
-python ocr_easyocr.py image.jpg --gpu
-
-# 🐌 LE PLUS LENT MAIS ULTRA-PRÉCIS (TrOCR GPU)
-python ocr_trocr.py image.jpg --gpu --confidence 0.7
-```
-
-### **🔄 Utilisation Avancée**
-
-#### **Traitement par Lot (Bash)**
-```bash
-# Traiter toutes les images JPG du dossier
-for img in test_images/*.jpg; do
-    echo "=== Analyse de $(basename "$img") ==="
-    python ocr_easyocr.py "$img" --gpu --confidence 0.3
-done
-
-# Avec noms de fichiers personnalisés
-for img in photos/*.jpg; do
-    filename=$(basename "$img" .jpg)
-    python ocr_easyocr.py "$img" --gpu --output "resultats_${filename}.txt"
-done
-```
-
-#### **Comparaison de Moteurs**
-```bash
-# Tester tous les moteurs sur la même image
-IMAGE="test_images/books1.jpg"
-
-echo "=== EASYOCR (GPU) ==="
-python ocr_easyocr.py "$IMAGE" --gpu --confidence 0.2
-
-echo "=== TESSERACT (CPU) ==="
-python ocr_tesseract.py "$IMAGE" --confidence 0.3
-
-echo "=== TROCR (GPU) ==="
-python ocr_trocr.py "$IMAGE" --gpu --confidence 0.5
-```
-
-#### **Scripts Personnalisés**
-```bash
-# Script de traitement automatique
-#!/bin/bash
-IMAGE=$1
-CONFIDENCE=${2:-0.2}
-
-echo "Traitement de $IMAGE avec confiance $CONFIDENCE"
-python ocr_easyocr.py "$IMAGE" --gpu --confidence "$CONFIDENCE" --output "auto_$(basename "$IMAGE" .jpg).txt"
-```
-
-### **📁 Gestion des Résultats**
-
-#### **Dossier de Sortie Automatique**
-```
-result-ocr/
-├── easyocr_results.txt      # Résultats EasyOCR par défaut
-├── tesseract_results.txt    # Résultats Tesseract par défaut
-├── trocr_results.txt        # Résultats TrOCR par défaut
-└── [nom_personnalisé].txt   # Fichiers avec --output
-```
-
-#### **Format des Résultats Détaillé**
-```
-=== RÉSULTATS OCR - test_images/books1.jpg ===
-Date: 2025-10-04 12:34:56
-Moteur: EasyOCR (GPU)
-Nombre de textes détectés: 11
-Confiance moyenne: 0.885
-Temps de traitement: 3.2s
-
-TEXTE COMPLET:
-[LE PETIT PRINCE] | [HARRY POTTER] | [1984] | ...
-
-DÉTAIL PAR TEXTE:
---- Texte 1 ---
-Confiance: 0.703
-Texte: "LE PETIT PRINCE"
-Position: x=45, y=120, w=180, h=25
-
---- Texte 2 ---
-Confiance: 0.892
-Texte: "HARRY POTTER"
-Position: x=45, y=160, w=195, h=28
-
-[... détails pour chaque texte détecté ...]
-```
-
-### **🎯 Recommandations d'Usage**
-
-| Scénario | Script Recommandé | Arguments | Raison |
-|----------|-------------------|-----------|---------|
-| **Premiers tests** | `ocr_easyocr.py` | `--gpu --confidence 0.2` | Équilibre parfait |
-| **Traitement rapide** | `ocr_tesseract.py` | `--confidence 0.3` | Ultra rapide |
-| **Haute précision** | `ocr_trocr.py` | `--gpu --confidence 0.7` | Maximum de fiabilité |
-| **CPU limité** | `ocr_tesseract.py` | `--lang fra --confidence 0.4` | Pas de GPU requis |
-| **Images difficiles** | `ocr_trocr.py` | `--gpu --confidence 0.8` | IA avancée |
-| **Traitement par lot** | `ocr_easyocr.py` | `--gpu --confidence 0.3` | Bon compromis |
+**Résultat attendu** : Un fichier `result-ocr/easyocr_results.txt` contenant les titres de livres détectés.
 
 ---
 
-## 🎨 **Interface Web**
+## 💻 **Utilisation détaillée**
+
+### **Commandes de Base**
+
+#### **Traitement d'une image avec EasyOCR**
+```bash
+# Analyse basique
+python ocr_easyocr.py test_images/books1.jpg
+
+# Avec GPU (recommandé)
+python ocr_easyocr.py test_images/books1.jpg --gpu
+
+# Avec seuil de confiance personnalisé
+python ocr_easyocr.py test_images/books1.jpg --confidence 0.3
+
+# Mode verbeux (détails complets)
+python ocr_easyocr.py test_images/books1.jpg --verbose
+```
+
+#### **Utilisation des autres moteurs**
+```bash
+# Tesseract (rapide, CPU uniquement)
+python ocr_tesseract.py test_images/books1.jpg
+
+# TrOCR (haute précision, GPU recommandé)
+python ocr_trocr.py test_images/books1.jpg --gpu
+```
+
+### **Options Avancées**
+
+#### **Paramètres de Configuration**
+```bash
+# Liste complète des options
+python ocr_easyocr.py --help
+
+# Exemples d'options avancées
+python ocr_easyocr.py image.jpg \
+  --confidence 0.2 \
+  --gpu \
+  --output-format json \
+  --save-annotated
+```
+
+#### **Traitement par Lot**
+```bash
+# Traiter toutes les images d'un dossier
+for img in test_images/*.jpg; do
+  python ocr_easyocr.py "$img" --gpu
+done
+
+# Avec sauvegarde des résultats
+mkdir -p results_batch
+for img in test_images/*.jpg; do
+  python ocr_easyocr.py "$img" --gpu --output-dir results_batch
+done
+```
+
+### **Formats de Sortie**
+
+#### **Fichier Texte (.txt)**
+```
+=== RÉSULTATS OCR ===
+Titre détecté: "LE PETIT PRINCE"
+Confiance: 0.892
+Position: x=45, y=120
+
+Titre détecté: "HARRY POTTER"
+Confiance: 0.756
+Position: x=45, y=160
+```
+
+#### **Format JSON**
+```json
+{
+  "image": "books1.jpg",
+  "timestamp": "2025-01-04T12:34:56",
+  "engine": "EasyOCR",
+  "results": [
+    {
+      "text": "LE PETIT PRINCE",
+      "confidence": 0.892,
+      "bbox": [45, 120, 180, 25]
+    }
+  ]
+}
+```
+
+---
+
+## 🏗️ **Architecture**
+
+### **OCR Multi-Moteurs**
+- 🔍 **EasyOCR** : Moteur principal (GPU/CPU, précision élevée)
+- ⚡ **Tesseract** : Moteur rapide (CPU uniquement, vitesse optimale)
+- 🎯 **TrOCR** : Moteur haute précision (GPU recommandé, IA avancée)
+
+### **Interface Utilisateur**
+- 🌐 **Web App** : Interface Streamlit moderne et intuitive
+- 📱 **Responsive** : Fonctionne sur desktop et mobile
+- 🎨 **Visualisation** : Aperçu des images avec zones détectées
+
+### **Enrichissement de Données**
+- � **Open Library API** : Métadonnées complètes des livres
+- 🔗 **ISBN Detection** : Recherche par numéro ISBN
+- 📊 **Statistiques** : Métriques de confiance et performance
+
+### **Gestion des Résultats**
+- 💾 **Sauvegarde automatique** : Dossier `result-ocr/` organisé
+- 📄 **Formats multiples** : JSON, TXT, CSV
+- 📈 **Historique** : Traçabilité des analyses
+
+---
+
+## 📁 **Structure du projet**
+
+```
+p1-MVP-Desktop/
+├── scripts/                 # Scripts OCR individuels
+│   ├── ocr_easyocr.py      # Moteur EasyOCR
+│   ├── ocr_tesseract.py    # Moteur Tesseract
+│   └── ocr_trocr.py        # Moteur TrOCR
+├── src/                    # Code source principal
+│   ├── app.py              # Interface web Streamlit
+│   ├── api_client.py       # Client Open Library API
+│   ├── ocr_easyocr.py      # Classe EasyOCRProcessor
+│   ├── ocr_tesseract.py    # Classe TesseractProcessor
+│   └── ocr_trocr.py        # Classe TrOCRProcessor
+├── tests/                  # Tests unitaires
+│   ├── __init__.py
+│   └── test_*.py
+├── test_images/            # Images de test
+│   ├── books1.jpg
+│   └── books2.jpg
+├── result-ocr/             # Résultats générés (auto-créé)
+├── env-p1/                 # Environnement virtuel
+├── requirements.txt        # Dépendances Python
+├── pyrightconfig.json      # Configuration Pyright
+└── README.md              # Cette documentation
+```
+
+### **Flux de Données**
+1. **Input** : Image JPG/PNG d'étagère de livres
+2. **OCR Processing** : Extraction du texte avec moteur choisi
+3. **Filtrage** : Application du seuil de confiance
+4. **Enrichissement** : Recherche métadonnées via API
+5. **Output** : Sauvegarde résultats + affichage interface
 
 ---
 
@@ -485,52 +336,6 @@ python ocr_easyocr.py image.jpg --confidence 0.7
 ---
 
 ## 🧪 **Tests**
-
-### **Tests Unitaires**
-```bash
-# Activer l'environnement virtuel
-source env-p1/bin/activate
-
-# Lancer tous les tests
-python -m pytest tests/
-
-# Tests avec couverture de code
-python -m pytest tests/ --cov=. --cov-report=html
-
-# Tests verbeux
-python -m pytest tests/ -v
-```
-
-### **Tests d'Intégration**
-```bash
-# Test complet pipeline OCR
-python -c "
-from ocr_easyocr import EasyOCRProcessor
-processor = EasyOCRProcessor()
-results = processor.process_image('test_images/books1.jpg')
-print(f'Détecté {len(results)} textes')
-"
-```
-
-### **Tests de Performance**
-```bash
-# Benchmark des moteurs
-python -c "
-import time
-from ocr_easyocr import EasyOCRProcessor
-
-start = time.time()
-processor = EasyOCRProcessor()
-results = processor.process_image('test_images/books1.jpg')
-end = time.time()
-
-print(f'EasyOCR: {len(results)} textes en {end-start:.2f}s')
-"
-```
-
----
-
-## 🔧 **Dépannage**
 
 ### **Problèmes Courants**
 
@@ -651,7 +456,7 @@ pip install easyocr torch torchvision torchaudio --index-url https://download.py
 - **Recommandé** : GPU accélère considérablement EasyOCR et TrOCR
 - **Conseil** : Testez d'abord en CPU, activez GPU pour production
 
-### **📷 Formats d'images supportés ?**
+### **�� Formats d'images supportés ?**
 - **JPG/JPEG** ✅
 - **PNG** ✅
 - **BMP** ✅
@@ -747,105 +552,3 @@ git push origin feature/nouvelle-fonctionnalite
 - **📖 Wiki** : [Documentation complète](https://github.com/delnixcode/Shelfreader/wiki)
 
 ---
-
-**ShelfReader P1** - *De la photo d'étagère au catalogue intelligent* 📚🤖
-
----
-*Dernière mise à jour : 4 octobre 2025*
-
-### 🚀 **Installation**
-```bash
-cd p1-MVP-Desktop
-source env-p1/bin/activate
-pip install -r requirements.txt
-```
-
-### � **Utilisation**
-
-#### **Scripts OCR individuels**
-Chaque moteur OCR peut être utilisé indépendamment. **Les résultats sont automatiquement sauvegardés dans le dossier `result-ocr/`**.
-
-##### **EasyOCR (Recommandé - GPU/CPU)**
-```bash
-# Test de base avec GPU (recommandé)
-python ocr_easyocr.py test_images/books1.jpg --gpu
-
-# Test avec CPU seulement
-python ocr_easyocr.py test_images/books1.jpg
-
-# Avec seuil de confiance personnalisé
-python ocr_easyocr.py test_images/books1.jpg --gpu --confidence 0.3
-```
-
-##### **Tesseract (Rapide - CPU seulement)**
-```bash
-# Test de base (optimisé pour la vitesse ~1.5s)
-python ocr_tesseract.py test_images/books1.jpg
-
-# Avec langue française
-python ocr_tesseract.py test_images/books1.jpg --lang fra
-
-# Avec seuil de confiance plus élevé
-python ocr_tesseract.py test_images/books1.jpg --confidence 0.5
-```
-
-##### **TrOCR (Précis - GPU recommandé)**
-```bash
-# Test avec GPU (recommandé pour les performances)
-python ocr_trocr.py test_images/books1.jpg --gpu --confidence 0.5
-
-# Test CPU (fonctionne mais plus lent)
-python ocr_trocr.py test_images/books1.jpg --confidence 0.5
-
-# Avec seuil de confiance plus strict
-python ocr_trocr.py test_images/books1.jpg --gpu --confidence 0.7
-```
-
-#### **Options communes**
-- `--gpu` : Utiliser le GPU (si disponible) - Accélère considérablement EasyOCR et TrOCR
-- `--confidence X.X` : Seuil de confiance minimum (0.0 à 1.0) - Défaut: 0.2
-  - `0.1` : Très tolérant (beaucoup de résultats, plus de faux positifs)
-  - `0.2` : Équilibre (recommandé pour débuter)
-  - `0.5` : Strict (moins de résultats, plus précis)
-  - `0.7` : Très strict (seulement les meilleurs résultats)
-- `--output fichier.txt` : Nom du fichier de sortie (défaut: `[moteur]_results.txt`)
-
-#### **Options spécifiques par moteur**
-- **EasyOCR** : `--gpu`, `--confidence`, `--output`
-- **Tesseract** : `--lang [eng|fra|deu|...]`, `--confidence`, `--output`
-- **TrOCR** : `--gpu`, `--confidence`, `--output`
-
-### �️ **Interface Web**
-```bash
-streamlit run app.py
-```
-
----
-
-## 🎨 **Interface Web**
-
-### 🧪 **Tests**
-```bash
-# Activer l'environnement virtuel d'abord
-source env-p1/bin/activate
-
-# Lancer tous les tests
-python -m pytest tests/
-
-# Tests avec couverture
-python -m pytest tests/ --cov=. --cov-report=html
-```
-
-### 📊 **Comparaison des moteurs OCR**
-
-| Moteur | GPU Support | Vitesse | Précision | Usage recommandé |
-|--------|-------------|---------|-----------|------------------|
-| **EasyOCR** | ✅ Excellent | 🚀 ~3-5s | 🟢🟢 Excellente | **Défaut - Tous usages** |
-| **Tesseract** | ❌ Aucun | ⚡ ~1.5s | 🟡 Moyenne | Tests rapides, CPU limité |
-| **TrOCR** | ✅ Bon | 🐌 ~8-15s | 🟢 Bonne | Précision maximale |
-
-**📊 Benchmarks sur `test_images/books1.jpg` :**
-- **EasyOCR** : 11 livres détectés, confiance 0.885, temps ~3s
-- **Tesseract** : 15 textes détectés, confiance 0.733, temps ~1.5s  
-- **TrOCR** : 14 textes détectés, confiance 0.807, temps ~12s
-

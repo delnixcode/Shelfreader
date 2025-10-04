@@ -117,61 +117,60 @@ class TrOCRProcessor:
             if len(generated_text) >= 2 and confidence >= 0.1:  # Seuil bas pour inclure
                 results.append((generated_text, confidence))
 
-        # Combiner les textes détectés
-        if results:
-            combined_text = ' | '.join([text for text, conf in results])
-            avg_confidence = np.mean([conf for text, conf in results])
-            return combined_text, avg_confidence
-
-        return "", 0.0
+        # Retourner les résultats individuels
+        return results if results else [("", 0.0)]
 
     # === INTERFACES PUBLIQUES ===
     def detect_text(self, pil_image, preprocess=True):
         """Détecte le texte avec TrOCR."""
-        text, confidence = self._trocr_detect(pil_image)
+        results = self._trocr_detect(pil_image)
 
-        if confidence >= self.confidence_threshold and len(text) >= 2:
-            # Créer une boîte fictive pour la compatibilité
-            # TrOCR ne détecte pas les boîtes, seulement le texte complet
-            width, height = pil_image.size
-            bbox = [(0, 0), (width, 0), (width, height), (0, height)]
-            return [(bbox, text, confidence)]
+        filtered_results = []
+        for text, confidence in results:
+            if confidence >= self.confidence_threshold and len(text) >= 2:
+                # Créer une boîte fictive pour la compatibilité
+                width, height = pil_image.size
+                bbox = [(0, 0), (width, 0), (width, height), (0, height)]
+                filtered_results.append((bbox, text, confidence))
 
-        return []
+        return filtered_results
 
     def get_text_and_confidence(self, pil_image, preprocess=True):
         """Extrait le texte et la confiance."""
-        text, confidence = self._trocr_detect(pil_image)
+        results = self._trocr_detect(pil_image)
 
-        if confidence >= self.confidence_threshold and len(text) >= 2:
-            return text, confidence
+        if results and any(conf >= self.confidence_threshold and len(text) >= 2 for text, conf in results):
+            texts = [text for text, conf in results if conf >= self.confidence_threshold and len(text) >= 2]
+            confidences = [conf for text, conf in results if conf >= self.confidence_threshold and len(text) >= 2]
+            combined_text = ' | '.join(texts)
+            avg_confidence = sum(confidences) / len(confidences) if confidences else 0.0
+            return combined_text, avg_confidence
 
         return "", 0.0
 
     def get_boxes(self, pil_image, preprocess=True, vertical_only=False):
-        """Extrait les boîtes de texte avec coordonnées, amélioré pour la détection verticale."""
-        text, confidence = self._trocr_detect(pil_image)
+        """Extrait les boîtes de texte avec coordonnées."""
+        results = self._trocr_detect(pil_image)
 
-        if confidence >= self.confidence_threshold and len(text) >= 2:
-            width, height = pil_image.size
-            font_size = min(width, height) * 0.8  # Estimation basée sur la dimension minimale
+        boxes = []
+        width, height = pil_image.size
+        strip_width = width // len(results) if results else width
 
-            # Détection verticale améliorée (basée sur dimensions et contenu)
-            aspect_ratio = height / width if width > 0 else 1
-            is_vertical = aspect_ratio > 1.2 or any(char in text for char in ['|', '/', '\\'])  # Heuristique simple pour texte vertical
+        for i, (text, confidence) in enumerate(results):
+            if confidence >= self.confidence_threshold and len(text) >= 2:
+                # Créer une boîte pour chaque strip
+                x = i * strip_width
+                y = 0
+                boxes.append({
+                    "text": text,
+                    "x": x, "y": y,
+                    "width": strip_width, "height": height,
+                    "font_size": height * 0.8,
+                    "is_vertical": True,  # Assume vertical for book spines
+                    "confidence": confidence
+                })
 
-            if vertical_only and not is_vertical:
-                return []
-
-            return [{
-                "text": text,
-                "x": 0, "y": 0,
-                "width": width, "height": height,
-                "font_size": font_size,
-                "is_vertical": is_vertical
-            }]
-
-        return []
+        return boxes
 
 # === SCRIPT PRINCIPAL ===
 if __name__ == "__main__":
@@ -187,6 +186,7 @@ if __name__ == "__main__":
     parser.add_argument('image_path', help='Chemin vers l\'image à analyser')
     parser.add_argument('--gpu', action='store_true', help='Utiliser le GPU')
     parser.add_argument('--confidence', type=float, default=0.2, help='Seuil de confiance (défaut: 0.2)')
+    parser.add_argument('--output', type=str, help='Préfixe des fichiers de sortie (défaut: detected_book)')
 
     args = parser.parse_args()
 
@@ -207,9 +207,34 @@ if __name__ == "__main__":
         print(f"🎯 Confiance: {confidence:.3f}")
         print(f"📝 Texte complet: {text}")
 
+        # Sauvegarder dans un fichier unique qui se remplace
+        output_file = args.output if args.output else 'result-ocr/trocr_results.txt'
+        if not output_file.startswith('result-ocr/'):
+            output_file = f'result-ocr/{output_file}'
+        
+        # Créer le dossier s'il n'existe pas
+        import os
+        os.makedirs(os.path.dirname(output_file), exist_ok=True)
+        
+        with open(output_file, 'w', encoding='utf-8') as f:
+            f.write(f"=== RÉSULTATS OCR - {args.image_path} ===\n")
+            f.write(f"Date: {__import__('datetime').datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            f.write(f"Nombre de textes détectés: {len(boxes)}\n")
+            f.write(f"Confiance moyenne: {confidence:.3f}\n\n")
+            f.write(f"TEXTE COMPLET:\n{text}\n\n")
+            
+            if boxes:
+                f.write("DÉTAIL PAR LIVRE:\n")
+                for i, box in enumerate(boxes, 1):
+                    f.write(f"\n--- Livre {i} ---\n")
+                    f.write(f"Confiance: {box['confidence']:.3f}\n")
+                    f.write(f"Texte: {box['text']}\n")
+        
+        print(f"💾 Résultats sauvegardés dans {output_file}")
+
         if boxes:
             print("\n📦 Textes détectés:")
-            for i, box in enumerate(boxes, 1):  # Afficher tous
+            for i, box in enumerate(boxes, 1):
                 print(f"  {i:2d}. {box['text']}")
 
     except Exception as e:

@@ -22,56 +22,29 @@ class TesseractOCRProcessor:
         self.languages = languages
         self.use_gpu = use_gpu  # Tesseract ne supporte pas vraiment GPU, mais gardé pour cohérence
 
-        # Configurations PSM pour différents types de texte
+        # Configurations PSM optimisées (seulement les plus efficaces)
         self.psm_configs = [
-            '--psm 6',  # Texte uniforme
-            '--psm 8',  # Mot unique
-            '--psm 11', # Texte vertical
-            '--psm 13'  # Texte brut
+            '--psm 6',  # Texte uniforme - le plus rapide et efficace
         ]
 
         print(f"🔍 Tesseract initialisé - Langues: {languages}, Seuil: {confidence_threshold}")
 
     # === PRÉTRAITEMENT ===
     def _preprocess_for_tesseract(self, image):
-        """Prétraitement optimisé pour Tesseract avec variantes."""
+        """Prétraitement rapide et efficace pour Tesseract."""
         import cv2
         
         # Convertir en niveaux de gris
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-        processed_images = []
-
-        # 1. Version originale avec CLAHE
+        # Améliorer le contraste avec CLAHE (simple et efficace)
         clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
         enhanced = clahe.apply(gray)
-        processed_images.append(enhanced)
 
-        # 2. Version avec binarisation adaptative
-        binary = cv2.adaptiveThreshold(
-            enhanced, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2
-        )
-        processed_images.append(binary)
-
-        # 3. Version avec réduction du bruit
+        # Léger débruitage pour améliorer la qualité
         denoised = cv2.bilateralFilter(enhanced, 5, 50, 50)
-        processed_images.append(denoised)
 
-        # 4. Version avec amélioration du contraste
-        lab = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)  # Approximation
-        enhanced_lab_gray = clahe.apply(lab)
-        processed_images.append(enhanced_lab_gray)
-
-        # 5. Version avec morphologie mathématique
-        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2))
-        morphed = cv2.morphologyEx(binary, cv2.MORPH_CLOSE, kernel)
-        processed_images.append(morphed)
-        
-        # 6. Version avec seuillage Otsu
-        _, otsu = cv2.threshold(enhanced, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-        processed_images.append(otsu)
-
-        return processed_images
+        return [denoised]  # Retourner une seule image optimisée
 
     # === DÉTECTION OCR ===
     def _detect_with_psm(self, image, psm_config):
@@ -100,36 +73,28 @@ class TesseractOCRProcessor:
             return []
 
     def detect_text(self, pil_image, preprocess=True):
-        """Détecte le texte avec Tesseract en essayant plusieurs PSM."""
+        """Détecte le texte avec Tesseract de façon optimisée."""
         import numpy as np
         import cv2
         
         image_array = np.array(pil_image)
         bgr_image = cv2.cvtColor(image_array, cv2.COLOR_RGB2BGR)
 
-        # Prétraitement si demandé
+        # Prétraitement rapide si demandé
         if preprocess:
             processed_images = self._preprocess_for_tesseract(bgr_image)
         else:
             processed_images = [cv2.cvtColor(bgr_image, cv2.COLOR_BGR2GRAY)]
 
-        # Essayer chaque configuration PSM et combiner les résultats
+        # Utiliser seulement la meilleure configuration PSM
         all_results = []
-        for psm_config in self.psm_configs:
-            for processed_img in processed_images:
-                results = self._detect_with_psm(processed_img, psm_config)
-                all_results.extend(results)
+        for processed_img in processed_images:
+            results = self._detect_with_psm(processed_img, self.psm_configs[0])
+            all_results.extend(results)
 
-        # Supprimer les doublons et trier par confiance
-        unique_results = []
-        seen_texts = set()
-        for result in sorted(all_results, key=lambda x: x[2], reverse=True):
-            text = result[1]
-            if text not in seen_texts:
-                unique_results.append(result)
-                seen_texts.add(text)
-
-        return unique_results[:20]  # Limiter à 20 meilleurs résultats
+        # Trier par confiance et limiter les résultats
+        all_results.sort(key=lambda x: x[2], reverse=True)
+        return all_results[:15]  # Limiter à 15 meilleurs résultats
 
     # === INTERFACES PUBLIQUES ===
     def get_text_and_confidence(self, pil_image, preprocess=True):
@@ -168,12 +133,14 @@ class TesseractOCRProcessor:
                 "x": x, "y": y,
                 "width": width, "height": height,
                 "font_size": font_size,
-                "is_vertical": is_vertical
+                "is_vertical": is_vertical,
+                "confidence": confidence
             })
 
         return boxes
 
 # === SCRIPT PRINCIPAL ===
+if __name__ == "__main__":
     """
     Point d'entrée pour tester Tesseract directement.
     Usage: python ocr_tesseract.py <image_path> [--gpu]
@@ -187,6 +154,7 @@ class TesseractOCRProcessor:
     parser.add_argument('--gpu', action='store_true', help='Utiliser le GPU (si disponible)')
     parser.add_argument('--confidence', type=float, default=0.2, help='Seuil de confiance (défaut: 0.2)')
     parser.add_argument('--lang', default='eng', help='Langue pour Tesseract (défaut: eng)')
+    parser.add_argument('--output', type=str, help='Préfixe des fichiers de sortie (défaut: detected_book)')
 
     args = parser.parse_args()
 
@@ -205,12 +173,37 @@ class TesseractOCRProcessor:
         print(f"🔍 Tesseract - Image: {args.image_path}")
         print(f"📊 Résultats: {len(boxes)} textes détectés")
         print(f"🎯 Confiance moyenne: {confidence:.3f}")
-        print(f"📝 Texte: {text[:100]}{'...' if len(text) > 100 else ''}")
+        print(f"📝 Texte complet: {text}")
+
+        # Sauvegarder dans un fichier unique qui se remplace
+        output_file = args.output if args.output else 'result-ocr/tesseract_results.txt'
+        if not output_file.startswith('result-ocr/'):
+            output_file = f'result-ocr/{output_file}'
+        
+        # Créer le dossier s'il n'existe pas
+        import os
+        os.makedirs(os.path.dirname(output_file), exist_ok=True)
+        
+        with open(output_file, 'w', encoding='utf-8') as f:
+            f.write(f"=== RÉSULTATS OCR - {args.image_path} ===\n")
+            f.write(f"Date: {__import__('datetime').datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            f.write(f"Nombre de textes détectés: {len(boxes)}\n")
+            f.write(f"Confiance moyenne: {confidence:.3f}\n\n")
+            f.write(f"TEXTE COMPLET:\n{text}\n\n")
+            
+            if boxes:
+                f.write("DÉTAIL PAR LIVRE:\n")
+                for i, box in enumerate(boxes, 1):
+                    f.write(f"\n--- Livre {i} ---\n")
+                    f.write(f"Confiance: {box['confidence']:.3f}\n")
+                    f.write(f"Texte: {box['text']}\n")
+        
+        print(f"💾 Résultats sauvegardés dans {output_file}")
 
         if boxes:
             print("\n📦 Textes détectés:")
-            for i, box in enumerate(boxes[:10], 1):  # Limiter à 10 premiers
-                print(f"  {i:2d}. {box['text'][:50]}{'...' if len(box['text']) > 50 else ''}")
+            for i, box in enumerate(boxes, 1):
+                print(f"  {i:2d}. {box['text']}")
 
     except Exception as e:
         print(f"❌ Erreur: {e}")

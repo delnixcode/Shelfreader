@@ -207,28 +207,34 @@ if __name__ == "__main__":
         print(f"🎯 Confiance moyenne: {confidence:.3f}")
         print(f"📝 Texte complet: {text}")
 
-        # Sauvegarder dans des fichiers séparés
-        output_prefix = args.output if args.output else 'detected_book'
-        summary_file = f"{output_prefix}_summary.txt"
-        with open(summary_file, 'w', encoding='utf-8') as f:
-            f.write(f"Image: {args.image_path}\n")
+        # Sauvegarder dans un fichier unique qui se remplace
+        output_file = args.output if args.output else 'result-ocr/easyocr_results.txt'
+        if not output_file.startswith('result-ocr/'):
+            output_file = f'result-ocr/{output_file}'
+        
+        # Créer le dossier s'il n'existe pas
+        import os
+        os.makedirs(os.path.dirname(output_file), exist_ok=True)
+        
+        with open(output_file, 'w', encoding='utf-8') as f:
+            f.write(f"=== RÉSULTATS OCR - {args.image_path} ===\n")
+            f.write(f"Date: {__import__('datetime').datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
             f.write(f"Nombre de textes détectés: {len(boxes)}\n")
-            f.write(f"Confiance moyenne: {confidence:.3f}\n")
-            f.write(f"Texte détecté:\n{text}\n")
-        print(f"💾 Résumé sauvegardé dans {summary_file}")
-
-        if boxes:
-            for i, box in enumerate(boxes, 1):
-                book_file = f"{output_prefix}_{i}.txt"
-                with open(book_file, 'w', encoding='utf-8') as f:
-                    f.write(f"Livre {i}\n")
+            f.write(f"Confiance moyenne: {confidence:.3f}\n\n")
+            f.write(f"TEXTE COMPLET:\n{text}\n\n")
+            
+            if boxes:
+                f.write("DÉTAIL PAR LIVRE:\n")
+                for i, box in enumerate(boxes, 1):
+                    f.write(f"\n--- Livre {i} ---\n")
                     f.write(f"Confiance: {box['confidence']:.3f}\n")
                     f.write(f"Texte: {box['text']}\n")
-                print(f"💾 Livre {i} sauvegardé dans {book_file}")
+        
+        print(f"💾 Résultats sauvegardés dans {output_file}")
 
         if boxes:
             print("\n📦 Textes détectés:")
-            for i, box in enumerate(boxes, 1):  # Afficher tous
+            for i, box in enumerate(boxes, 1):
                 print(f"  {i:2d}. {box['text']}")
 
     except Exception as e:

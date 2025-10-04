@@ -77,6 +77,12 @@ python scripts/ocr_detect.py --tesseract test_images/books1.jpg
 # Tesseract avec GPU
 python scripts/ocr_detect.py --gpu --tesseract test_images/books1.jpg
 
+# Utiliser TrOCR (Transformers-based OCR) - Plus précis mais plus lent
+python scripts/ocr_detect.py --trocr test_images/books1.jpg
+
+# TrOCR avec GPU (recommandé)
+python scripts/ocr_detect.py --gpu --trocr test_images/books1.jpg
+
 # EasyOCR explicite (équivalent au défaut)
 python scripts/ocr_detect.py --easyocr test_images/books1.jpg
 ```
@@ -137,6 +143,7 @@ python scripts/ocr_detect.py --gpu chemin/vers/votre/image.jpg
 |-----------|-------------|---------|
 | **OCR** | EasyOCR + PyTorch | GPU/CPU |
 | **OCR Alternative** | Tesseract | 5.0+ |
+| **OCR Avancé** | TrOCR (Transformers) | microsoft/trocr-base-printed |
 | **Computer Vision** | OpenCV | 4.8+ |
 | **API Client** | requests | 2.31+ |
 | **Interface** | Streamlit | 1.28+ |

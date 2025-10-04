@@ -7,6 +7,5 @@ __author__ = "Delart"
 
 # Imports pour faciliter l'utilisation
 from .api_client import OpenLibraryClient
-from .ocr_processor import BookOCR
 
-__all__ = ['OpenLibraryClient', 'BookOCR']
+__all__ = ['OpenLibraryClient']

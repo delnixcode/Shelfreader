@@ -47,8 +47,8 @@ ShelfReader/
 cd p1-MVP-Desktop
 source env-p1/bin/activate
 pip install -r requirements.txt
-python scripts/ocr_detect.py --gpu test_images/books1.jpg
-streamlit run src/app.py
+python ocr_easyocr.py test_images/books1.jpg --gpu
+streamlit run app.py
 ```
 
 ## 🎯 **Technologies Clés**
@@ -71,7 +71,7 @@ streamlit run src/app.py
 ## 📖 **Ressources**
 - **Images test** : `shared/data/test_images/`
 - **Documentation** : `shared/docs/` et `*/docs/`
-- **Scripts** : `p1-MVP-Desktop/scripts/ocr_detect.py`
+- **Scripts** : `p1-MVP-Desktop/ocr_easyocr.py`, `ocr_tesseract.py`, `ocr_trocr.py`
 
 ---
 

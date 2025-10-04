@@ -1,0 +1,53 @@
+=== RÉSULTATS OCR - test_images/books1.jpg ===
+Date: 2025-10-04 04:13:41
+Nombre de textes détectés: 11
+Confiance moyenne: 0.885
+
+TEXTE COMPLET:
+Idman "Softwgre Construction With 95 | KERNICHAN THE LANCUACE SECOND EDITION PTR | THE C++ LANGUACE 01 | Apple The Reference Dylan Manual Shalit Addison Aaisam | Peaecoys Edition Programming Language Gosong JAVA | ULLMAN ELEMENTS The Miranda Little OF MLer PROGRAMMING Felleisen The Craft and of Friedman ML?7 Thompson EDITION | THIRD EDITION Programming Perl Christianscn Orwant Wall | Learning Lutz Ascher | Nelson THE SCHEME Systems Programming with SCHEME PTR | Uuzdial Rose uado and Personal Multimedia Computing | SANGIORGI WALKER The Theory T-calculus of Mobile Processes CaMMT
+
+DÉTAIL PAR LIVRE:
+
+--- Livre 1 ---
+Confiance: 0.703
+Texte: Idman "Softwgre Construction With 95
+
+--- Livre 2 ---
+Confiance: 0.841
+Texte: KERNICHAN THE LANCUACE SECOND EDITION PTR
+
+--- Livre 3 ---
+Confiance: 0.866
+Texte: THE C++ LANGUACE 01
+
+--- Livre 4 ---
+Confiance: 0.935
+Texte: Apple The Reference Dylan Manual Shalit Addison Aaisam
+
+--- Livre 5 ---
+Confiance: 0.780
+Texte: Peaecoys Edition Programming Language Gosong JAVA
+
+--- Livre 6 ---
+Confiance: 0.918
+Texte: ULLMAN ELEMENTS The Miranda Little OF MLer PROGRAMMING Felleisen The Craft and of Friedman ML?7 Thompson EDITION
+
+--- Livre 7 ---
+Confiance: 0.884
+Texte: THIRD EDITION Programming Perl Christianscn Orwant Wall
+
+--- Livre 8 ---
+Confiance: 0.998
+Texte: Learning Lutz Ascher
+
+--- Livre 9 ---
+Confiance: 0.985
+Texte: Nelson THE SCHEME Systems Programming with SCHEME PTR
+
+--- Livre 10 ---
+Confiance: 0.955
+Texte: Uuzdial Rose uado and Personal Multimedia Computing
+
+--- Livre 11 ---
+Confiance: 0.874
+Texte: SANGIORGI WALKER The Theory T-calculus of Mobile Processes CaMMT

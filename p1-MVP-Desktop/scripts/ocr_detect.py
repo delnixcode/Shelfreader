@@ -84,6 +84,8 @@ def main():
     parser = argparse.ArgumentParser(description='ShelfReader - Détection OCR de livres')
     parser.add_argument('image_path', help='Chemin vers l\'image à analyser')
     parser.add_argument('--gpu', action='store_true', help='Utiliser le GPU pour l\'OCR (plus rapide)')
+    parser.add_argument('--confidence', type=float, default=0.2,
+                       help='Seuil de confiance minimum pour l\'OCR (défaut: 0.2)')
     parser.add_argument('--easyocr', action='store_true', help='Utiliser EasyOCR (par défaut)')
     parser.add_argument('--tesseract', action='store_true', help='Utiliser Tesseract au lieu d\'EasyOCR')
     parser.add_argument('--trocr', action='store_true', help='Utiliser TrOCR (Transformers-based OCR)')
@@ -91,6 +93,7 @@ def main():
     args = parser.parse_args()
     image_path = args.image_path
     use_gpu = args.gpu
+    confidence_threshold = args.confidence
     use_easyocr = args.easyocr
     use_tesseract = args.tesseract
     use_trocr = args.trocr
@@ -124,8 +127,8 @@ def main():
         # Configuration du chemin d'import
         import os as os_module
         script_dir = os_module.path.dirname(os_module.path.abspath(__file__))
-        src_dir = os_module.path.join(script_dir, '..', 'src')
-        sys.path.insert(0, src_dir)
+        parent_dir = os_module.path.dirname(script_dir)
+        sys.path.insert(0, parent_dir)
 
         # Import des modules OCR
         from ocr_easyocr import EasyOCRProcessor
@@ -135,13 +138,13 @@ def main():
 
         # Initialisation du processeur OCR selon l'option choisie
         if final_use_trocr:
-            processor = TrOCRProcessor(['en'], 0.2, use_gpu=use_gpu)
+            processor = TrOCRProcessor(['en'], confidence_threshold, use_gpu=use_gpu)
             ocr_type = "TrOCR"
         elif final_use_tesseract:
-            processor = TesseractOCRProcessor('eng', 0.2, use_gpu=use_gpu)
+            processor = TesseractOCRProcessor('eng', confidence_threshold, use_gpu=use_gpu)
             ocr_type = "Tesseract"
         else:
-            processor = EasyOCRProcessor(['en'], 0.2, use_gpu=use_gpu)
+            processor = EasyOCRProcessor(['en'], confidence_threshold, use_gpu=use_gpu)
             ocr_type = "EasyOCR"
 
         # Chargement et traitement de l'image

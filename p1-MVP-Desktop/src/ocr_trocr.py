@@ -3,12 +3,14 @@ ShelfReader - TrOCR Processor
 Module spécialisé pour la détection OCR avec TrOCR (Transformer-based OCR).
 """
 
+# === IMPORTS ===
 import cv2
 import numpy as np
 from PIL import Image
 import torch
 from transformers import TrOCRProcessor, VisionEncoderDecoderModel
 
+# === CLASSE PRINCIPALE ===
 class TrOCRProcessor:
     """Processeur OCR spécialisé pour TrOCR."""
 
@@ -43,6 +45,7 @@ class TrOCRProcessor:
         except Exception as e:
             raise RuntimeError(f"Erreur lors du chargement de TrOCR: {e}")
 
+    # === PRÉTRAITEMENT ===
     def _preprocess_image(self, image):
         """Prétraitement optimisé pour TrOCR."""
         import cv2
@@ -71,6 +74,7 @@ class TrOCRProcessor:
 
         return rgb
 
+    # === DÉTECTION OCR ===
     def _trocr_detect(self, pil_image):
         """Détection OCR avec TrOCR."""
         import numpy as np
@@ -110,6 +114,7 @@ class TrOCRProcessor:
 
         return generated_text.strip(), confidence
 
+    # === INTERFACES PUBLIQUES ===
     def detect_text(self, pil_image, preprocess=True):
         """Détecte le texte avec TrOCR."""
         text, confidence = self._trocr_detect(pil_image)
@@ -156,7 +161,48 @@ class TrOCRProcessor:
 
         return []
 
+# === SCRIPT PRINCIPAL ===
 if __name__ == "__main__":
+    """
+    Point d'entrée pour tester TrOCR directement.
+    Usage: python ocr_trocr.py <image_path> [--gpu]
+    """
+    import sys
+    import argparse
+    from PIL import Image
+
+    parser = argparse.ArgumentParser(description='Test TrOCR directement')
+    parser.add_argument('image_path', help='Chemin vers l\'image à analyser')
+    parser.add_argument('--gpu', action='store_true', help='Utiliser le GPU')
+    parser.add_argument('--confidence', type=float, default=0.2, help='Seuil de confiance (défaut: 0.2)')
+
+    args = parser.parse_args()
+
+    try:
+        # Initialisation
+        processor = TrOCRProcessor(['en'], args.confidence, args.gpu)
+
+        # Chargement de l'image
+        pil_image = Image.open(args.image_path)
+
+        # Traitement
+        text, confidence = processor.get_text_and_confidence(pil_image, preprocess=True)
+        boxes = processor.get_boxes(pil_image, preprocess=True)
+
+        # Résultats
+        print(f"🔍 TrOCR - Image: {args.image_path}")
+        print(f"📊 Résultats: {len(boxes)} textes détectés")
+        print(f"🎯 Confiance: {confidence:.3f}")
+        print(f"📝 Texte: {text[:100]}{'...' if len(text) > 100 else ''}")
+
+        if boxes:
+            print("\n📦 Textes détectés:")
+            for i, box in enumerate(boxes[:10], 1):  # Limiter à 10 premiers
+                print(f"  {i:2d}. {box['text'][:50]}{'...' if len(box['text']) > 50 else ''}")
+
+    except Exception as e:
+        print(f"❌ Erreur: {e}")
+        sys.exit(1)
     """
     Point d'entrée pour tester TrOCR directement.
     Usage: python ocr_trocr.py <image_path> [--gpu]

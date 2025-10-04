@@ -3,6 +3,7 @@ ShelfReader - Tesseract OCR Processor
 Module spécialisé pour la détection OCR avec Tesseract.
 """
 
+# === IMPORTS ===
 class TesseractOCRProcessor:
     """Processeur OCR spécialisé pour Tesseract."""
 
@@ -31,6 +32,7 @@ class TesseractOCRProcessor:
 
         print(f"🔍 Tesseract initialisé - Langues: {languages}, Seuil: {confidence_threshold}")
 
+    # === PRÉTRAITEMENT ===
     def _preprocess_for_tesseract(self, image):
         """Prétraitement optimisé pour Tesseract avec variantes."""
         import cv2
@@ -71,6 +73,7 @@ class TesseractOCRProcessor:
 
         return processed_images
 
+    # === DÉTECTION OCR ===
     def _detect_with_psm(self, image, psm_config):
         """Détection avec une configuration PSM spécifique."""
         import pytesseract
@@ -128,6 +131,7 @@ class TesseractOCRProcessor:
 
         return unique_results[:20]  # Limiter à 20 meilleurs résultats
 
+    # === INTERFACES PUBLIQUES ===
     def get_text_and_confidence(self, pil_image, preprocess=True):
         """Extrait le texte et la confiance moyenne."""
         results = self.detect_text(pil_image, preprocess=preprocess)
@@ -169,7 +173,7 @@ class TesseractOCRProcessor:
 
         return boxes
 
-if __name__ == "__main__":
+# === SCRIPT PRINCIPAL ===
     """
     Point d'entrée pour tester Tesseract directement.
     Usage: python ocr_tesseract.py <image_path> [--gpu]

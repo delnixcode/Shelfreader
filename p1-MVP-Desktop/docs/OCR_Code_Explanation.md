@@ -8,45 +8,54 @@
 ## 📋 **Table des matières**
 1. [Architecture générale](#architecture-générale)
 2. [Concepts OCR fondamentaux](#concepts-ocr-fondamentaux)
-3. [Classe BookOCR - Initialisation](#classe-bookocr---initialisation)
-4. [Prétraitement d'image](#prétraitement-dimage)
-5. [Détection de texte avec EasyOCR](#détection-de-texte-avec-easyocr)
-6. [Détection de texte avec Tesseract](#détection-de-texte-avec-tesseract)
-7. [Extraction des boîtes de texte](#extraction-des-boîtes-de-texte)
-8. [Regroupement par livres](#regroupement-par-livres)
-9. [Script de détection principal](#script-de-détection-principal)
-10. [Interactions entre méthodes](#interactions-entre-méthodes)
-11. [Interactions entre fichiers](#interactions-entre-fichiers)
+3. [Architecture modulaire OCR](#architecture-modulaire-ocr)
+4. [Module EasyOCR](#module-easyocr)
+5. [Module Tesseract](#module-tesseract)
+6. [Module TrOCR](#module-trocr)
+7. [Script de détection unifié](#script-de-détection-unifié)
+8. [Prétraitement d'image](#prétraitement-dimage)
+9. [Extraction des boîtes de texte](#extraction-des-boîtes-de-texte)
+10. [Regroupement par livres](#regroupement-par-livres)
+11. [Interactions entre modules](#interactions-entre-modules)
 12. [Flux d'exécution détaillé](#flux-dexécution-détaillé)
-13. [Comment recréer le système](#comment-recréer-le-système)
+13. [Comment utiliser le système](#comment-utiliser-le-système)
 
 ---
 
 ## 🏗️ **Architecture générale**
 
-Le système OCR de ShelfReader P1 est composé de **deux fichiers principaux** :
+Le système OCR de ShelfReader P1 utilise une **architecture modulaire** composée de **quatre fichiers principaux** :
 
-### `src/ocr_processor.py`
-- **Classe principale** : `BookOCR`
-- **Responsabilités** :
-  - Initialisation des moteurs OCR (EasyOCR/Tesseract)
-  - Prétraitement des images
-  - Détection de texte
-  - Regroupement des textes par livre
-  - Extraction des titres
+### Moteurs OCR individuels
+- **`src/ocr_easyocr.py`** : Module EasyOCR avec GPU support
+  - **Classe** : `EasyOCRProcessor`
+  - **Spécialisation** : Détection précise avec rotations automatiques
+- **`src/ocr_tesseract.py`** : Module Tesseract avec configurations PSM
+  - **Classe** : `TesseractOCRProcessor`
+  - **Spécialisation** : Performance et texte horizontal
+- **`src/ocr_trocr.py`** : Module TrOCR avec transformers
+  - **Classe** : `TrOCRProcessor`
+  - **Spécialisation** : Modèle transformer avancé
 
-### `scripts/ocr_detect.py`
-- **Script utilitaire** : Interface en ligne de commande
+### Script unifié
+- **`scripts/ocr_detect.py`** : Interface en ligne de commande unifiée
 - **Responsabilités** :
   - Parsing des arguments
+  - Sélection du moteur OCR
   - Configuration du système
   - Affichage des résultats
   - Gestion des erreurs
 
 ### Flux de données :
 ```
-Image → Prétraitement → Détection OCR → Boîtes de texte → Regroupement → Livres détectés
+Image → Sélection moteur → Prétraitement → Détection OCR → Boîtes de texte → Regroupement → Livres détectés
 ```
+
+### Avantages de l'architecture modulaire :
+1. **Indépendance** : Chaque moteur peut être testé et utilisé séparément
+2. **Maintenance** : Modifications isolées par moteur
+3. **Performance** : Choix du moteur optimal selon les besoins
+4. **Évolutivité** : Ajout de nouveaux moteurs facile
 
 ---
 
@@ -64,41 +73,177 @@ L'**OCR (Optical Character Recognition)** est la technologie qui permet de **con
 ### Moteurs OCR utilisés :
 
 #### EasyOCR
-- **Avantages** : Détection automatique des rotations, très précis
-- **Inconvénients** : Plus lent, nécessite PyTorch
-- **Usage** : Texte complexe, rotations multiples
+- **Avantages** : Détection automatique des rotations, très précis, GPU support
+- **Inconvénients** : Plus lent au chargement, nécessite PyTorch
+- **Usage** : Texte complexe, rotations multiples, précision maximale
 
 #### Tesseract
-- **Avantages** : Rapide, léger, bon pour texte horizontal
-- **Inconvénients** : Moins bon avec les rotations
-- **Usage** : Texte simple, performance importante
+- **Avantages** : Rapide, léger, configurations PSM avancées
+- **Inconvénients** : Moins bon avec les rotations complexes
+- **Usage** : Texte simple, performance importante, CPU uniquement
+
+#### TrOCR (Transformer OCR)
+- **Avantages** : Modèle de deep learning avancé, excellente précision
+- **Inconvénients** : Lent, nécessite beaucoup de ressources
+- **Usage** : Haute précision requise, GPU recommandé
 
 ---
 
-## 🔧 **Classe BookOCR - Initialisation**
+## 🏗️ **Architecture modulaire OCR**
 
-```python
-class BookOCR:
-    def __init__(self, languages, confidence_threshold, use_gpu=False, use_tesseract=False):
-        self.use_tesseract = use_tesseract
-        self.confidence_threshold = confidence_threshold
+Le système utilise une architecture modulaire où chaque moteur OCR est encapsulé dans sa propre classe :
 
-        if use_tesseract:
-            # Configuration Tesseract
-            self.tesseract_config = r'--oem 3 --psm 6 -c tessedit_char_whitelist=ABCDEFGHIJKLMNOPQRSTUVWXYZ...'
-            print(f"🔍 OCR initialisé - Tesseract, Seuil: {confidence_threshold}")
-        else:
-            # Initialisation EasyOCR
-            self.reader = easyocr.Reader(languages, gpu=use_gpu)
-            device = "GPU" if use_gpu else "CPU"
-            print(f"🔍 OCR initialisé - EasyOCR, Langues: {languages}, Seuil: {confidence_threshold}, Device: {device}")
+### Interface commune
+Tous les modules OCR implémentent une interface similaire :
+- `__init__(confidence_threshold, use_gpu=False)` : Initialisation
+- `detect_text(image_path)` : Détection principale
+- `get_text_and_confidence(pil_image)` : Texte + confiance
+- CLI intégré avec `argparse` pour utilisation standalone
+
+### Structure des modules
+```
+src/
+├── ocr_easyocr.py     # EasyOCRProcessor
+├── ocr_tesseract.py   # TesseractOCRProcessor
+└── ocr_trocr.py       # TrOCRProcessor
 ```
 
-### Paramètres d'initialisation :
-- **`languages`** : Liste des langues (ex: `['en']` pour anglais)
-- **`confidence_threshold`** : Seuil de confiance (0.0-1.0) pour filtrer les détections
-- **`use_gpu`** : Accélérer avec GPU (nécessite CUDA)
-- **`use_tesseract`** : Choisir Tesseract au lieu d'EasyOCR
+### Gestion des dépendances
+- **EasyOCR** : `easyocr`, `torch`, `torchvision`
+- **Tesseract** : `pytesseract`, `tesseract` system package
+- **TrOCR** : `transformers`, `torch`
+
+### Avantages modulaires
+1. **Testabilité** : Chaque moteur testable indépendamment
+2. **Performance** : Choix du moteur selon les besoins
+3. **Maintenance** : Modifications isolées
+4. **Extensibilité** : Nouveaux moteurs faciles à ajouter
+
+---
+
+## 🔧 **Module EasyOCR**
+
+Le module `ocr_easyocr.py` encapsule le moteur EasyOCR :
+
+```python
+class EasyOCRProcessor:
+    def __init__(self, confidence_threshold=0.2, use_gpu=True):
+        self.confidence_threshold = confidence_threshold
+        self.reader = easyocr.Reader(['en'], gpu=use_gpu)
+        print(f"🔍 EasyOCR initialisé - Seuil: {confidence_threshold}, GPU: {use_gpu}")
+
+    def detect_text(self, image_path):
+        # Chargement et traitement de l'image
+        pil_image = Image.open(image_path)
+        return self.get_text_and_confidence(pil_image)
+
+    def get_text_and_confidence(self, pil_image):
+        # Conversion et détection OCR
+        image_array = np.array(pil_image)
+        bgr_image = cv2.cvtColor(image_array, cv2.COLOR_RGB2BGR)
+
+        results = self.reader.readtext(bgr_image, rotation_info=[0, 90, 180, 270])
+        filtered_results = [r for r in results if r[2] >= self.confidence_threshold]
+
+        texts = [r[1] for r in filtered_results]
+        avg_confidence = np.mean([r[2] for r in filtered_results]) if filtered_results else 0.0
+
+        return ' '.join(texts), avg_confidence
+```
+
+### Utilisation standalone :
+```bash
+python src/ocr_easyocr.py --image path/to/image.jpg --gpu
+```
+
+---
+
+## 📝 **Module Tesseract**
+
+Le module `ocr_tesseract.py` utilise Tesseract avec configurations PSM :
+
+```python
+class TesseractOCRProcessor:
+    def __init__(self, confidence_threshold=0.3, psm_mode=6):
+        self.confidence_threshold = confidence_threshold
+        self.psm_mode = psm_mode
+        self.tesseract_config = f'--oem 3 --psm {psm_mode} -c tessedit_char_whitelist=ABCDEFGHIJKLMNOPQRSTUVWXYZ...'
+        print(f"🔍 Tesseract initialisé - Seuil: {confidence_threshold}, PSM: {psm_mode}")
+
+    def detect_text(self, image_path):
+        pil_image = Image.open(image_path)
+        return self.get_text_and_confidence(pil_image)
+
+    def get_text_and_confidence(self, pil_image):
+        # Prétraitement et détection
+        image_array = np.array(pil_image)
+        gray = cv2.cvtColor(image_array, cv2.COLOR_RGB2GRAY)
+
+        data = pytesseract.image_to_data(gray, config=self.tesseract_config, output_type=pytesseract.Output.DICT)
+
+        results = []
+        for i in range(len(data['text'])):
+            if int(data['conf'][i]) > 0:
+                text = data['text'][i].strip()
+                confidence = int(data['conf'][i]) / 100.0
+                if confidence >= self.confidence_threshold and len(text) >= 2:
+                    results.append((text, confidence))
+
+        texts = [text for text, conf in results]
+        avg_confidence = np.mean([conf for text, conf in results]) if results else 0.0
+
+        return ' '.join(texts), avg_confidence
+```
+
+### Utilisation standalone :
+```bash
+python src/ocr_tesseract.py --image path/to/image.jpg --psm 6
+```
+
+---
+
+## 🤖 **Module TrOCR**
+
+Le module `ocr_trocr.py` utilise le modèle Transformer TrOCR :
+
+```python
+class TrOCRProcessor:
+    def __init__(self, confidence_threshold=0.5, use_gpu=True):
+        self.confidence_threshold = confidence_threshold
+        self.device = torch.device('cuda' if use_gpu and torch.cuda.is_available() else 'cpu')
+
+        self.processor = TrOCRProcessor.from_pretrained('microsoft/trocr-base-printed')
+        self.model = VisionEncoderDecoderModel.from_pretrained('microsoft/trocr-base-printed')
+        self.model.to(self.device)
+
+        print(f"🔍 TrOCR initialisé - Seuil: {confidence_threshold}, Device: {self.device}")
+
+    def detect_text(self, image_path):
+        pil_image = Image.open(image_path)
+        return self.get_text_and_confidence(pil_image)
+
+    def get_text_and_confidence(self, pil_image):
+        # Prétraitement et génération
+        pixel_values = self.processor(pil_image, return_tensors="pt").pixel_values
+        pixel_values = pixel_values.to(self.device)
+
+        generated_ids = self.model.generate(
+            pixel_values,
+            max_length=50,
+            num_beams=4,
+            early_stopping=True
+        )
+
+        generated_text = self.processor.batch_decode(generated_ids, skip_special_tokens=True)[0]
+        confidence = self._estimate_confidence(pixel_values, generated_ids)
+
+        return generated_text, confidence
+```
+
+### Utilisation standalone :
+```bash
+python src/ocr_trocr.py --image path/to/image.jpg --gpu
+```
 
 ### Configuration Tesseract :
 ```python
@@ -396,53 +541,52 @@ def _extract_book_title(self, book_texts):
 
 ---
 
-## 🚀 **Script de détection principal**
+## 🚀 **Script de détection unifié**
 
-Le script `ocr_detect.py` fournit l'interface utilisateur :
+Le script `scripts/ocr_detect.py` orchestre tous les modules OCR :
 
 ```python
 def main():
-    # 1. Parsing des arguments
-    parser = argparse.ArgumentParser(description='ShelfReader - Détection OCR de livres')
-    parser.add_argument('image_path', help='Chemin vers l\'image à analyser')
-    parser.add_argument('--gpu', action='store_true', help='Utiliser le GPU')
-    parser.add_argument('--easyocr', action='store_true', help='Utiliser EasyOCR')
-    parser.add_argument('--tesseract', action='store_true', help='Utiliser Tesseract')
+    parser = argparse.ArgumentParser(description='ShelfReader - Détection OCR unifiée')
+    parser.add_argument('image_path', help='Chemin vers l\'image')
+    parser.add_argument('--engine', choices=['easyocr', 'tesseract', 'trocr'],
+                       default='easyocr', help='Moteur OCR à utiliser')
+    parser.add_argument('--gpu', action='store_true', help='Utiliser GPU')
+    parser.add_argument('--confidence', type=float, default=0.2,
+                       help='Seuil de confiance')
 
     args = parser.parse_args()
 
-    # 2. Validation
-    if args.easyocr and args.tesseract:
-        print("❌ Erreur: Impossible d'utiliser les deux moteurs")
-        sys.exit(1)
+    # Sélection du processeur selon le moteur choisi
+    if args.engine == 'easyocr':
+        from src.ocr_easyocr import EasyOCRProcessor
+        processor = EasyOCRProcessor(args.confidence, args.gpu)
+    elif args.engine == 'tesseract':
+        from src.ocr_tesseract import TesseractOCRProcessor
+        processor = TesseractOCRProcessor(args.confidence)
+    elif args.engine == 'trocr':
+        from src.ocr_trocr import TrOCRProcessor
+        processor = TrOCRProcessor(args.confidence, args.gpu)
 
-    # 3. Configuration des imports
-    script_dir = Path(__file__).parent
-    src_dir = script_dir.parent / "src"
-    sys.path.insert(0, str(src_dir))
+    # Traitement
+    text, confidence = processor.detect_text(args.image_path)
 
-    # 4. Initialisation et traitement
-    from ocr_processor import BookOCR
-    processor = BookOCR(['en'], 0.2, use_gpu=args.gpu, use_tesseract=args.tesseract)
-
-    pil_image = Image.open(args.image_path)
-
-    # 5. Analyse
-    text, confidence = processor.get_text_and_confidence(pil_image, preprocess=False)
-    boxes = processor.get_boxes(pil_image, preprocess=False)
-    books = processor.get_books(pil_image, preprocess=False)
-
-    # 6. Affichage des résultats
-    print(f"📊 Résultats:")
-    print(f"   Textes détectés: {len(boxes)}")
-    print(f"   Livres détectés: {len(books)}")
+    print(f"📊 Résultats avec {args.engine}:")
+    print(f"   Texte: {text}")
     print(f"   Confiance: {confidence:.2f}")
-
-    for i, book in enumerate(books, 1):
-        print(f"   {i:2d}. {book['title']}")
 ```
 
----
+### Utilisation :
+```bash
+# Avec EasyOCR (défaut)
+python scripts/ocr_detect.py image.jpg
+
+# Avec Tesseract
+python scripts/ocr_detect.py image.jpg --engine tesseract
+
+# Avec TrOCR et GPU
+python scripts/ocr_detect.py image.jpg --engine trocr --gpu
+```
 
 ## � **Interactions entre méthodes**
 
@@ -858,163 +1002,70 @@ Livres → Affichage formaté → Utilisateur
 
 Cette architecture modulaire permet de **tester chaque composant indépendamment** et de **réutiliser** la logique OCR dans différents contextes (interface web, API, etc.).
 
-### Étape 1 : Installation des dépendances
+## 🎯 **Comment utiliser le système**
 
+Le système OCR modulaire de ShelfReader P1 offre **trois modes d'utilisation** :
+
+### **Mode 1 : Script unifié (Recommandé)**
 ```bash
-pip install easyocr opencv-python pillow pytesseract numpy torch torchvision
+cd p1-MVP-Desktop
+
+# EasyOCR (par défaut, recommandé)
+python scripts/ocr_detect.py ../data/test_images/sample.jpg
+
+# Avec GPU pour EasyOCR
+python scripts/ocr_detect.py ../data/test_images/sample.jpg --engine easyocr --gpu
+
+# Tesseract (rapide, CPU uniquement)
+python scripts/ocr_detect.py ../data/test_images/sample.jpg --engine tesseract
+
+# TrOCR (haute précision, GPU recommandé)
+python scripts/ocr_detect.py ../data/test_images/sample.jpg --engine trocr --gpu
 ```
 
-### Étape 2 : Structure des fichiers
+### **Mode 2 : Modules individuels (Développement/Test)**
+```bash
+# Tester EasyOCR seul
+python src/ocr_easyocr.py --image ../data/test_images/sample.jpg --gpu
 
+# Tester Tesseract seul
+python src/ocr_tesseract.py --image ../data/test_images/sample.jpg --psm 6
+
+# Tester TrOCR seul
+python src/ocr_trocr.py --image ../data/test_images/sample.jpg --gpu
 ```
-mon_projet_ocr/
+
+### **Mode 3 : Intégration dans votre code**
+```python
+from src.ocr_easyocr import EasyOCRProcessor
+
+# Initialisation
+processor = EasyOCRProcessor(confidence_threshold=0.2, use_gpu=True)
+
+# Utilisation
+text, confidence = processor.detect_text("path/to/image.jpg")
+print(f"Texte: {text}, Confiance: {confidence:.2f}")
+```
+
+### **Structure des fichiers actuelle**
+```
+p1-MVP-Desktop/
 ├── src/
-│   └── ocr_processor.py    # Classe BookOCR
+│   ├── ocr_easyocr.py      # Module EasyOCR
+│   ├── ocr_tesseract.py    # Module Tesseract
+│   ├── ocr_trocr.py        # Module TrOCR
+│   ├── api_client.py       # Client Open Library
+│   ├── app.py              # Interface Streamlit (futur)
+│   └── __init__.py
 ├── scripts/
-│   └── ocr_detect.py       # Script principal
-└── test_images/
-    └── books.jpg          # Image de test
-```
-
-### Étape 3 : Classe BookOCR de base
-
-```python
-import easyocr
-import cv2
-import numpy as np
-from PIL import Image
-
-class BookOCR:
-    def __init__(self, languages, confidence_threshold, use_gpu=False):
-        self.confidence_threshold = confidence_threshold
-        self.reader = easyocr.Reader(languages, gpu=use_gpu)
-
-    def get_text_and_confidence(self, pil_image, preprocess=True):
-        image_array = np.array(pil_image)
-        bgr_image = cv2.cvtColor(image_array, cv2.COLOR_RGB2BGR)
-
-        results = self.reader.readtext(bgr_image, rotation_info=[0, 90, 180, 270])
-
-        filtered_results = [
-            r for r in results
-            if r[2] >= self.confidence_threshold and len(r[1].strip()) >= 2
-        ]
-
-        texts = [r[1] for r in filtered_results]
-        confidences = [r[2] for r in filtered_results]
-
-        full_text = ' '.join(texts)
-        avg_confidence = sum(confidences) / len(confidences) if confidences else 0.0
-
-        return full_text, avg_confidence
-
-    def get_boxes(self, pil_image, preprocess=False):
-        image_array = np.array(pil_image)
-        bgr_image = cv2.cvtColor(image_array, cv2.COLOR_RGB2BGR)
-
-        results = self.reader.readtext(bgr_image, rotation_info=[0, 90, 180, 270])
-
-        boxes = []
-        for bbox, text, confidence in results:
-            if confidence >= self.confidence_threshold and len(text.strip()) >= 2:
-                x = min([p[0] for p in bbox])
-                y = min([p[1] for p in bbox])
-                width = max([p[0] for p in bbox]) - x
-                height = max([p[1] for p in bbox]) - y
-
-                boxes.append({
-                    "text": text,
-                    "x": x, "y": y,
-                    "width": width, "height": height,
-                    "is_vertical": height > width * 1.5
-                })
-
-        return boxes
-
-    def get_books(self, pil_image, preprocess=True):
-        boxes = self.get_boxes(pil_image, preprocess=preprocess)
-        # Version simplifiée : retourner tous les textes verticaux comme "livres"
-        vertical_boxes = [b for b in boxes if b['is_vertical']]
-        return [{
-            'title': box['text'],
-            'x': box['x'],
-            'all_texts': [box['text']],
-            'text_count': 1
-        } for box in vertical_boxes]
-```
-
-### Étape 4 : Script de test
-
-```python
-#!/usr/bin/env python3
-import sys
-import os
-from pathlib import Path
-
-# Configuration des imports
-script_dir = Path(__file__).parent
-src_dir = script_dir.parent / "src"
-sys.path.insert(0, str(src_dir))
-
-from ocr_processor import BookOCR
-from PIL import Image
-
-def main():
-    if len(sys.argv) != 2:
-        print("Usage: python ocr_detect.py <image_path>")
-        sys.exit(1)
-
-    image_path = sys.argv[1]
-
-    if not os.path.exists(image_path):
-        print(f"Image not found: {image_path}")
-        sys.exit(1)
-
-    # Initialisation
-    processor = BookOCR(['en'], 0.2, use_gpu=False)
-
-    # Traitement
-    pil_image = Image.open(image_path)
-    text, confidence = processor.get_text_and_confidence(pil_image, preprocess=False)
-    boxes = processor.get_boxes(pil_image, preprocess=False)
-    books = processor.get_books(pil_image, preprocess=False)
-
-    # Résultats
-    print(f"📊 Résultats:")
-    print(f"   Textes détectés: {len(boxes)}")
-    print(f"   Livres détectés: {len(books)}")
-    print(f"   Confiance: {confidence:.2f}")
-    print(f"   Texte: {text[:80]}{'...' if len(text) > 80 else ''}")
-
-    if books:
-        print(f"\n📚 Livres détectés:")
-        for i, book in enumerate(books, 1):
-            print(f"   {i}. {book['title']}")
-
-if __name__ == "__main__":
-    main()
-```
-
-### Étape 5 : Améliorations progressives
-
-1. **Ajouter le prétraitement d'image**
-2. **Implémenter la détection verticale**
-3. **Ajouter le regroupement par livres**
-4. **Intégrer Tesseract comme alternative**
-5. **Ajouter les options GPU/CPU**
-6. **Améliorer la reconstruction des titres**
-
-### Étape 6 : Test et validation
-
-```bash
-# Test basique
-python scripts/ocr_detect.py test_images/books.jpg
-
-# Avec GPU
-python scripts/ocr_detect.py --gpu test_images/books.jpg
-
-# Avec Tesseract
-python scripts/ocr_detect.py --tesseract test_images/books.jpg
+│   └── ocr_detect.py       # Script unifié
+├── docs/
+│   ├── README.md           # Documentation principale
+│   ├── OCR_Code_Explanation.md  # Guide technique
+│   └── Dependencies.md     # Dépendances
+├── tests/
+│   └── __init__.py
+└── requirements.txt        # Dépendances Python
 ```
 
 ---
@@ -1027,26 +1078,29 @@ python scripts/ocr_detect.py --tesseract test_images/books.jpg
 - Petits caractères difficiles à détecter
 
 ### 2. **Choisir le bon moteur OCR**
-- **EasyOCR** : Plus précis, supporte les rotations
-- **Tesseract** : Plus rapide, meilleur pour texte simple
+- **EasyOCR** : Plus précis, supporte les rotations, GPU accéléré
+- **Tesseract** : Plus rapide, configurations PSM avancées, CPU uniquement
+- **TrOCR** : Haute précision, modèle transformer, GPU recommandé
 
-### 3. **Optimiser le prétraitement**
-- CLAHE pour améliorer le contraste
-- Filtres pour réduire le bruit
-- Binarisation adaptative
+### 3. **Architecture modulaire**
+- **Séparation des responsabilités** : Chaque moteur dans son propre module
+- **Interface commune** : Méthodes `detect_text()` et `get_text_and_confidence()`
+- **CLI intégré** : Chaque module utilisable indépendamment
+- **Testabilité** : Tests unitaires par moteur OCR
 
-### 4. **Algorithme de regroupement**
-- Détecter le texte vertical
-- Filtrer par taille de police
-- Regrouper spatialement
-- Reconstruire les titres
+### 4. **Optimisation des performances**
+- **GPU** : EasyOCR et TrOCR supportent l'accélération GPU
+- **CPU** : Tesseract pour les environnements sans GPU
+- **Prétraitement** : Améliore significativement la précision
+- **Seuil de confiance** : Ajuster selon la qualité des images
 
 ### 5. **Gestion des erreurs**
 - Validation des fichiers d'entrée
 - Gestion des imports manquants
 - Messages d'erreur informatifs
+- Robustesse individuelle des modules
 
 ---
 
-*Ce document vous donne toutes les clés pour comprendre et recréer le système OCR de ShelfReader. Commencez par la version simplifiée, puis ajoutez progressivement les fonctionnalités avancées.*</content>
+*Ce document explique l'architecture modulaire OCR de ShelfReader P1. Chaque module peut être utilisé indépendamment ou via le script unifié selon vos besoins.*</content>
 <parameter name="filePath">/home/delart/Documents/dev/python/Shelfreader/p1-MVP-Desktop/docs/OCR_Code_Explanation.md

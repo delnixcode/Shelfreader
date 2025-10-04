@@ -3,6 +3,7 @@ ShelfReader - EasyOCR Processor
 Module spécialisé pour la détection OCR avec EasyOCR.
 """
 
+# === IMPORTS ===
 class EasyOCRProcessor:
     """Processeur OCR spécialisé pour EasyOCR."""
 
@@ -21,6 +22,7 @@ class EasyOCRProcessor:
         device = "GPU" if use_gpu else "CPU"
         print(f"🔍 EasyOCR initialisé - Langues: {languages}, Seuil: {confidence_threshold}, Device: {device}")
 
+    # === PRÉTRAITEMENT ===
     def _preprocess_image(self, image):
         """Prétraitement agressivement optimisé pour EasyOCR."""
         import cv2
@@ -53,6 +55,7 @@ class EasyOCRProcessor:
 
         return processed
 
+    # === DÉTECTION OCR ===
     def detect_text(self, pil_image, preprocess=True):
         """Détecte le texte avec EasyOCR."""
         import numpy as np
@@ -85,6 +88,7 @@ class EasyOCRProcessor:
 
         return filtered_results
 
+    # === INTERFACES PUBLIQUES ===
     def get_text_and_confidence(self, pil_image, preprocess=True):
         """Extrait le texte et la confiance moyenne."""
         results = self.detect_text(pil_image, preprocess=preprocess)
@@ -126,7 +130,7 @@ class EasyOCRProcessor:
 
         return boxes
 
-if __name__ == "__main__":
+# === SCRIPT PRINCIPAL ===
     """
     Point d'entrée pour tester EasyOCR directement.
     Usage: python ocr_easyocr.py <image_path> [--gpu]

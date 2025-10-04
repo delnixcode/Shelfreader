@@ -1,251 +1,279 @@
-# ============================================
-# ShelfReader - OCR Processor (Phase 1 - MVP Desktop)
-# ============================================
 """
-Module de traitement OCR pour la détection de titres de livres.
-
-Ce module utilise EasyOCR pour détecter automatiquement les textes
-sur les images de bibliothèques et extraire les titres de livres.
-
-Fonctionnalités principales:
-- Détection OCR multi-langues (actuellement anglais)
-- Prétraitement d'image optionnel (désactivé pour meilleurs résultats)
-- Filtrage par seuil de confiance
-- Extraction des coordonnées des textes détectés
-
-Auteur: ShelfReader Team
-Date: 2025
+ShelfReader - OCR Processor (Phase 1)
+Détection de titres de livres sur images de bibliothèques.
 """
 
-# ============================================
-# IMPORTS ET DÉPENDANCES
-# ============================================
-
-import easyocr          # Bibliothèque OCR principale
-import cv2              # Traitement d'images OpenCV
-import numpy as np      # Calculs numériques
-from PIL import Image    # Manipulation d'images PIL/Pillow
-
-# ============================================
-# CLASSE PRINCIPALE - BookOCR
-# ============================================
+import easyocr
+import cv2
+import numpy as np
+from PIL import Image
+import math
+import pytesseract
 
 class BookOCR:
-    """
-    Classe principale pour le traitement OCR des images de livres.
+    """Processeur OCR pour détecter les titres de livres."""
 
-    Cette classe encapsule toute la logique de détection de texte
-    sur les images de bibliothèques, avec support pour le prétraitement
-    et le filtrage des résultats.
-
-    Attributs:
-        reader (easyocr.Reader): Instance du lecteur OCR
-        confidence_threshold (float): Seuil de confiance (0.0-1.0)
-    """
-
-    def __init__(self, languages, confidence_threshold):
-        """
-        Initialise le processeur OCR.
-
-        Args:
-            languages (list): Liste des langues à détecter (ex: ['en', 'fr'])
-            confidence_threshold (float): Seuil minimum de confiance (0.0-1.0)
-                                         Les textes avec une confiance inférieure
-                                         seront filtrés
-        """
-        # Créer l'instance EasyOCR
-        # gpu=False pour utiliser le CPU (plus lent mais compatible partout)
-        self.reader = easyocr.Reader(languages, gpu=False)
-
-        # Stocker le seuil de confiance pour le filtrage
+    def __init__(self, languages, confidence_threshold, use_gpu=False, use_tesseract=False):
+        """Initialise l'OCR avec langue, seuil de confiance et option GPU."""
+        self.use_tesseract = use_tesseract
         self.confidence_threshold = confidence_threshold
 
-        print(f"🔍 OCR initialisé - Langues: {languages}, Seuil: {confidence_threshold}")
+        if use_tesseract:
+            # Utiliser Tesseract avec configs spéciales pour texte vertical
+            self.tesseract_config = r'--oem 3 --psm 6 -c tessedit_char_whitelist=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .:()-'
+            print(f"🔍 OCR initialisé - Tesseract, Seuil: {confidence_threshold}")
+        else:
+            # Utiliser EasyOCR
+            self.reader = easyocr.Reader(languages, gpu=use_gpu)
+            device = "GPU" if use_gpu else "CPU"
+            print(f"🔍 OCR initialisé - EasyOCR, Langues: {languages}, Seuil: {confidence_threshold}, Device: {device}")
 
-    def preprocess_image(self, image):
-        """
-        Applique un prétraitement à l'image pour améliorer la détection OCR.
+    def _is_vertical_text(self, bbox):
+        """Vérifie si un texte est vertical (rotation 90° ou 270°)."""
+        # Calculer les dimensions de la bbox
+        width = max([p[0] for p in bbox]) - min([p[0] for p in bbox])
+        height = max([p[1] for p in bbox]) - min([p[1] for p in bbox])
+        
+        # Texte vertical : hauteur >> largeur
+        return height > width * 1.5
 
-        NOTE: Cette méthode est actuellement conservée mais DÉSACTIVÉE
-        par défaut car elle dégradait la qualité de détection sur les
-        images de bibliothèques naturelles.
+    def _calculate_font_size(self, bbox):
+        """Calcule la taille approximative de la police."""
+        height = max([p[1] for p in bbox]) - min([p[1] for p in bbox])
+        return height
 
-        Args:
-            image (numpy.ndarray): Image OpenCV (format BGR)
-
-        Returns:
-            numpy.ndarray: Image prétraitée en niveaux de gris
-        """
-        # Conversion en niveaux de gris
+    def _preprocess_image(self, image):
+        """Améliore agressivement la qualité d'image pour une meilleure détection OCR."""
+        # Convertir en niveaux de gris
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-        # Égalisation d'histogramme pour améliorer le contraste
-        # (utile pour les textes peu contrastés)
-        equalized = cv2.equalizeHist(gray)
+        # Améliorer drastiquement le contraste avec CLAHE
+        clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(6,6))
+        enhanced = clahe.apply(gray)
 
-        # Réduction du bruit avec un flou gaussien léger
-        blurred = cv2.GaussianBlur(equalized, (3, 3), 0)
+        # Réduction du bruit avec filtre bilatéral (préserve les bords)
+        denoised = cv2.bilateralFilter(enhanced, 9, 75, 75)
 
-        # Amélioration du contraste avec CLAHE (Contrast Limited Adaptive Histogram Equalization)
-        # clipLimit=4.0 : limite le contraste pour éviter les artefacts
-        # tileGridSize=(8,8) : taille des tuiles pour l'adaptation locale
-        clahe = cv2.createCLAHE(clipLimit=4.0, tileGridSize=(8,8))
-        enhanced = clahe.apply(blurred)
+        # Améliorer la netteté avec unsharp masking
+        gaussian = cv2.GaussianBlur(denoised, (0, 0), 1.0)
+        sharpened = cv2.addWeighted(denoised, 1.5, gaussian, -0.5, 0)
 
-        # Augmentation de la netteté avec un filtre de convolution
-        # Noyau de netteté : accentue les contours
-        kernel = np.array([[-1,-1,-1], [-1,9,-1], [-1,-1,-1]])
-        sharpened = cv2.filter2D(enhanced, -1, kernel)
+        # Binarisation adaptative plus agressive
+        binary = cv2.adaptiveThreshold(
+            sharpened, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 7, 3
+        )
 
-        # Redimensionnement si l'image est petite (< 1000px de hauteur)
-        # Utile pour améliorer la détection de petits textes
-        height, width = sharpened.shape
-        if height < 1000:
-            scale_factor = 1000 / height
-            new_width = int(width * scale_factor)
-            sharpened = cv2.resize(sharpened, (new_width, 1000), interpolation=cv2.INTER_CUBIC)
+        # Dilatation légère pour connecter les caractères
+        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 1))
+        dilated = cv2.dilate(binary, kernel, iterations=1)
 
-        return sharpened
+        # Reconvertir en BGR pour EasyOCR
+        processed = cv2.cvtColor(dilated, cv2.COLOR_GRAY2BGR)
 
-    # ============================================
-    # MÉTHODES PRINCIPALES - EXTRACTION DE TEXTE
-    # ============================================
+        return processed
+
+    def _tesseract_detect(self, pil_image):
+        """Détection OCR avec Tesseract (meilleur pour textes longs)."""
+        # Convertir PIL en array numpy
+        image_array = np.array(pil_image)
+
+        # Prétraitement pour Tesseract
+        gray = cv2.cvtColor(image_array, cv2.COLOR_RGB2GRAY)
+        # Améliorer le contraste
+        clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+        enhanced = clahe.apply(gray)
+
+        # Détection avec Tesseract
+        try:
+            data = pytesseract.image_to_data(enhanced, config=self.tesseract_config, output_type=pytesseract.Output.DICT)
+
+            results = []
+            n_boxes = len(data['text'])
+            for i in range(n_boxes):
+                text = data['text'][i].strip()
+                confidence = int(data['conf'][i]) / 100.0
+
+                if confidence > 0.1 and len(text) >= 2:
+                    # Calculer bbox depuis les coordonnées Tesseract
+                    x, y, w, h = data['left'][i], data['top'][i], data['width'][i], data['height'][i]
+                    bbox = [[x, y], [x+w, y], [x+w, y+h], [x, y+h]]
+
+                    results.append([bbox, text, confidence])
+
+            return results
+        except Exception as e:
+            print(f"⚠️ Erreur Tesseract: {e}")
+            return []
 
     def get_text_and_confidence(self, pil_image, preprocess=True):
-        """
-        Extrait le texte d'une image et retourne la confiance moyenne.
-
-        Cette méthode est le cœur du système OCR. Elle prend une image PIL,
-        applique optionnellement un prétraitement, détecte le texte avec
-        EasyOCR, filtre les résultats et retourne le texte combiné avec
-        la confiance moyenne.
-
-        Args:
-            pil_image (PIL.Image): Image PIL (format RGB)
-            preprocess (bool): Si True, applique le prétraitement d'image
-                              (désactivé par défaut pour meilleurs résultats)
-
-        Returns:
-            tuple: (texte_combine, confiance_moyenne)
-                   - texte_combine (str): Tous les textes détectés concaténés
-                   - confiance_moyenne (float): Moyenne des confiances (0.0-1.0)
-        """
-        # Conversion PIL → NumPy array
-        # PIL utilise le format RGB, OpenCV utilise BGR
-        image_array = np.array(pil_image)
-
-        # Conversion RGB → BGR pour OpenCV
-        # OpenCV attend le format BGR par défaut
-        bgr_image = cv2.cvtColor(image_array, cv2.COLOR_RGB2BGR)
-
-        # Application du prétraitement si demandé
-        if preprocess:
-            image = self.preprocess_image(bgr_image)
+        """Extrait le texte et la confiance moyenne."""
+        if self.use_tesseract:
+            # Utiliser Tesseract
+            results = self._tesseract_detect(pil_image)
+            texts = [r[1] for r in results]
+            confidences = [r[2] for r in results]
         else:
-            # Utilisation directe de l'image originale (recommandé)
-            image = bgr_image
+            # Utiliser EasyOCR
+            image_array = np.array(pil_image)
+            bgr_image = cv2.cvtColor(image_array, cv2.COLOR_RGB2BGR)
 
-        # === DÉTECTION OCR AVEC EASYOCR ===
-        # rotation_info : Liste des angles de rotation à tester
-        # [0, 90, 180, 270] = texte horizontal et vertical
-        results = self.reader.readtext(image, rotation_info=[0, 90, 180, 270])
+            # Prétraitement si demandé
+            if preprocess:
+                bgr_image = self._preprocess_image(bgr_image)
 
-        # === FILTRAGE DES RÉSULTATS ===
-        # Chaque résultat EasyOCR est un tuple: (bounding_box, text, confidence)
-        # On filtre par:
-        # 1. Seuil de confiance minimum
-        # 2. Longueur minimale du texte (évite les faux positifs)
-        filtered_results = [
-            r for r in results
-            if r[2] >= self.confidence_threshold and len(r[1].strip()) >= 2
-        ]
+            # Détection OCR
+            results = self.reader.readtext(bgr_image, rotation_info=[0, 90, 180, 270])
 
-        # Extraction de tous les textes détectés (après filtrage)
-        texts = [r[1] for r in filtered_results]
+            # Filtrage par confiance et longueur
+            filtered_results = [
+                r for r in results
+                if r[2] >= self.confidence_threshold and len(r[1].strip()) >= 2
+            ]
 
-        # Concaténation de tous les textes en une seule chaîne
-        # Séparés par des espaces pour la lisibilité
+            texts = [r[1] for r in filtered_results]
+            confidences = [r[2] for r in filtered_results]
+
         full_text = ' '.join(texts)
+        avg_confidence = sum(confidences) / len(confidences) if confidences else 0.0
 
-        # Calcul de la confiance moyenne
-        if filtered_results:
-            # Somme des confiances divisée par le nombre de résultats
-            avg_confidence = sum(r[2] for r in filtered_results) / len(filtered_results)
-        else:
-            # Aucun résultat détecté
-            avg_confidence = 0.0
-
-        # Retour du texte combiné et de la confiance moyenne
         return (full_text, avg_confidence)
 
-    def get_boxes(self, pil_image, preprocess=True):
-        """
-        Extrait les coordonnées (bounding boxes) des textes détectés.
-
-        Cette méthode retourne une liste détaillée de tous les textes détectés
-        avec leurs positions dans l'image. Utile pour visualiser ou traiter
-        individuellement chaque texte trouvé.
-
-        Args:
-            pil_image (PIL.Image): Image PIL (format RGB)
-            preprocess (bool): Si True, applique le prétraitement d'image
-
-        Returns:
-            list: Liste de dictionnaires avec les clés:
-                  - 'text': Le texte détecté (str)
-                  - 'x': Position X du coin supérieur gauche (float)
-                  - 'y': Position Y du coin supérieur gauche (float)
-                  - 'width': Largeur de la boîte (float)
-                  - 'height': Hauteur de la boîte (float)
-        """
-        # Conversion PIL → NumPy array (même processus que get_text_and_confidence)
-        image_array = np.array(pil_image)
-        bgr_image = cv2.cvtColor(image_array, cv2.COLOR_RGB2BGR)
-
-        # Application du prétraitement si demandé
-        if preprocess:
-            image = self.preprocess_image(bgr_image)
+    def get_boxes(self, pil_image, preprocess=False, vertical_only=False):
+        """Extrait les boîtes de texte avec coordonnées."""
+        if self.use_tesseract:
+            # Utiliser Tesseract
+            results = self._tesseract_detect(pil_image)
         else:
-            image = bgr_image
+            # Utiliser EasyOCR
+            image_array = np.array(pil_image)
+            bgr_image = cv2.cvtColor(image_array, cv2.COLOR_RGB2BGR)
 
-        # Détection OCR avec EasyOCR (mêmes paramètres)
-        results = self.reader.readtext(image, rotation_info=[0, 90, 180, 270])
+            # Prétraitement pour améliorer la détection
+            if preprocess:
+                bgr_image = self._preprocess_image(bgr_image)
 
-        # === EXTRACTION DES COORDONNÉES ===
+            # Détection OCR avec paramètres très optimisés pour texte vertical
+            results = self.reader.readtext(
+                bgr_image,
+                rotation_info=[0, 90, 180, 270],
+                width_ths=0.3,      # Encore plus tolérant
+                height_ths=0.3,     # Encore plus tolérant
+                contrast_ths=0.05,  # Seuil de contraste très bas
+                adjust_contrast=0.7, # Ajustement de contraste plus fort
+                text_threshold=0.5, # Seuil de texte plus bas
+                link_threshold=0.3  # Seuil de liaison plus bas
+            )
+
+        # Extraction des coordonnées (format unifié)
         boxes = []
         for r in results:
-            text = r[1]          # Le texte détecté
-            confidence = r[2]    # La confiance (0.0-1.0)
-            bbox = r[0]          # Liste des 4 coins de la boîte: [[x1,y1], [x2,y2], [x3,y3], [x4,y4]]
+            if self.use_tesseract:
+                bbox, text, confidence = r
+            else:
+                bbox, text, confidence = r[0], r[1], r[2]
 
-            # Appliquer les mêmes filtres que dans get_text_and_confidence
-            if confidence >= self.confidence_threshold and len(text.strip()) >= 2:
-                # Calcul des coordonnées de la boîte englobante
-                # x = coordonnée X minimale (coin gauche)
-                # y = coordonnée Y minimale (coin supérieur)
-                # width = largeur = Xmax - Xmin
-                # height = hauteur = Ymax - Ymin
-                x = min([p[0] for p in bbox])
-                y = min([p[1] for p in bbox])
-                width = max([p[0] for p in bbox]) - x
-                height = max([p[1] for p in bbox]) - y
+            # Filtrage plus permissif
+            if confidence < 0.1 or len(text.strip()) < 1:
+                continue
 
-                # Ajouter à la liste des résultats
-                boxes.append({
-                    "text": text,
-                    "x": x,
-                    "y": y,
-                    "width": width,
-                    "height": height
-                })
+            # Vérifier si vertical (optionnel)
+            if vertical_only and not self._is_vertical_text(bbox):
+                continue
 
-        # Retourner la liste complète des boîtes détectées
-        return boxes
+            # Calculer coordonnées et taille de police
+            x = min([p[0] for p in bbox])
+            y = min([p[1] for p in bbox])
+            width = max([p[0] for p in bbox]) - x
+            height = max([p[1] for p in bbox]) - y
+            font_size = self._calculate_font_size(bbox)
 
+            boxes.append({
+                "text": text,
+                "x": x,
+                "y": y,
+                "width": width,
+                "height": height,
+                "font_size": font_size,
+                "is_vertical": self._is_vertical_text(bbox)
+            })
 
-# ============================================
-# SECTION PRINCIPALE - TESTS ET DÉMONSTRATION
-# ============================================
+        return boxes    # ============================================
+    # MÉTHODE DE REGROUPEMENT - DÉTECTION DE LIVRES
+    # ============================================
+
+    def group_by_books(self, boxes, vertical_threshold=50):
+        """Regroupe les textes par livre et reconstitue les titres."""
+        if not boxes:
+            return []
+        
+        # Filtrer: garder seulement les textes verticaux avec grandes polices
+        vertical_boxes = [b for b in boxes if b.get('is_vertical', False)]
+        
+        if not vertical_boxes:
+            return []
+        
+        # Calculer la médiane de la taille de police
+        font_sizes = [b['font_size'] for b in vertical_boxes]
+        median_font_size = sorted(font_sizes)[len(font_sizes) // 2]
+        
+        # Garder seulement les grandes polices (> 80% de la médiane)
+        large_text_boxes = [b for b in vertical_boxes if b['font_size'] >= median_font_size * 0.8]
+        
+        # Trier par position X (gauche à droite)
+        sorted_boxes = sorted(large_text_boxes, key=lambda b: b['x'])
+        
+        # Regrouper par colonnes (même livre)
+        books = []
+        current_book = [sorted_boxes[0]]
+        current_x = sorted_boxes[0]['x']
+        
+        for box in sorted_boxes[1:]:
+            if abs(box['x'] - current_x) <= vertical_threshold:
+                current_book.append(box)
+            else:
+                books.append(current_book)
+                current_book = [box]
+                current_x = box['x']
+        
+        if current_book:
+            books.append(current_book)
+        
+        # Extraire les titres
+        formatted_books = []
+        for book_texts in books:
+            title = self._extract_book_title(book_texts)
+            formatted_books.append({
+                'title': title,
+                'x': book_texts[0]['x'],
+                'all_texts': [b['text'] for b in book_texts],
+                'text_count': len(book_texts)
+            })
+        
+        return formatted_books
+
+    def _extract_book_title(self, book_texts):
+        """Combine tous les textes détectés pour former un titre approximatif."""
+        if not book_texts:
+            return "Unknown"
+        
+        # Trier par position Y (du haut vers le bas du livre)
+        sorted_texts = sorted(book_texts, key=lambda b: b['y'])
+        
+        # Combiner tous les textes
+        all_texts = [b['text'].strip() for b in sorted_texts]
+        combined = ' / '.join(all_texts)
+        
+        # Limiter la longueur
+        if len(combined) > 60:
+            combined = combined[:60] + '...'
+        
+        return combined
+
+    def get_books(self, pil_image, preprocess=True):
+        """Détecte les livres individuels (titres verticaux avec grandes polices)."""
+        boxes = self.get_boxes(pil_image, preprocess=preprocess, vertical_only=False)
+        books = self.group_by_books(boxes)
+        return books
 
 if __name__ == "__main__":
     """
@@ -287,18 +315,22 @@ if __name__ == "__main__":
     # Désactiver le préprocessing pour de meilleurs résultats
     text, confidence = processor.get_text_and_confidence(pil_image, preprocess=False)
     boxes = processor.get_boxes(pil_image, preprocess=False)
+    books = processor.get_books(pil_image, preprocess=False)
 
     # === AFFICHAGE DES RÉSULTATS ===
     print("\n📊 === OCR Results ===")
-    print(f"📝 Text: {text}")
+    print(f"📝 Total text detected: {text[:100]}{'...' if len(text) > 100 else ''}")
     print(f"🎯 Confidence: {confidence:.3f}")
-    print(f"📚 Number of text boxes: {len(boxes)}")
+    print(f"� Number of text boxes: {len(boxes)}")
+    print(f"📚 Number of books detected: {len(books)}")
 
-    # Afficher le détail de chaque boîte détectée
-    if boxes:
-        print("\n📍 All detected boxes:")
-        for i, box in enumerate(boxes):
-            print(f"  Box {i+1}: {box}")
+    # Afficher les livres détectés
+    if books:
+        print("\n� Books detected:")
+        for i, book in enumerate(books, 1):
+            print(f"  {i:2d}. {book['title']}")
+            if book['text_count'] > 1:
+                print(f"      (+ {book['text_count']-1} other texts: {', '.join(book['all_texts'][:3])})")
 
     print("\n✅ Processing complete!")
 

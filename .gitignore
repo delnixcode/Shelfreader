@@ -9,6 +9,12 @@ venv/
 ENV/
 .venv
 
+# Project specific virtual environments
+env-p1/
+env-p2/
+env-p3/
+env-p4/
+
 # IDEs
 .vscode/
 .idea/
@@ -30,3 +36,25 @@ models/
 build/
 dist/
 *.egg-info/
+
+# YOLOv8 models
+*.pt
+*.pth
+yolov8*.pt
+
+# Redis dumps
+dump.rdb
+
+# Log files
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Test outputs
+test_outputs/
+outputs/

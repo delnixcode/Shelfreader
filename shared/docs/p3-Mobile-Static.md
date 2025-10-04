@@ -87,7 +87,7 @@ Le projet est divisé en **5 phases** pour porter progressivement vers mobile :
 
 ---
 
-## 🏗️ Architecture - Projet 3
+## 🏛️ Architecture - Projet 3
 
 ```
 ShelfReader/

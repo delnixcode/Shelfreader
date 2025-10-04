@@ -12,6 +12,41 @@
 ### 📁 **Structure**
 ```
 p1-MVP-Desktop/
+├── env-p1/              # Environnement virtuel P1
+├── scripts/             # Scripts utilitaires
+│   └── ocr_detect.py    # Script de détection OCR
+├── src/                 # Code source P1
+│   ├── __init__.py      # Package initialization
+│   ├── ocr_processor.py # Module OCR de base
+│   ├── api_client.py    # Client Open Library
+│   └── app.py           # Interface Streamlit
+├── tests/               # Tests unitaires
+├── docs/                # Documentation spécifique
+└── requirements.txt     # Dépendances P1
+```
+
+### 🚀 **Démarrage rapide**
+```bash
+cd p1-MVP-Desktop
+source env-p1/bin/activate  # Linux/Mac
+# ou env-p1\Scripts\activate  # Windows
+pip install -r requirements.txt
+streamlit run src/app.py
+```
+
+### 🧪 **Tests**
+```bash
+# Activer l'environnement virtuel
+source env-p1/bin/activate  # Linux/Mac
+
+# Tests du projet P1
+python -m pytest tests/
+
+# Test du script de détection OCR
+python scripts/ocr_detect.py
+```
+```
+p1-MVP-Desktop/
 ├── src/                    # Code source P1
 │   ├── __init__.py        # Package initialization
 │   ├── ocr_processor.py   # Module OCR de base
@@ -48,4 +83,21 @@ p1-MVP-Desktop/
 cd p1-MVP-Desktop
 pip install -r requirements.txt
 streamlit run src/app.py
+```
+
+### 🔗 **Ressources Partagées**
+- **Images de test** : `../../shared/data/test_images/`
+- **Documentation** : `../../shared/docs/`
+- **Scripts** : `../../shared/scripts/`
+
+python scripts/ocr_detect.py --gpu test_images/books1.jpg
+python scripts/ocr_detect.py --gpu --tesseract test_images/books1.jpg
+
+### 🧪 **Tests**
+```bash
+# Tests du projet P1
+python -m pytest tests/
+
+# Tests avec images partagées
+python src/ocr_processor.py ../../shared/data/test_images/books1.jpg
 ```

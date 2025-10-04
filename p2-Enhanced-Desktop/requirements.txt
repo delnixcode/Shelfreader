@@ -17,14 +17,14 @@ ultralytics>=8.0.0
 
 # Caching System
 redis>=4.5.0
-sqlite3  # Built-in Python
+# sqlite3  # Built-in Python
 
 # Performance Monitoring
 psutil>=5.9.0
-cProfile  # Built-in Python
+# cProfile  # Built-in Python
 
 # Async Processing
-asyncio  # Built-in Python
+# asyncio  # Built-in Python
 
 # Development and Testing
 pytest>=7.4.0

@@ -76,7 +76,7 @@ Le projet est divisé en **4 phases d'optimisation** pour améliorer progressive
 
 ---
 
-## 🏗️ Architecture - Projet 2
+## 🏛️ Architecture - Projet 2
 
 ```
 ShelfReader/
@@ -103,7 +103,7 @@ Photo upload → YOLO Detection → Orientation Correction → Cache Check → O
 
 ---
 
-## 🛠️ Technologies - Projet 2
+## 🔧 Technologies - Projet 2
 
 | Composant | Technologie | Version | Rôle |
 |-----------|-------------|---------|------|

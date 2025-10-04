@@ -98,7 +98,7 @@ Le projet est divisé en **6 phases** pour atteindre l'objectif temps réel :
 
 ---
 
-## 🏗️ Architecture - Projet 4
+## 🏛️ Architecture - Projet 4
 
 ```
 ShelfReader/
@@ -297,4 +297,3 @@ Mobile Interface with AR Books
 - ✅ Overlay AR précis
 - ✅ Cache multi-niveaux
 - ✅ Optimisation batterie
-- ✅ Mode exploration et recherche

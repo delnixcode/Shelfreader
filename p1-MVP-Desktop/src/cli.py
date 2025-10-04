@@ -56,6 +56,9 @@ def main_easyocr():
     parser.add_argument("--gpu", action="store_true", help="Utiliser le GPU")
     parser.add_argument("--confidence", type=float, default=0.2,
                        help="Seuil de confiance (0.0-1.0, défaut: 0.2)")
+    parser.add_argument("--spine-method", choices=["shelfie", "iccc2013"], default="shelfie",
+                       help="Méthode de détection (défaut: shelfie adaptatif)")
+    parser.add_argument("--debug", action="store_true", help="Mode debug (affiche les analyses)")
     parser.add_argument("--output", help="Nom du fichier de sortie")
 
     args = parser.parse_args()
@@ -68,6 +71,10 @@ def main_easyocr():
         script_args.append("--gpu")
     if args.confidence != 0.2:
         script_args.extend(["--confidence", str(args.confidence)])
+    if args.spine_method != "shelfie":
+        script_args.extend(["--spine-method", args.spine_method])
+    if args.debug:
+        script_args.append("--debug")
     if args.output:
         script_args.extend(["--output", args.output])
 

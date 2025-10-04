@@ -2,10 +2,10 @@
 # SHELFREADER - COMPLETE REQUIREMENTS FOR # ============================================
 # P4 - MOBILE REAL-TIME (TENSORFLOW + AR)
 # ============================================
-tensorflow<2.16.0,>=2.13.0  # Compatible Python 3.11
+tensorflow-cpu  # Compatible Python 3.13
 # tensorflow-lite non disponible - à installer séparément si nécessaire pour P4
 numpy>=1.24.0
-pytest-benchmark>=4.0.0JECTS
+pytest-benchmark>=4.0.0
 # ============================================
 # This file contains ALL dependencies from all 4 projects + existing environment
 # Install with: pip install -r requirements.txt
@@ -96,7 +96,7 @@ kivy-garden>=0.1.5
 # ============================================
 # P4 - MOBILE REAL-TIME (TENSORFLOW + AR)
 # ============================================
-tensorflow<2.16.0,>=2.13.0  # Compatible Python 3.11
+tensorflow-cpu  # Compatible Python 3.13
 numpy>=1.21.0  # Version minimale compatible avec toutes les libs
 pytest-benchmark>=4.0.0
 

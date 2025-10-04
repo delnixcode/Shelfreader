@@ -7,12 +7,17 @@ AMÉLIORATIONS RÉCENTES:
 - ✅ GPU support avec PyTorch CUDA
 - ✅ Détection de tranches basée sur l'algorithme shelfie
 - ✅ Regroupement intelligent par proximité et lignes de tranches
-- ✅ Validation de similarité avec titres de référence
+- ✅ Validation de similarité avec titres de référence (configurable)
 - ✅ Gestion d'erreurs robuste et fallback automatique
 - ✅ Consolidation de tous les fichiers OCR en une seule version optimisée
 
 UTILISATION:
-    python src/ocr_easyocr.py test_images/books1.jpg --gpu --validate
+    python src/ocr_easyocr.py test_images/image.jpg --gpu --validate --reference-file titres.txt
+
+OPTIONS DE VALIDATION:
+    --validate : Active la validation de similarité
+    --reference-file fichier.txt : Spécifie un fichier de titres de référence (un titre par ligne)
+    Sans --reference-file : utilise les titres par défaut seulement pour books1.jpg
 """
 
 # === IMPORTS ===
@@ -599,6 +604,7 @@ if __name__ == "__main__":
     parser.add_argument('--debug', action='store_true', help='Mode debug pour visualiser les étapes')
     parser.add_argument('--no-spine', action='store_true', help='Désactiver la détection de tranches')
     parser.add_argument('--validate', action='store_true', help='Activer la validation de similarité avec les vrais titres')
+    parser.add_argument('--reference-file', type=str, help='Fichier contenant les titres de référence (un titre par ligne)')
     parser.add_argument('--output', type=str, help='Préfixe des fichiers de sortie')
 
     args = parser.parse_args()
@@ -610,24 +616,42 @@ if __name__ == "__main__":
         # Chargement de l'image
         pil_image = Image.open(args.image_path)
 
-        # Titres de référence pour validation (liste des vrais titres de l'image books1.jpg)
-        reference_titles = [
-            "Ada 95",
-            "Software Construction",
-            "THE C PROGRAMMING LANGUAGE",
-            "THE C++ PROGRAMMING LANGUAGE",
-            "THE DYLAN REFERENCE MANUAL",
-            "The Java Programming Language",
-            "The Little MLer",
-            "ELEMENTS OF ML PROGRAMMING",
-            "Miranda: The Craft of Functional Programming",
-            "Programming Perl",
-            "Learning Python",
-            "Systems Programming with Modula-3",
-            "THE SCHEME PROGRAMMING LANGUAGE",
-            "Squeak: Open Personal Computing and Multimedia",
-            "The π-calculus: A Theory of Mobile Processes"
-        ] if args.validate else None
+        # Titres de référence pour validation
+        reference_titles = None
+        if args.validate:
+            if args.reference_file:
+                # Charger les titres depuis le fichier spécifié
+                try:
+                    with open(args.reference_file, 'r', encoding='utf-8') as f:
+                        reference_titles = [line.strip() for line in f if line.strip()]
+                    print(f"📚 Titres de référence chargés depuis {args.reference_file}: {len(reference_titles)} titres")
+                except FileNotFoundError:
+                    print(f"❌ Fichier de titres de référence non trouvé: {args.reference_file}")
+                    sys.exit(1)
+            elif 'books1.jpg' in args.image_path:
+                # Titres par défaut pour books1.jpg seulement
+                reference_titles = [
+                    "Ada 95",
+                    "Software Construction",
+                    "THE C PROGRAMMING LANGUAGE",
+                    "THE C++ PROGRAMMING LANGUAGE",
+                    "THE DYLAN REFERENCE MANUAL",
+                    "The Java Programming Language",
+                    "The Little MLer",
+                    "ELEMENTS OF ML PROGRAMMING",
+                    "Miranda: The Craft of Functional Programming",
+                    "Programming Perl",
+                    "Learning Python",
+                    "Systems Programming with Modula-3",
+                    "THE SCHEME PROGRAMMING LANGUAGE",
+                    "Squeak: Open Personal Computing and Multimedia",
+                    "The π-calculus: A Theory of Mobile Processes"
+                ]
+                print(f"📚 Utilisation des titres de référence par défaut pour books1.jpg: {len(reference_titles)} titres")
+            else:
+                print("⚠️ Validation activée mais aucun fichier de titres de référence spécifié (--reference-file)")
+                print("   La validation sera ignorée pour cette image")
+                args.validate = False
 
         # Traitement
         use_spine_detection = not args.no_spine

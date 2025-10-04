@@ -1,5 +1,5 @@
 === RÉSULTATS OCR - test_images/books1.jpg ===
-Date: 2025-10-04 04:02:36
+Date: 2025-10-04 05:35:46
 Nombre de textes détectés: 14
 Confiance moyenne: 0.807
 

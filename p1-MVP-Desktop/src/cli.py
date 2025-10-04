@@ -125,38 +125,6 @@ def main_trocr():
 
     run_ocr_script("src/ocr_trocr.py", script_args)
 
-def main_detect():
-    """Commande: detect [options] [image]"""
-    parser = argparse.ArgumentParser(description="Detect - Test multi-moteurs OCR")
-    parser.add_argument("image_pos", nargs="?", default="test_images/books1.jpg",
-                       help="Chemin vers l'image (défaut: test_images/books1.jpg)")
-    parser.add_argument("--image", "-i", help="Chemin vers l'image (remplace l'argument positionnel)")
-    parser.add_argument("--gpu", action="store_true", help="Utiliser le GPU")
-    parser.add_argument("--confidence", type=float, default=0.2,
-                       help="Seuil de confiance minimum (défaut: 0.2)")
-    parser.add_argument("--easyocr", action="store_true", help="Utiliser EasyOCR")
-    parser.add_argument("--tesseract", action="store_true", help="Utiliser Tesseract")
-    parser.add_argument("--trocr", action="store_true", help="Utiliser TrOCR")
-
-    args = parser.parse_args()
-
-    # Utiliser --image si spécifié, sinon l'argument positionnel
-    image = args.image if args.image is not None else args.image_pos
-
-    script_args = [image]
-    if args.gpu:
-        script_args.append("--gpu")
-    if args.confidence != 0.2:  # Seulement ajouter si différent de la valeur par défaut
-        script_args.extend(["--confidence", str(args.confidence)])
-    if args.easyocr:
-        script_args.append("--easyocr")
-    if args.tesseract:
-        script_args.append("--tesseract")
-    if args.trocr:
-        script_args.append("--trocr")
-
-    run_ocr_script("scripts/ocr_detect.py", script_args)
-
 def main():
     """Commande principale: shelfreader <commande> [options]"""
     parser = argparse.ArgumentParser(
@@ -167,16 +135,14 @@ Exemples d'utilisation:
   shelfreader easyocr --gpu                    # EasyOCR avec GPU
   shelfreader tesseract --lang fra             # Tesseract français
   shelfreader trocr --gpu --confidence 0.5     # TrOCR haute précision
-  shelfreader detect --gpu                     # Test multi-moteurs
 
 Ou utilisez directement:
   easyocr --gpu
   tesseract
   trocr --gpu --confidence 0.5
-  detect --gpu
         """
     )
-    parser.add_argument("command", choices=["easyocr", "tesseract", "trocr", "detect"],
+    parser.add_argument("command", choices=["easyocr", "tesseract", "trocr"],
                        help="Commande OCR à exécuter")
     parser.add_argument("args", nargs=argparse.REMAINDER,
                        help="Arguments pour la commande OCR")
@@ -194,9 +160,6 @@ Ou utilisez directement:
     elif args.command == "trocr":
         sys.argv = ["trocr"] + args.args
         main_trocr()
-    elif args.command == "detect":
-        sys.argv = ["detect"] + args.args
-        main_detect()
 
 if __name__ == "__main__":
     main()

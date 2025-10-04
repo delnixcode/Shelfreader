@@ -1,53 +1,84 @@
 === RÉSULTATS OCR - test_images/books1.jpg ===
-Date: 2025-10-04 04:13:41
-Nombre de textes détectés: 11
-Confiance moyenne: 0.885
+Date: 2025-10-04 05:36:33
+Nombre de textes détectés: 15
+Confiance moyenne: 0.922
 
 TEXTE COMPLET:
-Idman "Softwgre Construction With 95 | KERNICHAN THE LANCUACE SECOND EDITION PTR | THE C++ LANGUACE 01 | Apple The Reference Dylan Manual Shalit Addison Aaisam | Peaecoys Edition Programming Language Gosong JAVA | ULLMAN ELEMENTS The Miranda Little OF MLer PROGRAMMING Felleisen The Craft and of Friedman ML?7 Thompson EDITION | THIRD EDITION Programming Perl Christianscn Orwant Wall | Learning Lutz Ascher | Nelson THE SCHEME Systems Programming with SCHEME PTR | Uuzdial Rose uado and Personal Multimedia Computing | SANGIORGI WALKER The Theory T-calculus of Mobile Processes CaMMT
+SANGIORGI KERNICHAN ULLMAN NELSON | APPLE UUZDIAL IDMAN ROSE THIRD EDITION THE WALKER | LEARNING ELEMENTS | PROGRAMMING SCHEME THE THE THE SYSTEMS | MIRANDA THE | REFERENCE LITTLE EDITION C++ | PROGRAMMING DYLAN PROGRAMMING CONSTRUCTION | OF MLER THE THEORY MANUAL PROGRAMMING T-CALCULUS | WITH OF MOBILE PROCESSES LANGUAGE ADA FELLEISEN THE CRAFT | OPEN LANGUACE PERL | AND PERSONAL AND | MULTIMEDIA OF | 95 GOSONG FRIEDMAN SCHEME COMPUTING L6IW THOMPSON SECOND EDITION | LUTZ EDITION CHRISTIANSCN 01 ORWANT JAVA ASCHER VO | WALL ADDISON PTR PTR AAISAM
 
 DÉTAIL PAR LIVRE:
 
 --- Livre 1 ---
-Confiance: 0.703
-Texte: Idman "Softwgre Construction With 95
+Confiance: 0.993
+Texte: SANGIORGI KERNICHAN ULLMAN NELSON
+Nombre de fragments: 4
 
 --- Livre 2 ---
-Confiance: 0.841
-Texte: KERNICHAN THE LANCUACE SECOND EDITION PTR
+Confiance: 0.930
+Texte: APPLE UUZDIAL IDMAN ROSE THIRD EDITION THE WALKER
+Nombre de fragments: 7
 
 --- Livre 3 ---
-Confiance: 0.866
-Texte: THE C++ LANGUACE 01
+Confiance: 0.999
+Texte: LEARNING ELEMENTS
+Nombre de fragments: 2
 
 --- Livre 4 ---
-Confiance: 0.935
-Texte: Apple The Reference Dylan Manual Shalit Addison Aaisam
+Confiance: 0.948
+Texte: PROGRAMMING SCHEME THE THE THE SYSTEMS
+Nombre de fragments: 6
 
 --- Livre 5 ---
-Confiance: 0.780
-Texte: Peaecoys Edition Programming Language Gosong JAVA
+Confiance: 0.950
+Texte: MIRANDA THE
+Nombre de fragments: 2
 
 --- Livre 6 ---
-Confiance: 0.918
-Texte: ULLMAN ELEMENTS The Miranda Little OF MLer PROGRAMMING Felleisen The Craft and of Friedman ML?7 Thompson EDITION
+Confiance: 0.876
+Texte: REFERENCE LITTLE EDITION C++
+Nombre de fragments: 4
 
 --- Livre 7 ---
-Confiance: 0.884
-Texte: THIRD EDITION Programming Perl Christianscn Orwant Wall
+Confiance: 0.995
+Texte: PROGRAMMING DYLAN PROGRAMMING CONSTRUCTION
+Nombre de fragments: 4
 
 --- Livre 8 ---
-Confiance: 0.998
-Texte: Learning Lutz Ascher
+Confiance: 0.858
+Texte: OF MLER THE THEORY MANUAL PROGRAMMING T-CALCULUS
+Nombre de fragments: 7
 
 --- Livre 9 ---
-Confiance: 0.985
-Texte: Nelson THE SCHEME Systems Programming with SCHEME PTR
+Confiance: 0.907
+Texte: WITH OF MOBILE PROCESSES LANGUAGE ADA FELLEISEN THE CRAFT
+Nombre de fragments: 6
 
 --- Livre 10 ---
-Confiance: 0.955
-Texte: Uuzdial Rose uado and Personal Multimedia Computing
+Confiance: 0.962
+Texte: OPEN LANGUACE PERL
+Nombre de fragments: 3
 
 --- Livre 11 ---
-Confiance: 0.874
-Texte: SANGIORGI WALKER The Theory T-calculus of Mobile Processes CaMMT
+Confiance: 0.933
+Texte: AND PERSONAL AND
+Nombre de fragments: 3
+
+--- Livre 12 ---
+Confiance: 0.930
+Texte: MULTIMEDIA OF
+Nombre de fragments: 2
+
+--- Livre 13 ---
+Confiance: 0.796
+Texte: 95 GOSONG FRIEDMAN SCHEME COMPUTING L6IW THOMPSON SECOND EDITION
+Nombre de fragments: 8
+
+--- Livre 14 ---
+Confiance: 0.854
+Texte: LUTZ EDITION CHRISTIANSCN 01 ORWANT JAVA ASCHER VO
+Nombre de fragments: 8
+
+--- Livre 15 ---
+Confiance: 0.902
+Texte: WALL ADDISON PTR PTR AAISAM
+Nombre de fragments: 5

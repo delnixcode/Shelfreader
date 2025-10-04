@@ -1,0 +1,77 @@
+=== RÉSULTATS OCR AVEC DÉTECTION DE TRANCHES - test_images/books1.jpg ===
+Date: 2025-10-04 05:56:18
+Nombre de livres détectés: 11
+Confiance moyenne: 0.908
+Détection de tranches: Activée
+Validation de similarité: Activée
+
+TEXTE COMPLET:
+Ada 95 | KERNICHAN THE SECOND EDITION PTR | THE C++ PROGRAMMING LANGUAGE | THE DYLAN REFERENCE MANUAL | ULLMAN ELEMENTS The Little OF MLer PROGRAMMING Felleisen and Friedman L6IW EDITION | Miranda of Thompson | Miranda: The Craft of Functional Programming | Nelson THIRD EDITION Learning Programming Systems Programming with Perl Lutz Christianscn Orwant Ascher Wall | THE SCHEME PROGRAMMING LANGUAGE | Squeak: Open Personal Computing and Multimedia | The π-calculus: A Theory of Mobile Processes
+
+DÉTAIL PAR LIVRE:
+
+--- Livre 1 ---
+Confiance: 0.692
+Texte: Ada 95
+Position: (0.0, 87.0)
+Dimensions: 74.0 x 653.0
+
+--- Livre 2 ---
+Confiance: 0.897
+Texte: KERNICHAN THE SECOND EDITION PTR
+Position: (98.0, 27.0)
+Dimensions: 51.0 x 834.0
+
+--- Livre 3 ---
+Confiance: 0.868
+Texte: THE C++ PROGRAMMING LANGUAGE
+Position: (187.0, 175.0)
+Dimensions: 82.0 x 616.0
+
+--- Livre 4 ---
+Confiance: 0.882
+Texte: THE DYLAN REFERENCE MANUAL
+Position: (297.0, 62.0)
+Dimensions: 179.0 x 805.0
+
+--- Livre 5 ---
+Confiance: 0.929
+Texte: ULLMAN ELEMENTS The Little OF MLer PROGRAMMING Felleisen and Friedman L6IW EDITION
+Position: (500.0, 38.0)
+Dimensions: 93.0 x 778.0
+
+--- Livre 6 ---
+Confiance: 0.950
+Texte: Miranda of Thompson
+Position: (602.0, 206.0)
+Dimensions: 96.0 x 596.0
+
+--- Livre 7 ---
+Confiance: 1.000
+Texte: Miranda: The Craft of Functional Programming
+Position: (664.0, 516.0)
+Dimensions: 28.0 x 120.0
+
+--- Livre 8 ---
+Confiance: 0.952
+Texte: Nelson THIRD EDITION Learning Programming Systems Programming with Perl Lutz Christianscn Orwant Ascher Wall
+Position: (734.0, 38.0)
+Dimensions: 272.0 x 797.0
+
+--- Livre 9 ---
+Confiance: 0.986
+Texte: THE SCHEME PROGRAMMING LANGUAGE
+Position: (1023.0, 116.0)
+Dimensions: 41.0 x 735.0
+
+--- Livre 10 ---
+Confiance: 0.948
+Texte: Squeak: Open Personal Computing and Multimedia
+Position: (1089.0, 82.0)
+Dimensions: 67.0 x 716.0
+
+--- Livre 11 ---
+Confiance: 0.889
+Texte: The π-calculus: A Theory of Mobile Processes
+Position: (1195.0, 0.0)
+Dimensions: 82.0 x 869.0

@@ -92,22 +92,22 @@ def main():
     # Test EasyOCR
     test_ocr_engine(
         "EasyOCR",
-        [sys.executable, str(script_dir / "scripts" / "ocr_detect.py"),
-         str(image_path), "--gpu", "--easyocr"]
+        [sys.executable, str(script_dir / "src" / "ocr_easyocr.py"),
+         str(image_path), "--gpu"]
     )
 
     # Test Tesseract
     test_ocr_engine(
         "Tesseract",
-        [sys.executable, str(script_dir / "scripts" / "ocr_detect.py"),
-         str(image_path), "--gpu", "--tesseract"]
+        [sys.executable, str(script_dir / "src" / "ocr_tesseract.py"),
+         str(image_path)]
     )
 
     # Test TrOCR
     test_ocr_engine(
         "TrOCR",
-        [sys.executable, str(script_dir / "scripts" / "ocr_detect.py"),
-         str(image_path), "--gpu", "--trocr"]
+        [sys.executable, str(script_dir / "src" / "ocr_trocr.py"),
+         str(image_path), "--gpu"]
     )
 
     print(f"\n{'='*50}")

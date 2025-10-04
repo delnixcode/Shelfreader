@@ -34,8 +34,8 @@ class TrOCRProcessor:
 
         # Chargement du modèle TrOCR
         try:
-            self.processor = TrOCRProcessor.from_pretrained('microsoft/trocr-base-printed', use_fast=True)
-            self.model = VisionEncoderDecoderModel.from_pretrained('microsoft/trocr-base-printed')
+            self.processor = TrOCRProcessor.from_pretrained('microsoft/trocr-base-handwritten', use_fast=True)
+            self.model = VisionEncoderDecoderModel.from_pretrained('microsoft/trocr-base-handwritten')
             self.model.to(self.device)
             self.model.eval()
 
@@ -47,36 +47,17 @@ class TrOCRProcessor:
 
     # === PRÉTRAITEMENT ===
     def _preprocess_image(self, image):
-        """Prétraitement optimisé pour TrOCR."""
+        """Prétraitement minimal pour TrOCR."""
         import cv2
         
-        # Convertir en niveaux de gris
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
-        # Améliorer le contraste avec CLAHE
-        clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
-        enhanced = clahe.apply(gray)
-
-        # Réduction du bruit
-        denoised = cv2.bilateralFilter(enhanced, 9, 75, 75)
-
-        # Améliorer la netteté
-        gaussian = cv2.GaussianBlur(denoised, (0, 0), 1.0)
-        sharpened = cv2.addWeighted(denoised, 1.5, gaussian, -0.5, 0)
-
-        # Binarisation adaptative
-        binary = cv2.adaptiveThreshold(
-            sharpened, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2
-        )
-
-        # Reconvertir en RGB pour TrOCR
-        rgb = cv2.cvtColor(binary, cv2.COLOR_GRAY2RGB)
+        # Convertir en RGB
+        rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
         return rgb
 
     # === DÉTECTION OCR ===
     def _trocr_detect(self, pil_image):
-        """Détection OCR avec TrOCR."""
+        """Détection OCR avec TrOCR, segmentation en bandes pour plusieurs livres."""
         import numpy as np
         import cv2
         from PIL import Image
@@ -86,33 +67,63 @@ class TrOCRProcessor:
         bgr_image = cv2.cvtColor(image_array, cv2.COLOR_RGB2BGR)
         processed_image = self._preprocess_image(bgr_image)
 
-        # Convertir en PIL Image
-        pil_processed = Image.fromarray(processed_image)
+        # Segmentation en bandes verticales (pour dos de livres)
+        height, width = processed_image.shape[:2]
+        num_strips = 14  # Nombre estimé de livres
+        strip_width = width // num_strips
 
-        # Préparation pour TrOCR
-        pixel_values = self.processor(pil_processed, return_tensors="pt").pixel_values
-        pixel_values = pixel_values.to(self.device)
+        results = []
+        for i in range(num_strips):
+            left = i * strip_width
+            right = (i + 1) * strip_width if i < num_strips - 1 else width
+            strip = processed_image[:, left:right]
 
-        # Génération avec beam search
-        with torch.no_grad():
-            generated_ids = self.model.generate(
-                pixel_values,
-                max_length=50,
-                num_beams=4,
-                early_stopping=True,
-                no_repeat_ngram_size=3,
-                length_penalty=2.0,
-                repetition_penalty=1.5
-            )
+            # Convertir en PIL Image
+            strip_pil = Image.fromarray(strip)
 
-        # Décodage du texte
-        generated_text = self.processor.batch_decode(generated_ids, skip_special_tokens=True)[0]
+            # Préparation pour TrOCR
+            pixel_values = self.processor(strip_pil, return_tensors="pt").pixel_values
+            pixel_values = pixel_values.to(self.device)
 
-        # TrOCR ne fournit pas de confiance directement, on utilise une valeur fixe élevée
-        # pour la compatibilité avec l'interface
-        confidence = 0.95 if len(generated_text.strip()) > 0 else 0.0
+            # Génération avec beam search
+            with torch.no_grad():
+                outputs = self.model.generate(
+                    pixel_values,
+                    max_length=100,
+                    num_beams=6,
+                    early_stopping=True,
+                    no_repeat_ngram_size=2,
+                    length_penalty=1.5,
+                    repetition_penalty=1.2,
+                    return_dict_in_generate=True,
+                    output_scores=True
+                )
 
-        return generated_text.strip(), confidence
+            # Décodage du texte
+            generated_text = self.processor.batch_decode(outputs.sequences, skip_special_tokens=True)[0].strip()
+
+            # Calcul de la confiance
+            scores = outputs.scores
+            if scores:
+                log_probs = []
+                for score in scores[1:]:
+                    probs = torch.softmax(score, dim=-1)
+                    max_prob = torch.max(probs, dim=-1).values.max().item()
+                    log_probs.append(np.log(max_prob) if max_prob > 0 else -float('inf'))
+                confidence = np.exp(np.mean(log_probs)) if log_probs else 0.0
+            else:
+                confidence = 0.0
+
+            if len(generated_text) >= 2 and confidence >= 0.1:  # Seuil bas pour inclure
+                results.append((generated_text, confidence))
+
+        # Combiner les textes détectés
+        if results:
+            combined_text = ' | '.join([text for text, conf in results])
+            avg_confidence = np.mean([conf for text, conf in results])
+            return combined_text, avg_confidence
+
+        return "", 0.0
 
     # === INTERFACES PUBLIQUES ===
     def detect_text(self, pil_image, preprocess=True):
@@ -138,15 +149,16 @@ class TrOCRProcessor:
         return "", 0.0
 
     def get_boxes(self, pil_image, preprocess=True, vertical_only=False):
-        """Extrait les boîtes de texte avec coordonnées."""
+        """Extrait les boîtes de texte avec coordonnées, amélioré pour la détection verticale."""
         text, confidence = self._trocr_detect(pil_image)
 
         if confidence >= self.confidence_threshold and len(text) >= 2:
             width, height = pil_image.size
-            font_size = height  # Estimation
+            font_size = min(width, height) * 0.8  # Estimation basée sur la dimension minimale
 
-            # Détection verticale basée sur les dimensions
-            is_vertical = height > width
+            # Détection verticale améliorée (basée sur dimensions et contenu)
+            aspect_ratio = height / width if width > 0 else 1
+            is_vertical = aspect_ratio > 1.2 or any(char in text for char in ['|', '/', '\\'])  # Heuristique simple pour texte vertical
 
             if vertical_only and not is_vertical:
                 return []
@@ -193,52 +205,12 @@ if __name__ == "__main__":
         print(f"🔍 TrOCR - Image: {args.image_path}")
         print(f"📊 Résultats: {len(boxes)} textes détectés")
         print(f"🎯 Confiance: {confidence:.3f}")
-        print(f"📝 Texte: {text[:100]}{'...' if len(text) > 100 else ''}")
+        print(f"📝 Texte complet: {text}")
 
         if boxes:
             print("\n📦 Textes détectés:")
-            for i, box in enumerate(boxes[:10], 1):  # Limiter à 10 premiers
-                print(f"  {i:2d}. {box['text'][:50]}{'...' if len(box['text']) > 50 else ''}")
-
-    except Exception as e:
-        print(f"❌ Erreur: {e}")
-        sys.exit(1)
-    """
-    Point d'entrée pour tester TrOCR directement.
-    Usage: python ocr_trocr.py <image_path> [--gpu]
-    """
-    import sys
-    import argparse
-    from PIL import Image
-
-    parser = argparse.ArgumentParser(description='Test TrOCR directement')
-    parser.add_argument('image_path', help='Chemin vers l\'image à analyser')
-    parser.add_argument('--gpu', action='store_true', help='Utiliser le GPU')
-    parser.add_argument('--confidence', type=float, default=0.2, help='Seuil de confiance (défaut: 0.2)')
-
-    args = parser.parse_args()
-
-    try:
-        # Initialisation
-        processor = TrOCRProcessor(['en'], args.confidence, args.gpu)
-
-        # Chargement de l'image
-        pil_image = Image.open(args.image_path)
-
-        # Traitement
-        text, confidence = processor.get_text_and_confidence(pil_image, preprocess=True)
-        boxes = processor.get_boxes(pil_image, preprocess=True)
-
-        # Résultats
-        print(f"🔍 TrOCR - Image: {args.image_path}")
-        print(f"📊 Résultats: {len(boxes)} textes détectés")
-        print(f"🎯 Confiance: {confidence:.3f}")
-        print(f"📝 Texte: {text[:100]}{'...' if len(text) > 100 else ''}")
-
-        if boxes:
-            print("\n📦 Textes détectés:")
-            for i, box in enumerate(boxes[:10], 1):  # Limiter à 10 premiers
-                print(f"  {i:2d}. {box['text'][:50]}{'...' if len(box['text']) > 50 else ''}")
+            for i, box in enumerate(boxes, 1):  # Afficher tous
+                print(f"  {i:2d}. {box['text']}")
 
     except Exception as e:
         print(f"❌ Erreur: {e}")

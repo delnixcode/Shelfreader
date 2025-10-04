@@ -91,18 +91,18 @@ class EasyOCRProcessor:
     # === INTERFACES PUBLIQUES ===
     def get_text_and_confidence(self, pil_image, preprocess=True):
         """Extrait le texte et la confiance moyenne."""
-        results = self.detect_text(pil_image, preprocess=preprocess)
+        boxes = self.get_boxes(pil_image, preprocess=preprocess)
 
-        texts = [r[1] for r in results]
-        confidences = [r[2] for r in results]
+        texts = [b['text'] for b in boxes]
+        confidences = [b['confidence'] for b in boxes]
 
-        full_text = ' '.join(texts)
+        full_text = ' | '.join(texts)  # Séparer par | pour les livres
         avg_confidence = sum(confidences) / len(confidences) if confidences else 0.0
 
         return full_text, avg_confidence
 
     def get_boxes(self, pil_image, preprocess=True, vertical_only=False):
-        """Extrait les boîtes de texte avec coordonnées."""
+        """Extrait les boîtes de texte avec coordonnées, groupées par livre."""
         results = self.detect_text(pil_image, preprocess=preprocess)
 
         boxes = []
@@ -125,12 +125,55 @@ class EasyOCRProcessor:
                 "x": x, "y": y,
                 "width": width, "height": height,
                 "font_size": font_size,
-                "is_vertical": is_vertical
+                "is_vertical": is_vertical,
+                "confidence": confidence
             })
+
+        # Grouper les boîtes par position horizontale (même livre)
+        if boxes:
+            # Trier par x croissant
+            boxes.sort(key=lambda b: b['x'])
+
+            grouped_boxes = []
+            current_group = [boxes[0]]
+            group_x_threshold = 50  # pixels de tolérance horizontale
+
+            for box in boxes[1:]:
+                # Si la différence x est petite, ajouter au groupe
+                if abs(box['x'] - current_group[-1]['x']) < group_x_threshold:
+                    current_group.append(box)
+                else:
+                    # Nouveau groupe
+                    grouped_boxes.append(current_group)
+                    current_group = [box]
+
+            # Ajouter le dernier groupe
+            grouped_boxes.append(current_group)
+
+            # Pour chaque groupe, trier par y et combiner les textes
+            final_boxes = []
+            for group in grouped_boxes:
+                if len(group) == 1:
+                    final_boxes.append(group[0])
+                else:
+                    # Trier le groupe par y croissant (haut en bas)
+                    group.sort(key=lambda b: b['y'])
+                    combined_text = ' '.join([b['text'] for b in group])
+                    # Utiliser la première boîte comme base
+                    combined_box = group[0].copy()
+                    combined_box['text'] = combined_text
+                    combined_box['width'] = max([b['x'] + b['width'] for b in group]) - min([b['x'] for b in group])
+                    combined_box['height'] = max([b['y'] + b['height'] for b in group]) - min([b['y'] for b in group])
+                    # Confiance moyenne
+                    combined_box['confidence'] = sum([b['confidence'] for b in group]) / len(group)
+                    final_boxes.append(combined_box)
+
+            boxes = final_boxes
 
         return boxes
 
 # === SCRIPT PRINCIPAL ===
+if __name__ == "__main__":
     """
     Point d'entrée pour tester EasyOCR directement.
     Usage: python ocr_easyocr.py <image_path> [--gpu]
@@ -143,6 +186,7 @@ class EasyOCRProcessor:
     parser.add_argument('image_path', help='Chemin vers l\'image à analyser')
     parser.add_argument('--gpu', action='store_true', help='Utiliser le GPU')
     parser.add_argument('--confidence', type=float, default=0.2, help='Seuil de confiance (défaut: 0.2)')
+    parser.add_argument('--output', type=str, help='Préfixe des fichiers de sortie (défaut: detected_book)')
 
     args = parser.parse_args()
 
@@ -161,12 +205,31 @@ class EasyOCRProcessor:
         print(f"🔍 EasyOCR - Image: {args.image_path}")
         print(f"📊 Résultats: {len(boxes)} textes détectés")
         print(f"🎯 Confiance moyenne: {confidence:.3f}")
-        print(f"📝 Texte: {text[:100]}{'...' if len(text) > 100 else ''}")
+        print(f"📝 Texte complet: {text}")
+
+        # Sauvegarder dans des fichiers séparés
+        output_prefix = args.output if args.output else 'detected_book'
+        summary_file = f"{output_prefix}_summary.txt"
+        with open(summary_file, 'w', encoding='utf-8') as f:
+            f.write(f"Image: {args.image_path}\n")
+            f.write(f"Nombre de textes détectés: {len(boxes)}\n")
+            f.write(f"Confiance moyenne: {confidence:.3f}\n")
+            f.write(f"Texte détecté:\n{text}\n")
+        print(f"💾 Résumé sauvegardé dans {summary_file}")
+
+        if boxes:
+            for i, box in enumerate(boxes, 1):
+                book_file = f"{output_prefix}_{i}.txt"
+                with open(book_file, 'w', encoding='utf-8') as f:
+                    f.write(f"Livre {i}\n")
+                    f.write(f"Confiance: {box['confidence']:.3f}\n")
+                    f.write(f"Texte: {box['text']}\n")
+                print(f"💾 Livre {i} sauvegardé dans {book_file}")
 
         if boxes:
             print("\n📦 Textes détectés:")
-            for i, box in enumerate(boxes[:10], 1):  # Limiter à 10 premiers
-                print(f"  {i:2d}. {box['text'][:50]}{'...' if len(box['text']) > 50 else ''}")
+            for i, box in enumerate(boxes, 1):  # Afficher tous
+                print(f"  {i:2d}. {box['text']}")
 
     except Exception as e:
         print(f"❌ Erreur: {e}")

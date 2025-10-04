@@ -119,6 +119,10 @@ python src/ocr_easyocr.py test_images/books1.jpg --gpu --preprocess --vertical-o
 
 # Avec seuil de confiance personnalisé
 python src/ocr_easyocr.py test_images/books1.jpg --gpu --confidence 0.3
+
+# Sauvegarder les résultats dans des fichiers séparés
+python src/ocr_easyocr.py test_images/books1.jpg --gpu --confidence 0.1 --output detected_books
+# Crée detected_books_summary.txt et detected_books_1.txt, detected_books_2.txt, etc.
 ```
 
 #### **Tesseract (Classique)**

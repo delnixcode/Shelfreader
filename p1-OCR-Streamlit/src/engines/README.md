@@ -14,16 +14,18 @@ ShelfReader utilise une architecture modulaire avec **3 moteurs OCR spécialisé
 src/engines/
 ├── easyocr/           # Moteur EasyOCR spécialisé tranches
 │   ├── README.md      # Documentation complète
-│   ├── processor.py   # Classe principale
-│   ├── config.py      # Paramètres et configuration
+│   ├── __init__.py    # Point d'entrée du module
+│   ├── main.py        # Script principal de test
+│   ├── logic/         # Logique métier (orchestrator, config)
+│   ├── models/        # Structures de données
 │   ├── preprocessing/ # Amélioration d'images
 │   ├── detection/     # Algos détection texte
-│   ├── grouping/      # Regroupement résultats
-│   └── models/        # Classes de données
+│   └── grouping/      # Regroupement résultats
 ├── tesseract/         # Moteur Tesseract rapide
 │   ├── README.md      # Documentation complète
-│   ├── processor.py   # Classe principale
-│   ├── config.py      # Configurations PSM
+│   ├── __init__.py    # Point d'entrée du module
+│   ├── main.py        # Script principal de test
+│   ├── logic/         # Logique métier (orchestrator, config)
 │   ├── preprocessing/ # CLAHE et filtres
 │   └── grouping/      # Regroupement proximité
 ├── trocr/            # Moteur TrOCR manuscrit
@@ -39,7 +41,7 @@ src/engines/
 ## 🎯 Architecture de Chaque Moteur
 
 ### Composants Standards
-1. **`processor.py`** - Orchestrateur principal du pipeline OCR
+1. **`orchestrator.py`** - Orchestrateur principal du pipeline OCR
 2. **`config.py`** - Paramètres et constantes spécifiques
 3. **`preprocessing/`** - Amélioration qualité des images
 4. **`detection/`** - Détection régions de texte (optionnel)

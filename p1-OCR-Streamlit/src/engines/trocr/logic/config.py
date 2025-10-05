@@ -1,3 +1,8 @@
+# DÉPENDANCES:
+#   - Utilise: Aucun (fichier de constantes)
+#   - Importe: Aucun
+#   - Utilisé par: orchestrator.py, __init__.py
+
 """
 ShelfReader - TrOCR Configuration
 Constantes et paramètres de configuration pour TrOCR.

@@ -1,3 +1,8 @@
+# DÉPENDANCES:
+#   - Utilise: detection/spine_detection.py, logic/config.py
+#   - Importe: numpy
+#   - Utilisé par: logic/orchestrator.py
+
 """
 ShelfReader - EasyOCR Text Grouping
 Module de regroupement intelligent des textes détectés.
@@ -5,7 +10,7 @@ Module de regroupement intelligent des textes détectés.
 
 import numpy as np
 from ..detection.spine_detection import EasyOCRSpineDetection
-from ..config import (
+from ..logic.config import (
     MIN_SPINE_LINES_THRESHOLD, HORIZONTAL_GROUP_THRESHOLD_BASE,
     ADAPTIVE_THRESHOLD_MIN, ADAPTIVE_THRESHOLD_MAX,
     FONT_SIZE_RATIO_STRICT, FONT_SIZE_RATIO_TOLERANT,

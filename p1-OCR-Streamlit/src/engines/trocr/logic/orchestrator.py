@@ -1,3 +1,8 @@
+# DÉPENDANCES:
+#   - Utilise: config.py, preprocessing/image_preprocessing.py, detection/text_detection.py, grouping/text_grouping.py
+#   - Importe: torch, numpy, transformers, typing, logging
+#   - Utilisé par: __init__.py, main.py
+
 """
 ShelfReader - TrOCR Processor
 Processeur principal pour TrOCR.
@@ -10,9 +15,9 @@ from typing import List, Dict, Any, Optional
 import logging
 
 from .config import *
-from .preprocessing.image_preprocessing import TrOCRImagePreprocessor
-from .detection.text_detection import TrOCRTextDetector
-from .grouping.text_grouping import TrOCRTextGrouper
+from ..preprocessing.image_preprocessing import TrOCRImagePreprocessor
+from ..detection.text_detection import TrOCRTextDetector
+from ..grouping.text_grouping import TrOCRTextGrouper
 
 logger = logging.getLogger(__name__)
 

@@ -1,3 +1,8 @@
+# DÉPENDANCES:
+#   - Utilise: __init__.py (import du moteur), engines.easyocr (module parent)
+#   - Importe: argparse, sys, os, cv2, time, pathlib, PIL, json
+#   - Utilisé par: Utilisateur final (script exécutable)
+
 #!/usr/bin/env python3
 """
 ShelfReader - EasyOCR Engine Main Script

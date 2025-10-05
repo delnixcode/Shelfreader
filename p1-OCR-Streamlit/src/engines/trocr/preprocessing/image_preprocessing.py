@@ -1,3 +1,8 @@
+# DÉPENDANCES:
+#   - Utilise: Aucun (préparation simple)
+#   - Importe: cv2, numpy, PIL, torch, transformers
+#   - Utilisé par: logic/orchestrator.py
+
 """
 ShelfReader - TrOCR Image Preprocessing
 Préparation des images pour TrOCR.

@@ -1,3 +1,8 @@
+# DÉPENDANCES:
+#   - Utilise: __init__.py (import du moteur), engines.trocr (module parent)
+#   - Importe: argparse, sys, os, cv2, time, pathlib, PIL, json
+#   - Utilisé par: Utilisateur final (script exécutable)
+
 #!/usr/bin/env python3
 """
 ShelfReader - TrOCR Engine Main Script

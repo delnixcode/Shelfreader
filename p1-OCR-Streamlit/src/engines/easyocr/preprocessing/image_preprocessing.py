@@ -1,3 +1,8 @@
+# DÉPENDANCES:
+#   - Utilise: logic/config.py (paramètres de prétraitement)
+#   - Importe: cv2, numpy
+#   - Utilisé par: logic/orchestrator.py
+
 """
 ShelfReader - EasyOCR Image Preprocessing
 Module de prétraitement d'images pour optimiser la détection OCR.
@@ -5,7 +10,7 @@ Module de prétraitement d'images pour optimiser la détection OCR.
 
 import cv2
 import numpy as np
-from ..config import (
+from ..logic.config import (
     CLAHE_CLIP_LIMIT, CLAHE_TILE_GRID_SIZE,
     BILATERAL_D, BILATERAL_SIGMA_COLOR, BILATERAL_SIGMA_SPACE,
     GAUSSIAN_SIGMA, ADAPTIVE_BLOCK_SIZE, ADAPTIVE_C

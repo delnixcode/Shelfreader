@@ -1,3 +1,8 @@
+# DÉPENDANCES:
+#   - Utilise: Aucun (détection simple)
+#   - Importe: cv2, numpy, typing
+#   - Utilisé par: logic/orchestrator.py
+
 """
 ShelfReader - TrOCR Text Detection
 Détection et segmentation du texte pour TrOCR.

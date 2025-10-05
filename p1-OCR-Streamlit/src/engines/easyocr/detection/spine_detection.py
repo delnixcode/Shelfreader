@@ -1,3 +1,8 @@
+# DÉPENDANCES:
+#   - Utilise: models/line.py, logic/config.py
+#   - Importe: cv2, numpy, scipy.ndimage, scipy.stats
+#   - Utilisé par: logic/orchestrator.py
+
 """
 ShelfReader - EasyOCR Spine Detection
 Module de détection des lignes de séparation entre livres (tranches).
@@ -8,7 +13,7 @@ import numpy as np
 import scipy.ndimage
 import scipy.stats
 from ..models.line import Line
-from ..config import (
+from ..logic.config import (
     DOWNSAMPLE_FACTOR, GAUSSIAN_BLUR_SIGMA, BINARIZE_CUTOFF_FACTOR,
     VERTICAL_ERODE_LENGTH, VERTICAL_ERODE_ITERATIONS,
     VERTICAL_DILATE_LENGTH, VERTICAL_DILATE_ITERATIONS,

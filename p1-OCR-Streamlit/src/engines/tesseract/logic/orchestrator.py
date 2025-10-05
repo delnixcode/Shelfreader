@@ -1,3 +1,8 @@
+# DÉPENDANCES:
+#   - Utilise: preprocessing/image_preprocessing.py, grouping/text_grouping.py, config.py
+#   - Importe: numpy, cv2 (opencv), PIL (Pillow), pytesseract
+#   - Utilisé par: __init__.py, main.py
+
 """
 ShelfReader - Tesseract OCR Processor
 Processeur OCR spécialisé pour Tesseract.
@@ -8,8 +13,8 @@ import cv2
 from PIL import Image
 import pytesseract
 from pytesseract import Output
-from .preprocessing.image_preprocessing import TesseractPreprocessing
-from .grouping.text_grouping import TesseractTextGrouping
+from ..preprocessing.image_preprocessing import TesseractPreprocessing
+from ..grouping.text_grouping import TesseractTextGrouping
 from .config import PSM_CONFIGS, MAX_RESULTS, MIN_TEXT_LENGTH
 
 

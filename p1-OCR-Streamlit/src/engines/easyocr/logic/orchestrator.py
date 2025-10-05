@@ -1,3 +1,8 @@
+# DÉPENDANCES:
+#   - Utilise: preprocessing/image_preprocessing.py, detection/spine_detection.py, grouping/text_grouping.py, config.py
+#   - Importe: numpy, cv2 (opencv), PIL (Pillow)
+#   - Utilisé par: __init__.py, main.py
+
 """
 ShelfReader - EasyOCR Processor
 Processeur OCR spécialisé pour EasyOCR avec détection de tranches.
@@ -6,9 +11,9 @@ Processeur OCR spécialisé pour EasyOCR avec détection de tranches.
 import numpy as np
 import cv2
 from PIL import Image
-from .preprocessing.image_preprocessing import EasyOCRPreprocessing
-from .detection.spine_detection import EasyOCRSpineDetection
-from .grouping.text_grouping import EasyOCRTextGrouping
+from ..preprocessing.image_preprocessing import EasyOCRPreprocessing
+from ..detection.spine_detection import EasyOCRSpineDetection
+from ..grouping.text_grouping import EasyOCRTextGrouping
 from .config import (
     OCR_WIDTH_THS, OCR_HEIGHT_THS, OCR_CONTRAST_THS,
     OCR_ADJUST_CONTRAST, OCR_TEXT_THRESHOLD, OCR_LINK_THRESHOLD

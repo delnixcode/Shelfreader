@@ -1,3 +1,8 @@
+# DÉPENDANCES:
+#   - Utilise: Aucun (regroupement simple)
+#   - Importe: typing
+#   - Utilisé par: logic/orchestrator.py
+
 """
 ShelfReader - TrOCR Text Grouping
 Regroupement du texte extrait par TrOCR.

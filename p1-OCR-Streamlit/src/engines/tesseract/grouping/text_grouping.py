@@ -1,3 +1,8 @@
+# DÉPENDANCES:
+#   - Utilise: Aucun (regroupement simple)
+#   - Importe: Aucun
+#   - Utilisé par: logic/orchestrator.py
+
 """
 ShelfReader - Tesseract Text Grouping
 Module de regroupement simple pour Tesseract.

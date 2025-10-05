@@ -4,12 +4,16 @@
 
 1. **Activer l'environnement virtuel :**
    ```bash
+   # Linux/macOS
    source env-p1/bin/activate
+   
+   # Windows
+   env-p1\Scripts\activate
    ```
 
 2. **Lancer l'application web :**
    ```bash
-   ./run_streamlit.sh
+   streamlit run src/app.py
    ```
 
 3. **Ouvrir dans votre navigateur :**
@@ -44,7 +48,7 @@ Si l'application ne démarre pas :
 pip install -r requirements.txt
 
 # Relancer
-./run_streamlit.sh
+streamlit run src/app.py
 ```
 
 ## 📊 Résultats attendus

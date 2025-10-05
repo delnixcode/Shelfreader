@@ -114,8 +114,13 @@ env-p1\Scripts\activate     # Windows
 
 #### **🖥️ Interface Web (Recommandé pour débuter)**
 ```bash
-# Lancement automatique
-./run_streamlit.sh
+# Linux/macOS
+source env-p1/bin/activate
+streamlit run src/app.py
+
+# Windows
+env-p1\Scripts\activate
+streamlit run src/app.py
 
 # Puis ouvrir: http://localhost:8501
 ```
@@ -211,11 +216,14 @@ ShelfReader propose une interface web moderne et intuitive pour analyser vos ima
 
 ### **Démarrage rapide**
 ```bash
-# Méthode 1: Script automatique (recommandé)
-./run_streamlit.sh
-
-# Méthode 2: Lancement manuel
+# Linux/macOS
+cd p1-MVP-Desktop
 source env-p1/bin/activate
+streamlit run src/app.py
+
+# Windows
+cd p1-MVP-Desktop
+env-p1\Scripts\activate
 streamlit run src/app.py
 ```
 

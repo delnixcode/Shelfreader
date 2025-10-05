@@ -115,85 +115,83 @@ def display_results(results, processing_time, enriched_books=None):
 
     with col_center:
         # Métriques principales
-            st.subheader("📊 Résultats de l'analyse")
-            col1, col2, col3, col4 = st.columns(4)
-    
+        st.subheader("📊 Résultats de l'analyse")
+        col1, col2, col3, col4 = st.columns(4)
+
         with col1:
             st.metric("📚 Livres détectés", len(books))
-    
+
         with col2:
             avg_confidence = np.mean([book.get('confidence', 0) for book in books]) if books else 0
             st.metric("🎯 Confiance moyenne", f"{avg_confidence:.1%}")
-    
+
         with col3:
             st.metric("⚡ Temps de traitement", f"{processing_time:.2f}s")
-    
+
         with col4:
             enriched_count = sum(1 for book in books if book.get('enriched', False))
             st.metric("📚 Enrichis Open Library", f"{enriched_count}/{len(books)}")
 
-    st.markdown("---")
+        st.markdown("---")
 
-    # Affichage détaillé des livres
-    st.subheader("📖 Livres détectés")
+        # Affichage détaillé des livres
+        st.subheader("📖 Livres détectés")
 
-    if books:
-        # Créer un DataFrame pour l'affichage
-        books_data = []
-        for i, book in enumerate(books, 1):
-            enriched = book.get('enriched', False)
-            year = book.get('openlibrary_year', 'N/A') if enriched else 'N/A'
-            # Convertir l'année en string pour éviter les problèmes de type
-            year_str = str(year) if year != 'N/A' else 'N/A'
+        if books:
+            # Créer un DataFrame pour l'affichage
+            books_data = []
+            for i, book in enumerate(books, 1):
+                enriched = book.get('enriched', False)
+                year = book.get('openlibrary_year', 'N/A') if enriched else 'N/A'
+                # Convertir l'année en string pour éviter les problèmes de type
+                year_str = str(year) if year != 'N/A' else 'N/A'
 
-            books_data.append({
-                "N°": i,
-                "Titre OCR": book.get('text', 'N/A'),
-                "Titre OL": book.get('openlibrary_title', 'N/A') if enriched else 'Non enrichi',
-                "Auteur": book.get('openlibrary_author', 'N/A') if enriched else 'N/A',
-                "Année": year_str,
-                "Confiance": f"{book.get('confidence', 0):.1%}",
-                "Enrichi": "✅" if enriched else "❌"
-            })
+                books_data.append({
+                    "N°": i,
+                    "Titre OCR": book.get('text', 'N/A'),
+                    "Titre OL": book.get('openlibrary_title', 'N/A') if enriched else 'Non enrichi',
+                    "Auteur": book.get('openlibrary_author', 'N/A') if enriched else 'N/A',
+                    "Année": year_str,
+                    "Confiance": f"{book.get('confidence', 0):.1%}",
+                    "Enrichi": "✅" if enriched else "❌"
+                })
 
-        df = pd.DataFrame(books_data)
+            df = pd.DataFrame(books_data)
 
-        # Afficher le tableau en pleine largeur
-        st.dataframe(df, use_container_width=True, hide_index=True)
+            # Afficher le tableau en pleine largeur
+            st.dataframe(df, use_container_width=True, hide_index=True)
 
-        # Affichage en format carte pour plus de lisibilité
-        st.markdown("### 📋 Détails par livre")
-        for i, book in enumerate(books, 1):
-            enriched = book.get('enriched', False)
-            with st.expander(f"📖 Livre {i} - {book.get('text', 'N/A')[:50]}..."):
-                col1, col2 = st.columns(2)
+            # Affichage en format carte pour plus de lisibilité
+            st.markdown("### 📋 Détails par livre")
+            for i, book in enumerate(books, 1):
+                enriched = book.get('enriched', False)
+                with st.expander(f"📖 Livre {i} - {book.get('text', 'N/A')[:50]}..."):
+                    col1, col2 = st.columns(2)
 
-                with col1:
-                    st.write(f"**Texte OCR :** {book.get('text', 'N/A')}")
-                    st.write(f"**Confiance :** {book.get('confidence', 0):.1%}")
-                    if enriched:
-                        st.write(f"**Titre Open Library :** {book.get('openlibrary_title', 'N/A')}")
-                        st.write(f"**Auteur :** {book.get('openlibrary_author', 'N/A')}")
-                        st.write(f"**Année :** {book.get('openlibrary_year', 'N/A')}")
+                    with col1:
+                        st.write(f"**Texte OCR :** {book.get('text', 'N/A')}")
+                        st.write(f"**Confiance :** {book.get('confidence', 0):.1%}")
+                        if enriched:
+                            st.write(f"**Titre Open Library :** {book.get('openlibrary_title', 'N/A')}")
+                            st.write(f"**Auteur :** {book.get('openlibrary_author', 'N/A')}")
+                            st.write(f"**Année :** {book.get('openlibrary_year', 'N/A')}")
 
-                with col2:
-                    st.write(f"**Position :** x={book.get('x', 0)}, y={book.get('y', 0)}")
-                    st.write(f"**Dimensions :** {book.get('width', 0)}×{book.get('height', 0)} px")
-                    if enriched:
-                        cover_url = book.get('openlibrary_cover_url')
-                        if cover_url:
-                            st.image(cover_url, width=100, caption="Couverture")
-                        else:
-                            st.write("🖼️ *Pas de couverture disponible*")
+                    with col2:
+                        st.write(f"**Position :** x={book.get('x', 0)}, y={book.get('y', 0)}")
+                        st.write(f"**Dimensions :** {book.get('width', 0)}×{book.get('height', 0)} px")
+                        if enriched:
+                            cover_url = book.get('openlibrary_cover_url')
+                            if cover_url:
+                                st.image(cover_url, width=100, caption="Couverture")
+                            else:
+                                st.write("🖼️ *Pas de couverture disponible*")
 
-                        ol_url = book.get('openlibrary_url')
-                        if ol_url:
-                            st.markdown(f"[🔗 Voir sur Open Library]({ol_url})")
+                            ol_url = book.get('openlibrary_url')
+                            if ol_url:
+                                st.markdown(f"[🔗 Voir sur Open Library]({ol_url})")
 
-    else:
-        st.warning("⚠️ Aucun livre détecté dans cette image")
-
-# Fonction pour enrichir les résultats OCR avec Open Library
+        else:
+            st.warning("⚠️ Aucun livre détecté dans cette image")
 def enrich_books_with_openlibrary(books, client):
     """Enrichit les résultats OCR avec des informations de Open Library"""
     enriched_books = []

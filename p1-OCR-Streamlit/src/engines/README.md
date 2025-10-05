@@ -53,6 +53,29 @@ process_image(image: np.ndarray) -> List[Dict[str, Any]]
 get_model_info() -> Dict[str, Any]
 ```
 
+## 🔍 Détails par Moteur
+
+### 1. EasyOCR Engine
+**Spécialisation** : Tranches de livres, texte vertical, multi-langues
+- **Prétraitement** : Amélioration contraste, réduction bruit
+- **Détection** : Algorithmes SHELFIE + ICCV2013
+- **Regroupement** : Adaptatif basé sur proximité et orientation
+- **Avantages** : Haute précision (93%), robustesse images bruitées
+
+### 2. Tesseract Engine
+**Spécialisation** : Texte imprimé standard, traitement rapide
+- **Prétraitement** : CLAHE, binarisation optimale
+- **Configuration** : Modes PSM (Page Segmentation Mode)
+- **Regroupement** : Par proximité des boîtes
+- **Avantages** : Ultra-rapide (CPU), faible consommation
+
+### 3. TrOCR Engine
+**Spécialisation** : Texte manuscrit, documents historiques
+- **Prétraitement** : Conversion RGB, segmentation bandes
+- **Modèle** : Transformers (microsoft/trocr-base-handwritten)
+- **Génération** : Beam search avec paramètres optimisés
+- **Avantages** : Excellente reconnaissance manuscrit
+
 ## 🚀 Utilisation Rapide
 
 ```bash
@@ -76,14 +99,42 @@ python main.py ../../../../test_images/books1.jpg --device cuda
 - ✅ **Évolution indépendante** possible
 - ✅ **Tests unitaires** facilités
 
+## 🎯 Avantages de l'Architecture
+
+### Indépendance Totale
+- Chaque moteur peut évoluer indépendamment
+- Pas de conflits de dépendances entre moteurs
+- Maintenance facilitée par moteur
+
+### Modularité Interne
+- Code organisé par responsabilité
+- Facilite les tests unitaires
+- Améliore la lisibilité et la maintenabilité
+
+### Évolutivité
+- Ajout de nouveaux moteurs facile
+- Modification d'un moteur sans impact sur les autres
+- Possibilité de versions différentes par moteur
+
+## 📊 Comparaison des Moteurs
+
+| Critère | EasyOCR | Tesseract | TrOCR |
+|---------|---------|-----------|-------|
+| **Précision** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ |
+| **Vitesse** | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐ |
+| **GPU Support** | ✅ | ❌ | ✅ |
+| **Texte imprimé** | ✅ | ✅ | ⚠️ |
+| **Texte manuscrit** | ⚠️ | ❌ | ✅ |
+| **Multi-langues** | ✅ | ✅ | ⚠️ |
+| **Installation** | Simple | Système | Modèle lourd |
+
 ## 📚 Documentation
 
 Chaque moteur possède sa propre documentation complète :
-- [📖 EasyOCR](easyocr/README.md) - Architecture, commandes, exemples
-- [📖 Tesseract](tesseract/README.md) - Configuration PSM, benchmarks
-- [� TrOCR](trocr/README.md) - Paramètres génération, cas d'usage
+- [📖 EasyOCR](easyocr/README.md) - Architecture, commandes, exemples détaillés
+- [📖 Tesseract](tesseract/README.md) - Configuration PSM, benchmarks, prérequis
+- [📖 TrOCR](trocr/README.md) - Paramètres génération, cas d'usage, optimisations
 
 ---
 
-*Architecture modulaire OCR - ShelfReader P1*</content>
-<parameter name="filePath">/home/delart/Documents/dev/python/Shelfreader/p1-OCR-Streamlit/src/engines/globale-explanation.md
+*Architecture modulaire OCR - ShelfReader P1*

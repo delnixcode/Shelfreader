@@ -1,65 +1,57 @@
-=== RÉSULTATS OCR - test_images/books1.jpg ===
-Date: 2025-10-04 05:35:46
-Nombre de textes détectés: 14
-Confiance moyenne: 0.807
+=== RÉSULTATS OCR - test_images/books6.png ===
+Date: 2025-10-04 20:23:49
+Nombre de textes détectés: 12
+Confiance moyenne: 0.772
 
 TEXTE COMPLET:
-0 1 . | 1st | 5 1 . | n. | sut . | 5th | 0 1 | 2 . | 0 1 | 5th | 0 1 | 0 . | sfi | will be signed
+1st | 2 . | 1 . | to | 1 . | 1 1 | 2 . | fi | K _ | 1 . | 0 1 | 2 1
 
 DÉTAIL PAR LIVRE:
 
 --- Livre 1 ---
-Confiance: 0.940
-Texte: 0 1 .
-
---- Livre 2 ---
-Confiance: 0.993
+Confiance: 0.772
 Texte: 1st
 
---- Livre 3 ---
-Confiance: 0.730
-Texte: 5 1 .
-
---- Livre 4 ---
-Confiance: 0.875
-Texte: n.
-
---- Livre 5 ---
-Confiance: 0.667
-Texte: sut .
-
---- Livre 6 ---
-Confiance: 0.967
-Texte: 5th
-
---- Livre 7 ---
-Confiance: 0.823
-Texte: 0 1
-
---- Livre 8 ---
-Confiance: 0.950
+--- Livre 2 ---
+Confiance: 0.576
 Texte: 2 .
 
+--- Livre 3 ---
+Confiance: 0.869
+Texte: 1 .
+
+--- Livre 4 ---
+Confiance: 0.987
+Texte: to
+
+--- Livre 5 ---
+Confiance: 0.637
+Texte: 1 .
+
+--- Livre 6 ---
+Confiance: 0.705
+Texte: 1 1
+
+--- Livre 7 ---
+Confiance: 0.596
+Texte: 2 .
+
+--- Livre 8 ---
+Confiance: 0.977
+Texte: fi
+
 --- Livre 9 ---
-Confiance: 0.606
-Texte: 0 1
+Confiance: 0.992
+Texte: K _
 
 --- Livre 10 ---
-Confiance: 0.850
-Texte: 5th
+Confiance: 0.984
+Texte: 1 .
 
 --- Livre 11 ---
-Confiance: 0.736
+Confiance: 0.538
 Texte: 0 1
 
 --- Livre 12 ---
-Confiance: 0.744
-Texte: 0 .
-
---- Livre 13 ---
-Confiance: 0.692
-Texte: sfi
-
---- Livre 14 ---
-Confiance: 0.726
-Texte: will be signed
+Confiance: 0.633
+Texte: 2 1

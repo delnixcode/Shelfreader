@@ -1,0 +1,8 @@
+=== RÉSULTATS OCR - test_images/books6.png ===
+Date: 2025-10-04 20:24:06
+Nombre de textes détectés: 0
+Confiance moyenne: 0.000
+
+TEXTE COMPLET:
+
+

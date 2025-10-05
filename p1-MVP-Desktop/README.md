@@ -100,9 +100,29 @@ source env-p1/bin/activate  # Linux/macOS
 env-p1\Scripts\activate     # Windows
 ```
 
-### **Étape 2 : Tester avec une image d'exemple**
+### **Démarrage rapide (3 étapes)**
+
+### **Étape 1 : Activer l'environnement**
 ```bash
-# Cette commande analyse une photo d'exemple
+# Toujours faire ça au début
+source env-p1/bin/activate  # Linux/macOS
+# ou
+env-p1\Scripts\activate     # Windows
+```
+
+### **Étape 2 : Choisir votre interface**
+
+#### **🖥️ Interface Web (Recommandé pour débuter)**
+```bash
+# Lancement automatique
+./run_streamlit.sh
+
+# Puis ouvrir: http://localhost:8501
+```
+
+#### **💻 Ligne de commande (Pour experts)**
+```bash
+# Test rapide avec image d'exemple
 python src/ocr_easyocr.py test_images/books1.jpg --gpu --confidence 0.3
 ```
 
@@ -112,8 +132,13 @@ python src/ocr_easyocr.py test_images/books1.jpg --gpu --confidence 0.3
 📊 Résultats: 14 livres détectés (93% de précision)
 🎯 Confiance moyenne: 93.3%
 🧮 Seuil adaptatif calculé: 13.4px
-📝 Texte détecté: Ada 95 | KERNICHAN THE SECOND EDITION PTR | ...
 ```
+
+### **Étape 3 : Analyser vos propres images**
+- **Interface web** : Uploadez votre image via le navigateur
+- **Ligne de commande** : `python src/ocr_easyocr.py votre_image.jpg --gpu`
+
+**🎉 Félicitations !** Vous venez d'analyser votre première étagère de livres !
 
 ### **Étape 3 : Voir les résultats**
 Les résultats sont automatiquement sauvegardés dans le dossier `result-ocr/`.
@@ -182,22 +207,44 @@ done
 
 ## 🎨 **Interface web**
 
-Pour une utilisation plus simple, ShelfReader propose une interface web moderne.
+ShelfReader propose une interface web moderne et intuitive pour analyser vos images d'étagères.
 
-### **Démarrage**
+### **Démarrage rapide**
 ```bash
-# Lancer l'interface web
+# Méthode 1: Script automatique (recommandé)
+./run_streamlit.sh
+
+# Méthode 2: Lancement manuel
+source env-p1/bin/activate
 streamlit run src/app.py
 ```
 
 Puis ouvrir http://localhost:8501 dans votre navigateur.
 
 ### **Fonctionnalités**
-- 📤 **Glisser-déposer** : Déposez vos photos directement
-- ⚙️ **Configuration** : Réglages simples pour l'analyse
-- 👁️ **Aperçu** : Visualisez les zones détectées
-- 📊 **Résultats** : Tableaux clairs des livres trouvés
-- 💾 **Téléchargement** : Exportez les résultats
+- 📤 **Upload intuitif** : Glissez-déposez vos photos directement
+- ⚙️ **Paramètres avancés** : Réglages du seuil de confiance et GPU
+- 👁️ **Visualisation temps réel** : Aperçu des zones détectées sur l'image
+- 📊 **Résultats détaillés** : Tableaux et métriques de performance
+- 💾 **Export automatique** : Résultats sauvegardés dans `result-ocr/`
+- 🎯 **Algorithme optimisé** : Utilise automatiquement l'OCR adaptatif (93% précision)
+
+### **Interface utilisateur**
+- **Colonne gauche** : Informations sur l'algorithme et paramètres
+- **Zone centrale** : Upload d'image et paramètres de traitement
+- **Résultats** : Métriques, visualisation et détails par livre
+
+### **Avantages de l'interface web**
+- ✅ **Plus simple** : Pas besoin de commandes complexes
+- ✅ **Visuel** : Aperçu immédiat des résultats
+- ✅ **Interactif** : Ajustement des paramètres en temps réel
+- ✅ **Complet** : Toutes les fonctionnalités disponibles
+
+### **Quand utiliser la ligne de commande**
+- 🔧 **Automatisation** : Scripts et traitement par lots
+- ⚡ **Performance** : Traitement direct sans interface
+- 🔄 **Intégration** : Utilisation dans d'autres programmes
+- 📊 **Batch processing** : Traitement de plusieurs images
 
 ---
 

@@ -28,6 +28,17 @@ Développer une suite d'applications capables de reconnaître automatiquement le
 
 ---
 
+## 🔗 **Accès Direct aux Phases**
+
+| Phase | Dossier | Description | Documentation | État |
+|-------|---------|-------------|---------------|------|
+| **P1** | [p1-OCR-Streamlit](./p1-OCR-Streamlit) | MVP Desktop avec Streamlit, 3 moteurs OCR | [README P1](./p1-OCR-Streamlit/README.md) | 🔄 EN COURS |
+| **P2** | [p2-Enhanced-Desktop](./p2-Enhanced-Desktop) | Desktop avancé, détection YOLOv8 | [README P2](./p2-Enhanced-Desktop/README.md) | 🔄 EN COURS |
+| **P3** | [p3-Mobile-Static](./p3-Mobile-Static) | Application mobile statique | [README P3](./p3-Mobile-Static/README.md) | ⏳ PLANIFIÉ |
+| **P4** | [p4-Mobile-Real-time](./p4-Mobile-Real-time) | Application mobile temps réel | [README P4](./p4-Mobile-Real-time/README.md) | ⏳ PLANIFIÉ |
+
+---
+
 ## 🏗️ **Architecture - 4 Phases Évolutives**
 
 ```

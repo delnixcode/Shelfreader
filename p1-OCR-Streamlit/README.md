@@ -143,53 +143,72 @@ ShelfReader P1 utilise une **architecture modulaire** permettant le développeme
 p1-OCR-Streamlit/
 ├── src/                          # Code source principal
 │   ├── __init__.py              # Package Python
-│   ├── core/                    # Noyau de l'application
-│   │   ├── __init__.py          # Package core
+│   ├── core/                    # Noyau de l'application (CLI, config)
+│   │   ├── __init__.py
 │   │   └── cli.py               # Interface ligne de commande
 │   ├── engines/                 # Moteurs OCR
-│   │   ├── __init__.py          # Package engines
-│   │   ├── easyocr_engine.py    # Moteur EasyOCR avancé
+│   │   ├── __init__.py
+│   │   ├── easyocr_engine.py    # Moteur EasyOCR
 │   │   ├── tesseract_engine.py  # Moteur Tesseract
 │   │   └── trocr_engine.py      # Moteur TrOCR
 │   ├── services/                # Services externes
-│   │   ├── __init__.py          # Package services
+│   │   ├── __init__.py
 │   │   └── openlibrary_client.py # Client API Open Library
-│   └── frontend/                # Interface utilisateur
-│       ├── __init__.py          # Package frontend
-│       └── streamlit_app.py     # Application Streamlit
+│   └── frontend/                # Interface utilisateur (Streamlit)
+│       ├── __init__.py
+│       ├── main.py              # Point d'entrée Streamlit (navigation unique)
+│       ├── app_pages/           # Pages de contenu (aucune navigation ici)
+│       │   ├── __init__.py
+│       │   ├── analysis_page.py     # show()
+│       │   └── comparison_page.py   # show()
+│       ├── components/          # Composants UI réutilisables
+│       │   ├── __init__.py
+│       │   ├── sidebar.py           # Navigation principale (radio)
+│       │   ├── analysis_sidebar.py  # Sidebar spécifique Analyse
+│       │   ├── comparison_sidebar.py# Sidebar spécifique Comparaison
+│       │   ├── results_display.py   # Listes, tableaux, stats
+│       │   └── visualization.py     # Visualisations (bbox, comparaisons)
+│       └── utils/                # Logique de traitement front
+│           ├── __init__.py
+│           ├── ocr_processing.py    # Orchestration OCR multi-moteurs
+│           └── openlibrary_enrichment.py # Enrichissement Open Library
 ├── scripts/                      # Scripts utilitaires
-│   └── ocr_detect.py            # Script de détection unifié
+│   └── ocr_detect.py
 ├── docs/                         # Documentation complète
-│   ├── README.md                # Guide utilisateur
-│   ├── P1_Architecture_Documentation.md # Architecture & Documentation
-│   ├── P1_Status_Report.md      # État d'avancement & métriques
-│   ├── Testing_Guide.md         # Guide des tests
-│   ├── Dependencies.md          # Gestion dépendances
-│   └── OCR_Code_Explanation.md  # Explication technique OCR
-├── tests/                        # Tests unitaires
-│   └── __init__.py              # Package de tests
-├── test_images/                  # Images de test
+│   ├── README.md
+│   ├── P1_Architecture_Documentation.md
+│   ├── P1_Status_Report.md
+│   ├── Testing_Guide.md
+│   ├── Dependencies.md
+│   └── OCR_Code_Explanation.md
+├── tests/
+│   └── __init__.py
+├── test_images/
 │   ├── books1.jpg
 │   └── books2.jpg
-├── requirements.txt             # Dépendances Python
-└── README.md                    # Documentation principale
+├── requirements.txt
+└── README.md
 ```
 
-### 🏗️ Architecture
+### 🏗️ Architecture (vue simplifiée)
 
 ```
 src/
-├── engines/          # Moteurs OCR
-│   ├── ocr_easyocr.py
-│   ├── ocr_tesseract.py
-│   └── ocr_trocr.py
-├── services/         # Services métier
-│   └── api_client.py
-├── frontend/         # Interface utilisateur
-│   └── app.py
-└── core/            # Noyau applicatif
-└── __init__.py
+├── engines/                  # Moteurs OCR (EasyOCR, Tesseract, TrOCR)
+├── services/                 # Intégrations externes (Open Library)
+├── frontend/
+│   ├── main.py               # Entrée Streamlit + navigation
+│   ├── app_pages/            # Pages (show())
+│   └── components/           # Sidebar, affichages, visualisations
+└── core/                     # CLI / utilitaires
 ```
+
+#### ℹ️ Note: Pourquoi `app_pages/` et pas `pages/` ?
+
+- Streamlit active automatiquement le mode multi-pages quand un dossier `pages/` existe à côté du fichier d'entrée. Cela crée un menu par défaut dans la sidebar.
+- Ici, on veut une seule navigation personnalisée (radio) gérée dans `frontend/components/sidebar.py` et orchestrée depuis `frontend/main.py`.
+- Pour désactiver l'auto-multipage et garder notre navigation, on utilise donc `app_pages/` au lieu de `pages/`.
+- Conséquence: les fichiers de `app_pages/` n'incluent aucune logique de navigation ni `st.sidebar.*`. Le contenu latéral spécifique est déplacé dans `components/analysis_sidebar.py` et `components/comparison_sidebar.py`.
 
 ### 📦 Modules
 
@@ -239,7 +258,7 @@ pip install -r requirements.txt
 
 #### 4. Lancer l'application
 ```bash
-streamlit run src/frontend/streamlit_app.py
+streamlit run src/frontend/main.py
 ```
 
 Ouvrir http://localhost:8501 dans votre navigateur.
@@ -266,7 +285,7 @@ python src/engines/easyocr_engine.py test_images/books1.jpg --gpu
 # Résultat sauvegardé automatiquement dans : result-ocr/books1_easyocr.json
 
 # OU mode interface web
-streamlit run src/frontend/streamlit_app.py
+streamlit run src/frontend/main.py
 ```
 
 <a name="configuration-avancee"></a>
@@ -355,7 +374,7 @@ python src/engines/trocr_engine.py test_images/books1.jpg --gpu
 ### 🖥️ Mode Interface Web (Pour débutants)
 Interface Streamlit intuitive avec upload et visualisation :
 ```bash
-streamlit run src/frontend/streamlit_app.py
+streamlit run src/frontend/main.py
 # Puis ouvrir http://localhost:8501
 ```
 
@@ -397,7 +416,7 @@ python scripts/compare_engines.py image_test.jpg
 ### 🌐 Interface web interactive
 
 ```bash
-streamlit run src/frontend/streamlit_app.py
+streamlit run src/frontend/main.py
 # Interface intuitive pour :
 # - Upload multiple d'images
 # - Réglages en temps réel
@@ -466,7 +485,7 @@ Options communes :
 ### 🖥️ Mode Interface Web (Débutants)
 
 ```bash
-streamlit run src/frontend/streamlit_app.py
+streamlit run src/frontend/main.py
 # Ouvrir http://localhost:8501
 ```
 

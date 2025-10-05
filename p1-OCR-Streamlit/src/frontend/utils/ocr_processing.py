@@ -51,7 +51,8 @@ class OCRProcessor:
             'TrOCR': None
         }
 
-    def get_processor(self, engine_name: str, confidence: float = 0.3, use_gpu: bool = True) -> Any:
+    def get_processor(self, engine_name: str, confidence: float = 0.3, use_gpu: bool = True, 
+                      advanced_params: Dict = None) -> Any:
         """
         Récupère ou crée un processeur OCR pour le moteur spécifié.
 
@@ -59,6 +60,7 @@ class OCRProcessor:
             engine_name (str): Nom du moteur ('EasyOCR', 'Tesseract', 'TrOCR')
             confidence (float): Seuil de confiance pour le filtrage (0.0-1.0)
             use_gpu (bool): Utilisation du GPU si disponible
+            advanced_params (Dict): Paramètres avancés spécifiques au moteur
 
         Returns:
             Any: Instance du processeur OCR approprié
@@ -69,21 +71,51 @@ class OCRProcessor:
         if engine_name not in self.engines:
             raise ValueError(f"Moteur OCR inconnu : {engine_name}")
 
-        if self.engines[engine_name] is None:
-            if engine_name == 'EasyOCR':
-                self.engines[engine_name] = EasyOCRProcessor(['en'], confidence, use_gpu)
-            elif engine_name == 'Tesseract':
-                self.engines[engine_name] = TesseractOCRProcessor('eng', confidence, use_gpu)
-            elif engine_name == 'TrOCR':
-                # TrOCR only needs device argument, not languages/confidence/use_gpu
+        # Toujours créer une nouvelle instance pour s'assurer que les paramètres sont à jour
+        # (notamment le seuil de confiance qui peut changer dynamiquement)
+        if engine_name == 'EasyOCR':
+            # Utiliser les paramètres avancés si disponibles
+            if advanced_params:
+                languages = advanced_params.get('languages', ['en'])
+                conf_threshold = advanced_params.get('confidence', confidence)
+                gpu = advanced_params.get('use_gpu', use_gpu)
+            else:
+                languages = ['en']
+                conf_threshold = confidence
+                gpu = use_gpu
+            
+            processor = EasyOCRProcessor(languages, conf_threshold, gpu)
+            
+        elif engine_name == 'Tesseract':
+            # Utiliser les paramètres avancés si disponibles
+            if advanced_params:
+                lang = advanced_params.get('lang', 'eng')
+                conf_threshold = advanced_params.get('confidence', confidence)
+            else:
+                lang = 'eng'
+                conf_threshold = confidence
+            
+            # Tesseract utilise des confiances en pourcentage (0-100), convertir le seuil
+            processor = TesseractOCRProcessor(lang, conf_threshold * 100, False)  # Convertir en pourcentage
+            
+        elif engine_name == 'TrOCR':
+            # Utiliser les paramètres avancés si disponibles
+            if advanced_params:
+                device = advanced_params.get('device', 'auto')
+            else:
                 device = 'cuda' if use_gpu else 'cpu'
-                self.engines[engine_name] = ShelfReaderTrOCRProcessor(device)
+            
+            processor = ShelfReaderTrOCRProcessor(device)
+        else:
+            raise ValueError(f"Moteur OCR non supporté : {engine_name}")
 
-        return self.engines[engine_name]
+        # Stocker la nouvelle instance
+        self.engines[engine_name] = processor
+        return processor
 
     def process_image(self, image_path: str, engine_name: str = 'EasyOCR',
                      confidence: float = 0.3, use_gpu: bool = True,
-                     debug: bool = False) -> Tuple[Optional[Dict], float]:
+                     debug: bool = False, advanced_params: Dict = None) -> Tuple[Optional[Dict], float]:
         """
         Traite une image avec le moteur OCR spécifié.
 
@@ -97,6 +129,7 @@ class OCRProcessor:
             confidence (float): Seuil de confiance minimum (0.0-1.0)
             use_gpu (bool): Utilisation du GPU pour accélérer le traitement
             debug (bool): Mode debug pour analyses détaillées
+            advanced_params (Dict): Paramètres avancés spécifiques au moteur
 
         Returns:
             Tuple[Optional[Dict], float]: (résultats, temps de traitement)
@@ -113,11 +146,16 @@ class OCRProcessor:
             # Charger l'image
             pil_image = Image.open(image_path)
 
-            # Récupérer le processeur approprié
-            processor = self.get_processor(engine_name, confidence, use_gpu)
+            # Récupérer le processeur approprié avec paramètres avancés
+            processor = self.get_processor(engine_name, confidence, use_gpu, advanced_params)
 
             # Traitement spécifique selon le moteur
             if engine_name == 'EasyOCR':
+                # Récupérer les paramètres avancés pour EasyOCR
+                spine_method = "shelfie"  # défaut
+                if advanced_params and 'spine_method' in advanced_params:
+                    spine_method = advanced_params['spine_method']
+                
                 # EasyOCR avec détection spécialisée de dos de livres
                 boxes = processor.get_boxes(
                     pil_image,
@@ -125,40 +163,47 @@ class OCRProcessor:
                     use_spine_detection=True,  # Détection intelligente des dos
                     debug=debug,
                     reference_titles=None,
+                    spine_method=spine_method
                 )
                 text, avg_confidence = processor.get_text_and_confidence(
                     pil_image,
                     preprocess=False,
                     use_spine_detection=True,
                     reference_titles=None,
-                    spine_method="shelfie"  # Méthode optimisée pour étagères
+                    spine_method=spine_method
                 )
 
             elif engine_name == 'Tesseract':
                 # Traitement standard pour Tesseract
                 boxes = processor.get_boxes(pil_image)
                 text, avg_confidence = processor.get_text_and_confidence(pil_image)
+                
             elif engine_name == 'TrOCR':
                 # TrOCR: process_image returns list of dicts with text/confidence/bbox
                 image_np = np.array(pil_image)
                 trocr_results = processor.process_image(image_np)
 
                 # Convert TrOCR format to standard format expected by visualization
+                # and apply confidence filtering
                 boxes = []
+                filtered_results = []
                 for result in trocr_results:
-                    if 'bbox' in result and len(result['bbox']) >= 4:
-                        x, y, w, h = result['bbox']
-                        boxes.append({
-                            'x': x,
-                            'y': y,
-                            'width': w,
-                            'height': h,
-                            'text': result.get('text', ''),
-                            'confidence': result.get('confidence', 0.0)
-                        })
+                    result_confidence = result.get('confidence', 0.0)
+                    if result_confidence >= confidence:  # Apply confidence threshold
+                        if 'bbox' in result and len(result['bbox']) >= 4:
+                            x, y, w, h = result['bbox']
+                            boxes.append({
+                                'x': x,
+                                'y': y,
+                                'width': w,
+                                'height': h,
+                                'text': result.get('text', ''),
+                                'confidence': result_confidence
+                            })
+                        filtered_results.append(result)
 
-                text = '\n'.join([r.get('text','') for r in trocr_results]) if trocr_results else ''
-                avg_confidence = (sum([r.get('confidence',0) for r in trocr_results])/len(trocr_results)) if trocr_results else 0.0
+                text = '\n'.join([r.get('text','') for r in filtered_results]) if filtered_results else ''
+                avg_confidence = (sum([r.get('confidence',0) for r in filtered_results])/len(filtered_results)) if filtered_results else 0.0
 
             else:
                 raise ValueError(f"Moteur OCR non supporté : {engine_name}")
@@ -181,7 +226,7 @@ class OCRProcessor:
 
     def compare_engines(self, image_path: str, engines: List[str],
                        confidence: float = 0.3, use_gpu: bool = True,
-                       debug: bool = False) -> Dict[str, Tuple[Optional[Dict], float]]:
+                       debug: bool = False, advanced_params: Dict = None) -> Dict[str, Dict]:
         """
         Compare plusieurs moteurs OCR sur la même image.
 
@@ -194,19 +239,33 @@ class OCRProcessor:
             confidence (float): Seuil de confiance pour tous les moteurs
             use_gpu (bool): Utilisation du GPU pour tous les moteurs
             debug (bool): Mode debug pour analyses détaillées
+            advanced_params (Dict): Paramètres avancés par moteur
 
         Returns:
-            Dict[str, Tuple[Optional[Dict], float]]: Résultats par moteur
-                clé = nom du moteur, valeur = (résultats, temps de traitement)
+            Dict[str, Dict]: Résultats par moteur
+                clé = nom du moteur, valeur = résultats du moteur
         """
         results = {}
 
         for engine_name in engines:
             print(f"Traitement avec {engine_name}...")
+            # Utiliser les paramètres avancés spécifiques au moteur si disponibles
+            engine_advanced_params = advanced_params.get(engine_name, {}) if advanced_params else None
+            
             result, processing_time = self.process_image(
-                image_path, engine_name, confidence, use_gpu, debug
+                image_path, engine_name, confidence, use_gpu, debug, engine_advanced_params
             )
-            results[engine_name] = (result, processing_time)
+            
+            if result:
+                result['processing_time'] = processing_time
+                results[engine_name] = result
+            else:
+                results[engine_name] = {
+                    'books': [],
+                    'text': '',
+                    'confidence': 0.0,
+                    'processing_time': processing_time
+                }
 
         return results
 

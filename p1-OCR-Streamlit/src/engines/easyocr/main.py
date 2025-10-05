@@ -49,9 +49,9 @@ Exemples d'utilisation:
                        help='Mode debug avec informations détaillées')
     parser.add_argument('--benchmark', action='store_true',
                        help='Afficher les métriques de performance')
-    parser.add_argument('--spine-method', type=str, default='shelfie', 
-                       choices=['iccc2013', 'shelfie'],
-                       help='Méthode de détection de tranches (défaut: shelfie)')
+    parser.add_argument('--spine-method', type=str, default='vertical_lines', 
+                       choices=['horizontal_shelves', 'vertical_lines'],
+                       help='Méthode de détection de tranches (défaut: vertical_lines)')
     parser.add_argument('--output', type=str,
                        help='Fichier de sortie pour les résultats (JSON)')
 

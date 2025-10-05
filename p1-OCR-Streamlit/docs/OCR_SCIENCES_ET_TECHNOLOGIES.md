@@ -26,6 +26,8 @@
    - 5.1 [Regroupement par Lignes de Tranches](#51-regroupement-par-lignes-de-tranches)
    - 5.2 [Fallback Adaptatif (vertical_lines)](#52-fallback-adaptatif-vertical_lines)
    - 5.3 [Fallback Simple (horizontal_shelves)](#53-fallback-simple-horizontal_shelves)
+   - 5.4 [Comparaison Détaillée des Fallbacks](#54-comparaison-détaillée-des-fallbacks)
+   - 5.5 [Exemples Pratiques de Comportement](#55-exemples-pratiques-de-comportement)
 
 ### 6. [Paramètres et Configuration](#6-paramètres-et-configuration)
    - 6.1 [Paramètres de Détection](#61-paramètres-de-détection)
@@ -286,26 +288,109 @@ normalized = (image - mean) / std
 
 ### 5.2 Fallback Adaptatif (vertical_lines)
 
-**Multi-scale detection :**
-1. Calcul seuil adaptatif basé sur statistiques des écarts
-2. Test 3 seuils : 0.6×, 1.0×, 1.4× du seuil adaptatif
-3. Sélection meilleur résultat (max groupes sans dépasser 20)
+**Principe :** Analyse intelligente des données pour déterminer le meilleur seuil de regroupement
 
-**Seuil adaptatif :**
+**Algorithme multi-échelle :**
+1. **Analyse statistique** : Calcul des écarts entre toutes les boîtes de texte consécutives
+2. **Calcul du seuil adaptatif** : `(Q25 + médiane) / 2` des écarts, borné entre 10-35px
+3. **Test multi-seuils** : Évaluation avec 3 seuils (0.6×, 1.0×, 1.4× du seuil adaptatif)
+4. **Sélection optimale** : Choix du seuil donnant le plus de groupes (max 20 groupes)
+
+**Exemple concret :**
 ```python
-gaps = [distance between consecutive boxes]
-adaptive_threshold = (Q25 + median) / 2
-clamped_threshold = clamp(adaptive_threshold, 10, 35)
+# Écarts mesurés entre boîtes: [15px, 25px, 8px, 30px, 12px]
+# Q25 = 12px, médiane = 15px
+# Seuil adaptatif = (12 + 15) / 2 = 13.5px
+# Tests: 8.1px, 13.5px, 18.9px
+# Résultat: seuil 8.1px donne 15 groupes → sélectionné
 ```
+
+**Avantages :**
+- ✅ S'adapte automatiquement aux caractéristiques de l'image
+- ✅ Robuste aux variations d'espacement des livres
+- ✅ Optimise le nombre de groupes détectés
+
+**Inconvénients :**
+- ❌ Plus lent (3 calculs au lieu d'1)
+- ❌ Plus complexe à déboguer
+- ❌ Comportement non-déterministe
 
 ### 5.3 Fallback Simple (horizontal_shelves)
 
-**Regroupement par proximité :**
-- Tri boîtes par position X
-- Regroupement si écart < seuil fixe (50px)
-- Combinaison textes dans chaque groupe
+**Principe :** Regroupement déterministe avec seuil fixe, privilégiant la séparation
 
-**Avantages :** Rapide, déterministe, prévisible
+**Algorithme de proximité :**
+1. **Tri horizontal** : Classement des boîtes par position X croissante
+2. **Regroupement itératif** : Fusion des boîtes si écart < seuil fixe (25px)
+3. **Combinaison finale** : Fusion des textes et calcul des boîtes englobantes
+
+**Seuil fixe actuel :** 25px (configurable via `HORIZONTAL_GROUP_THRESHOLD_BASE`)
+
+**Exemple concret :**
+```python
+# Boîtes: [x=10, x=35, x=70, x=110, x=160]
+# Écarts: 25px, 35px, 40px, 50px
+# Seuil: 25px
+# Résultat: [10+35], [70], [110], [160] → 4 groupes
+```
+
+**Avantages :**
+- ✅ Ultra-rapide (un seul passage)
+- ✅ Comportement prévisible et déterministe
+- ✅ Simple à comprendre et déboguer
+
+**Inconvénients :**
+- ❌ Ne s'adapte pas aux caractéristiques spécifiques de l'image
+- ❌ Peut créer trop de groupes séparés ou trop de fusions
+- ❌ Sensible au choix du seuil fixe
+
+### 5.4 Comparaison Détaillée des Fallbacks
+
+| Aspect | Adaptatif (vertical_lines) | Simple (horizontal_shelves) |
+|--------|---------------------------|----------------------------|
+| **Approche** | Analyse statistique des données | Seuil fixe prédéfini |
+| **Complexité** | Élevée (multi-échelle) | Faible (un seul seuil) |
+| **Performance** | Plus lent | Plus rapide |
+| **Robustesse** | Excellente (s'adapte) | Moyenne (seuil fixe) |
+| **Prédictibilité** | Variable selon image | Constante |
+| **Nombre groupes** | Optimisé automatiquement | Dépend du seuil fixe |
+| **Cas optimal** | Images variées, espacement irrégulier | Images standardisées |
+
+**Quand utiliser chaque méthode :**
+
+**vertical_lines (adaptatif) :**
+- Images avec espacement irrégulier des livres
+- Quand on veut maximiser le nombre de livres détectés
+- Applications où la précision compte plus que la vitesse
+
+**horizontal_shelves (simple) :**
+- Images avec espacement régulier
+- Traitement temps réel où la vitesse est critique
+- Quand on veut un comportement constant et prévisible
+
+### 5.5 Exemples Pratiques de Comportement
+
+**Scénario : Image avec boîtes espacées de 20-30px**
+
+**vertical_lines (adaptatif) :**
+```
+Écarts mesurés: [20px, 25px, 30px]
+Seuil calculé: (20+25)/2 = 22.5px
+Tests: 13.5px, 22.5px, 31.5px
+Résultat: 13.5px → 4 groupes (séparation maximale)
+```
+
+**horizontal_shelves (simple) :**
+```
+Seuil fixe: 25px
+Écarts: [20px, 25px, 30px]
+Résultat: 20px < 25px → fusion, 25px = 25px → séparation, 30px > 25px → séparation
+→ 3 groupes (regroupement intermédiaire)
+```
+
+**Impact sur les résultats :**
+- **Adaptatif** : S'adapte aux données, peut créer plus de groupes
+- **Simple** : Comportement fixe, plus prévisible mais moins optimal
 
 ---
 
@@ -333,7 +418,7 @@ clamped_threshold = clamp(adaptive_threshold, 10, 35)
 
 | Paramètre | Valeur | Impact |
 |-----------|--------|--------|
-| `HORIZONTAL_GROUP_THRESHOLD_BASE` | 50 | Distance max regroupement |
+| `HORIZONTAL_GROUP_THRESHOLD_BASE` | 25 | Distance max regroupement (horizontal_shelves) |
 | `ADAPTIVE_THRESHOLD_MIN/MAX` | 10/35 | Limites seuil adaptatif |
 | `FONT_SIZE_RATIO_STRICT` | 1.5 | Seuil police différente |
 
@@ -377,7 +462,141 @@ confident_results = [r for r in results if r.confidence > threshold]
 
 **Impact :** Réduction faux positifs, amélioration précision
 
+### 8. [Glossaire - Vocabulaire pour Débutants](#8-glossaire---vocabulaire-pour-débutants)
+
+**Pourquoi un glossaire ?** Ce document utilise beaucoup de termes techniques issus des mathématiques, de l'informatique et de la vision par ordinateur. Cette section explique les concepts clés de manière simple, comme si vous découvriez ces notions pour la première fois. Chaque terme est défini avec des mots accessibles, parfois avec des analogies du quotidien.
+
+**Comment l'utiliser :** Si vous rencontrez un mot inconnu dans le document, cherchez-le ici ! Les explications sont classées par ordre alphabétique pour faciliter la recherche.
+
+### A
+**Algorithme** : Recette mathématique qui dit à l'ordinateur comment résoudre un problème étape par étape.
+
+**Analyse composantes connectées** : Technique pour trouver des "îlots" de pixels connectés dans une image (comme trouver des continents sur une carte).
+
+### B
+**Binarisation** : Transformer une image en noir et blanc (pixels = 0 ou 255) pour simplifier l'analyse.
+
+**Boîte englobante (bounding box)** : Rectangle imaginaire qui entoure un élément détecté (comme une boîte autour d'un mot).
+
+### C
+**Canny** : Algorithme de détection de bords dans les images (trouve les contours des objets).
+
+**CLAHE (Contrast Limited Adaptive Histogram Equalization)** : Technique pour améliorer le contraste local d'une image sans créer d'artefacts.
+
+**CNN (Convolutional Neural Network)** : Type d'intelligence artificielle spécialisé dans l'analyse d'images, inspiré du cerveau humain.
+
+**Composantes connectées** : Groupes de pixels qui se touchent dans une image.
+
+**Confiance (confidence)** : Probabilité (entre 0 et 1) que la reconnaissance OCR soit correcte.
+
+**Convolution** : Opération mathématique qui "glisse" un petit filtre sur l'image pour en extraire des caractéristiques.
+
+### D
+**Détection de bords** : Trouver les contours des objets dans une image.
+
+**Dilatation morphologique** : Grossir les zones blanches d'une image (élargir les contours).
+
+**Downsampling** : Réduire la taille d'une image pour accélérer les calculs.
+
+**DPI (Dots Per Inch)** : Nombre de points par pouce, mesure de la résolution d'une image.
+
+### E
+**Écart-type (standard deviation)** : Mesure de la dispersion des valeurs autour de la moyenne.
+
+**Érosion morphologique** : Réduire les zones blanches d'une image (affaiblir les contours).
+
+### F
+**Fallback** : Plan B - méthode alternative utilisée quand la méthode principale échoue.
+
+**Filtrage bilatéral** : Technique pour réduire le bruit d'une image tout en préservant les bords.
+
+**Filtrage gaussien** : Flou naturel appliqué à une image (comme un effet de brouillard).
+
+### G
+**GPU (Graphics Processing Unit)** : Processeur spécialisé dans les calculs graphiques et parallèles.
+
+### H
+**Histogramme** : Graphique montrant la distribution des valeurs (ex: combien de pixels de chaque couleur).
+
+**horizontal_shelves** : Algorithme de détection des étagères horizontales (ex-ICCV2013).
+
+### I
+**ICCV2013** : Ancienne appellation de l'algorithme de détection des étagères horizontales (maintenant horizontal_shelves).
+
+**Intelligence artificielle (IA)** : Programmes qui apprennent et prennent des décisions comme un humain.
+
+**Interpolation** : Technique pour agrandir une image en inventant des pixels intermédiaires.
+
+### K
+**Kernel** : Petit matrice utilisée pour les opérations de convolution (comme un tampon).
+
+### L
+**LSTM (Long Short-Term Memory)** : Type de réseau neuronal qui se souvient du passé.
+
+### M
+**Machine Learning** : Apprentissage automatique - l'ordinateur apprend des patterns sans être explicitement programmé.
+
+**Médiane** : Valeur centrale d'une liste triée (50% des valeurs sont en dessous, 50% au-dessus).
+
+**Morphologie mathématique** : Ensemble d'opérations pour analyser la forme des objets dans les images.
+
+**Multi-échelle** : Analyser une image à différentes résolutions/tailles.
+
+### N
+**Neurone artificiel** : Unité de base d'un réseau neuronal, inspirée des neurones biologiques.
+
+**Normalisation** : Mettre les valeurs à la même échelle (ex: entre 0 et 1) pour les comparer.
+
+### O
+**OCR (Optical Character Recognition)** : Reconnaissance optique de caractères - transformer une image de texte en texte numérique.
+
+**OpenCV** : Bibliothèque logicielle gratuite pour le traitement d'images et la vision par ordinateur.
+
+### P
+**Paramètre** : Valeur que l'on peut ajuster pour changer le comportement d'un algorithme.
+
+**Pixel** : Plus petit élément d'une image numérique (contraction de "picture element").
+
+**Prétraitement** : Étapes préparatoires avant l'analyse principale (nettoyer, améliorer l'image).
+
+**Probabilité** : Chance qu'un événement se produise (entre 0 = impossible et 1 = certain).
+
+### Q
+**Quantile** : Division d'un ensemble trié (ex: Q25 = valeur où 25% des données sont en dessous).
+
+### R
+**Réseau neuronal** : Système d'IA inspiré du cerveau, composé de neurones artificiels connectés.
+
+**Résolution** : Nombre de pixels dans une image (ex: 1920x1080 pixels).
+
+**RGB** : Système de couleurs avec Rouge, Vert, Bleu (Red, Green, Blue).
+
+### S
+**Seuil (threshold)** : Valeur limite pour décider si quelque chose est accepté ou rejeté.
+
+**SHELFIE** : Ancienne appellation de l'algorithme de détection des lignes verticales (maintenant vertical_lines).
+
+**Sobel** : Opérateur mathématique pour détecter les bords verticaux et horizontaux.
+
+**Standardisation** : Transformer les données pour qu'elles aient une moyenne de 0 et un écart-type de 1.
+
+### T
+**Tensor** : Structure de données multi-dimensionnelle (généralisation des matrices).
+
+**Traitement d'images** : Ensemble de techniques pour analyser et modifier des images numériques.
+
+### U
+**Upsampling** : Agrandir une image (augmenter le nombre de pixels).
+
+### V
+**vertical_lines** : Algorithme de détection des lignes verticales entre tranches de livres (ex-SHELFIE).
+
+**Vision par ordinateur** : Domaine de l'IA qui apprend aux ordinateurs à "voir" et comprendre les images.
+
+### W
+**Weight (poids)** : Paramètre d'un réseau neuronal qui contrôle l'importance d'une connexion.
+
 ---
 
-*Document technique - ShelfReader OCR Engine - Version 1.0*</content>
+*Glossaire - Comprendre les termes techniques de l'OCR*</content>
 <parameter name="filePath">/home/delart/Documents/dev/python/Shelfreader/p1-OCR-Streamlit/src/engines/OCR_SCIENCES_ET_TECHNOLOGIES.md

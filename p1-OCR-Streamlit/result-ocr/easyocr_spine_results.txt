@@ -1,20 +1,24 @@
 === RÉSULTATS OCR AVEC DÉTECTION DE TRANCHES - books1.jpg ===
-Date: 2025-10-05 04:31:02
-Nombre de livres détectés: 14
-Confiance moyenne: 0.910
+Date: 2025-10-05 06:29:28
+Nombre de livres détectés: 18
+Confiance moyenne: 0.921
 Détection de tranches: Activée
 
 TEXTE COMPLET:
-Idman "Softwgre Construction With Ada 95 (conf: 0.69)
+Idman "Softwgre With Ada 95 (conf: 0.63)
+Construction (conf: 0.98)
 KERNICHAN THE SECOND EDITION PTR (conf: 0.90)
 THE C++ LANGUACE 01 (conf: 0.87)
 Apple The Reference Dylan Manual Addison Aaisam (conf: 0.97)
 Peaecoys Edition Programming Language Gosong JAVA (conf: 0.77)
 The Little MLer Felleisen and Friedman (conf: 1.00)
 ULLMAN ELEMENTS OF PROGRAMMING L6IW EDITION (conf: 0.86)
-Miranda The Craft of Thompson (conf: 0.96)
+Miranda (conf: 1.00)
+Thompson (conf: 0.89)
+The Craft of (conf: 0.98)
 THIRD EDITION Programming Perl Christianscn Orwant Wall (conf: 0.90)
-Learning Lutz Ascher (conf: 1.00)
+Learning (conf: 1.00)
+Lutz Ascher (conf: 1.00)
 Nelson Systems Programming with (conf: 1.00)
 THE SCHEME SCHEME PTR (conf: 0.99)
 Uuzdial Rose Open and Personal Multimedia Computing (conf: 0.95)
@@ -23,85 +27,109 @@ SANGIORGI WALKER The Theory T-calculus of Mobile Processes VO (conf: 0.89)
 DÉTAIL PAR LIVRE:
 
 --- Livre 1 ---
-Confiance: 0.692
-Texte: Idman "Softwgre Construction With Ada 95
+Confiance: 0.634
+Texte: Idman "Softwgre With Ada 95
 Position: (0.0, 87.0)
 Dimensions: 74.0 x 653.0
 
 --- Livre 2 ---
-Confiance: 0.897
-Texte: KERNICHAN THE SECOND EDITION PTR
-Position: (98.0, 27.0)
-Dimensions: 51.0 x 834.0
+Confiance: 0.982
+Texte: Construction
+Position: (26.0, 314.0)
+Dimensions: 32.0 x 152.0
 
 --- Livre 3 ---
-Confiance: 0.868
-Texte: THE C++ LANGUACE 01
-Position: (187.0, 175.0)
-Dimensions: 82.0 x 616.0
+Confiance: 0.897
+Texte: KERNICHAN THE SECOND EDITION PTR
+Position: (105.0, 27.0)
+Dimensions: 51.0 x 834.0
 
 --- Livre 4 ---
-Confiance: 0.974
-Texte: Apple The Reference Dylan Manual Addison Aaisam
-Position: (297.0, 62.0)
-Dimensions: 76.0 x 805.0
+Confiance: 0.868
+Texte: THE C++ LANGUACE 01
+Position: (197.0, 175.0)
+Dimensions: 82.0 x 616.0
 
 --- Livre 5 ---
-Confiance: 0.775
-Texte: Peaecoys Edition Programming Language Gosong JAVA
-Position: (397.0, 140.0)
-Dimensions: 79.0 x 666.0
+Confiance: 0.974
+Texte: Apple The Reference Dylan Manual Addison Aaisam
+Position: (312.0, 62.0)
+Dimensions: 76.0 x 805.0
 
 --- Livre 6 ---
+Confiance: 0.775
+Texte: Peaecoys Edition Programming Language Gosong JAVA
+Position: (400.0, 140.0)
+Dimensions: 79.0 x 666.0
+
+--- Livre 7 ---
 Confiance: 1.000
 Texte: The Little MLer Felleisen and Friedman
 Position: (500.0, 186.0)
 Dimensions: 28.0 x 563.0
 
---- Livre 7 ---
+--- Livre 8 ---
 Confiance: 0.858
 Texte: ULLMAN ELEMENTS OF PROGRAMMING L6IW EDITION
-Position: (548.0, 38.0)
+Position: (560.0, 38.0)
 Dimensions: 45.0 x 778.0
 
---- Livre 8 ---
-Confiance: 0.963
-Texte: Miranda The Craft of Thompson
-Position: (602.0, 206.0)
-Dimensions: 96.0 x 596.0
-
 --- Livre 9 ---
+Confiance: 1.000
+Texte: Miranda
+Position: (602.0, 206.0)
+Dimensions: 96.0 x 307.0
+
+--- Livre 10 ---
+Confiance: 0.895
+Texte: Thompson
+Position: (633.0, 695.0)
+Dimensions: 29.0 x 107.0
+
+--- Livre 11 ---
+Confiance: 0.978
+Texte: The Craft of
+Position: (664.0, 516.0)
+Dimensions: 28.0 x 150.0
+
+--- Livre 12 ---
 Confiance: 0.897
 Texte: THIRD EDITION Programming Perl Christianscn Orwant Wall
 Position: (734.0, 112.0)
 Dimensions: 112.0 x 723.0
 
---- Livre 10 ---
-Confiance: 0.998
-Texte: Learning Lutz Ascher
-Position: (879.0, 147.0)
-Dimensions: 96.0 x 688.0
-
---- Livre 11 ---
-Confiance: 1.000
-Texte: Nelson Systems Programming with
-Position: (971.0, 38.0)
-Dimensions: 35.0 x 486.0
-
---- Livre 12 ---
-Confiance: 0.986
-Texte: THE SCHEME SCHEME PTR
-Position: (1023.0, 116.0)
-Dimensions: 41.0 x 735.0
-
 --- Livre 13 ---
-Confiance: 0.948
-Texte: Uuzdial Rose Open and Personal Multimedia Computing
-Position: (1089.0, 82.0)
-Dimensions: 67.0 x 716.0
+Confiance: 1.000
+Texte: Learning
+Position: (879.0, 147.0)
+Dimensions: 96.0 x 291.0
 
 --- Livre 14 ---
+Confiance: 0.997
+Texte: Lutz Ascher
+Position: (909.0, 733.0)
+Dimensions: 18.0 x 102.0
+
+--- Livre 15 ---
+Confiance: 1.000
+Texte: Nelson Systems Programming with
+Position: (978.0, 38.0)
+Dimensions: 35.0 x 486.0
+
+--- Livre 16 ---
+Confiance: 0.986
+Texte: THE SCHEME SCHEME PTR
+Position: (1036.0, 116.0)
+Dimensions: 41.0 x 735.0
+
+--- Livre 17 ---
+Confiance: 0.948
+Texte: Uuzdial Rose Open and Personal Multimedia Computing
+Position: (1092.0, 82.0)
+Dimensions: 67.0 x 716.0
+
+--- Livre 18 ---
 Confiance: 0.889
 Texte: SANGIORGI WALKER The Theory T-calculus of Mobile Processes VO
-Position: (1195.0, 0.0)
+Position: (1221.0, 0.0)
 Dimensions: 82.0 x 869.0

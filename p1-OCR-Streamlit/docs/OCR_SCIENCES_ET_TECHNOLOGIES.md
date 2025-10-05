@@ -39,6 +39,8 @@
    - 7.2 [Traitement Multi-échelle](#72-traitement-multi-échelle)
    - 7.3 [Filtrage de Confiance](#73-filtrage-de-confiance)
 
+### 8. [Glossaire - Vocabulaire pour Débutants](#8-glossaire---vocabulaire-pour-débutants)
+
 ---
 
 ## 1. Principes Fondamentaux de l'OCR

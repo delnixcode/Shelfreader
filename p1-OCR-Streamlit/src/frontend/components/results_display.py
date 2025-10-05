@@ -265,7 +265,10 @@ Moteurs: {', '.join(selected_engines)}
                 if advanced_params and engine in advanced_params:
                     engine_adv_params = advanced_params[engine]
                     if engine == 'EasyOCR':
-                        cmd_parts.extend(["--spine-method", engine_adv_params.get('spine_method', 'vertical_lines')])
+                        # Pour les spines : n'afficher que si différent du défaut (vertical_lines)
+                        if engine_adv_params.get('spine_method') and engine_adv_params['spine_method'] != 'vertical_lines':
+                            cmd_parts.extend(["--spine-method", engine_adv_params['spine_method']])
+                        # Pour les langues : TOUJOURS inclus
                         if engine_adv_params.get('languages'):
                             cmd_parts.extend(["--lang"] + engine_adv_params['languages'])
                     elif engine == 'Tesseract':
@@ -286,15 +289,10 @@ Moteurs: {', '.join(selected_engines)}
                 differences_found = False
                 for engine in selected_engines:
                     executed = executed_commands.get(engine, "")
-                    reconstructed = reconstructed_commands.get(engine, "")
-                    if executed and reconstructed:
-                        # Normaliser pour la comparaison (remplacer les chemins temporaires)
-                        executed_normalized = executed.replace("/tmp/", "[TEMP]/").split()
-                        reconstructed_normalized = reconstructed.replace("image_path", "[TEMP]/image.jpg").split()
-                        
-                        if executed_normalized != reconstructed_normalized:
-                            differences_found = True
-                            break
+                    reconstructed = " ".join(cmd_parts).replace("image_path", "[IMAGE_PATH]")
+                    if executed and executed.replace("[IMAGE_PATH]", "image_path") != reconstructed.replace("[IMAGE_PATH]", "image_path"):
+                        differences_found = True
+                        break
 
                 if differences_found:
                     st.warning("⚠️ **Différences détectées** : Certaines commandes exécutées ne correspondent pas aux reconstructions")

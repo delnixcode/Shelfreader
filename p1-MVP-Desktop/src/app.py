@@ -393,6 +393,146 @@ def main():
         - **Contenu** : Étageres de livres avec titres visibles
         """)
 
+
+def ocr_comparison_page():
+    st.header("📊 Comparaison des moteurs OCR")
+    st.markdown("Comparez plusieurs moteurs OCR sur la même image.")
+
+    engines = ["EasyOCR", "Tesseract", "TrOCR"]
+    selected_engines = st.multiselect(
+        "Sélectionnez les moteurs OCR à comparer",
+        options=engines,
+        default=["EasyOCR", "Tesseract"],
+        help="Choisissez au moins deux moteurs pour la comparaison."
+    )
+    if len(selected_engines) < 2:
+        st.warning("Veuillez sélectionner au moins deux moteurs OCR.")
+        return
+
+    uploaded_file = st.file_uploader(
+        "Téléchargez une image pour la comparaison",
+        type=['jpg', 'jpeg', 'png'],
+        help="Formats supportés : JPG, PNG. Taille recommandée : 1000px minimum"
+    )
+    if uploaded_file is not None:
+        image = Image.open(uploaded_file)
+        st.image(image, caption="Image à comparer", use_container_width=True)
+        confidence = st.slider(
+            "Seuil de confiance OCR",
+            min_value=0.1,
+            max_value=1.0,
+            value=0.3,
+            step=0.1,
+            help="0.1 = tolérant, 0.5 = strict. Recommandé : 0.3"
+        )
+        use_gpu = st.checkbox(
+            "Utiliser le GPU (recommandé)",
+            value=True,
+            help="Accélère le traitement si GPU disponible"
+        )
+        debug_mode = st.checkbox(
+            "Mode debug",
+            value=False,
+            help="Affiche les analyses détaillées (plus lent)"
+        )
+        if st.button("🚀 Comparer les moteurs OCR", type="primary", use_container_width=True):
+            with tempfile.NamedTemporaryFile(delete=False, suffix='.jpg') as tmp_file:
+                if image.mode == 'RGBA':
+                    background = Image.new('RGB', image.size, (255, 255, 255))
+                    background.paste(image, mask=image.split()[-1])
+                    background.save(tmp_file.name, 'JPEG')
+                else:
+                    rgb_image = image.convert('RGB')
+                    rgb_image.save(tmp_file.name, 'JPEG')
+                temp_path = tmp_file.name
+            try:
+                results_dict = {}
+                for engine in selected_engines:
+                    if engine == "EasyOCR":
+                        processor = EasyOCRProcessor(['en'], confidence, use_gpu)
+                        pil_image = Image.open(temp_path)
+                        boxes = processor.get_boxes(
+                            pil_image,
+                            preprocess=False,
+                            use_spine_detection=True,
+                            debug=debug_mode,
+                            reference_titles=None,
+                        )
+                        text, avg_confidence = processor.get_text_and_confidence(
+                            pil_image,
+                            preprocess=False,
+                            use_spine_detection=True,
+                            reference_titles=None,
+                            spine_method="shelfie"
+                        )
+                    elif engine == "Tesseract":
+                        processor = TesseractOCRProcessor('eng', confidence, use_gpu)
+                        pil_image = Image.open(temp_path)
+                        boxes = processor.get_boxes(pil_image)
+                        text, avg_confidence = processor.get_text_and_confidence(pil_image)
+                    elif engine == "TrOCR":
+                        processor = TrOCRProcessor(['en'], confidence, use_gpu)
+                        pil_image = Image.open(temp_path)
+                        boxes = processor.get_boxes(pil_image)
+                        text, avg_confidence = processor.get_text_and_confidence(pil_image)
+                    else:
+                        st.error(f"Moteur OCR inconnu : {engine}")
+                        continue
+                    results_dict[engine] = {
+                        'books': boxes,
+                        'text': text,
+                        'confidence': avg_confidence,
+                        'processing_time': None  # Optionally add timing
+                    }
+                st.success("Comparaison terminée !")
+
+                # Display results side-by-side
+                st.markdown("## Résultats par moteur")
+                cols = st.columns(len(selected_engines))
+                for idx, engine in enumerate(selected_engines):
+                    with cols[idx]:
+                        st.markdown(f"### {engine}")
+                        res = results_dict[engine]
+                        st.write(f"**Texte OCR :** {res['text']}")
+                        st.write(f"**Confiance moyenne :** {res['confidence']:.1%}")
+                        st.write(f"**Livres détectés :** {len(res['books'])}")
+                        # Table of books
+                        if res['books']:
+                            books_data = []
+                            for i, book in enumerate(res['books'], 1):
+                                books_data.append({
+                                    "N°": i,
+                                    "Texte": book.get('text', 'N/A'),
+                                    "Confiance": f"{book.get('confidence', 0):.1%}",
+                                })
+                            st.dataframe(books_data)
+                        else:
+                            st.warning("Aucun livre détecté.")
+
+                # Add comparison graphs
+                st.markdown("## Graphiques de comparaison")
+                import matplotlib.pyplot as plt
+                import pandas as pd
+                # Bar chart: confidence
+                confs = [results_dict[e]['confidence'] for e in selected_engines]
+                nb_books = [len(results_dict[e]['books']) for e in selected_engines]
+                df = pd.DataFrame({
+                    'Moteur': selected_engines,
+                    'Confiance moyenne': confs,
+                    'Livres détectés': nb_books
+                })
+                st.bar_chart(df.set_index('Moteur')[['Confiance moyenne', 'Livres détectés']])
+            finally:
+                os.unlink(temp_path)
+
 if __name__ == "__main__":
-    main()
+    page = st.sidebar.radio(
+        "Navigation",
+        ["Analyse OCR", "Comparaison OCR"],
+        index=0
+    )
+    if page == "Analyse OCR":
+        main()
+    elif page == "Comparaison OCR":
+        ocr_comparison_page()
 

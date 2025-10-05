@@ -84,15 +84,15 @@ get_model_info() -> Dict[str, Any]
 ```bash
 # EasyOCR (recommandé)
 cd src/engines/easyocr
-python main.py ../../../../test_images/books1.jpg --device cuda
+python main.py ../../../test_images/books1.jpg --device cuda
 
 # Tesseract (rapide)
 cd src/engines/tesseract
-python main.py ../../../../test_images/books1.jpg --lang eng
+python main.py ../../../test_images/books1.jpg --lang eng
 
 # TrOCR (manuscrit)
 cd src/engines/trocr
-python main.py ../../../../test_images/books1.jpg --device cuda
+python main.py ../../../test_images/books1.jpg --device cuda
 ```
 
 ## 🔒 Indépendance des Moteurs

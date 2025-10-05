@@ -39,12 +39,31 @@ Exemples d'utilisation:
     parser.add_argument('image_path', help='Chemin vers l\'image à traiter')
     parser.add_argument('--device', choices=['cpu', 'cuda', 'auto'], default='auto',
                        help='Device pour l\'inférence (cpu, cuda, auto)')
+    parser.add_argument('--cpu', action='store_true',
+                       help='Forcer l\'utilisation du CPU')
+    parser.add_argument('--gpu', action='store_true',
+                       help='Forcer l\'utilisation du GPU')
+    parser.add_argument('--debug', action='store_true',
+                       help='Mode debug avec informations détaillées')
     parser.add_argument('--benchmark', action='store_true',
                        help='Afficher les métriques de performance')
     parser.add_argument('--output', type=str,
                        help='Fichier de sortie pour les résultats (JSON)')
 
     args = parser.parse_args()
+
+    # Validation des arguments
+    if args.cpu and args.gpu:
+        print("❌ Erreur: --cpu et --gpu sont mutuellement exclusifs")
+        return 1
+
+    # Configuration du device
+    if args.cpu:
+        device = 'cpu'
+    elif args.gpu:
+        device = 'cuda'
+    else:
+        device = args.device
 
     # Vérifier que l'image existe
     if not os.path.exists(args.image_path):
@@ -62,12 +81,17 @@ Exemples d'utilisation:
 
         print(f"📊 Dimensions: {image.shape[1]}x{image.shape[0]} pixels")
 
+        # Mode debug
+        if args.debug:
+            print(f"🐛 DEBUG - Arguments: {vars(args)}")
+            print(f"🐛 DEBUG - Device configuré: {device}")
+
         # Initialiser le processeur
         print("🚀 Initialisation du moteur TrOCR...")
-        print(f"   Device: {args.device}")
+        print(f"   Device: {device}")
 
         start_init = time.time()
-        processor = ShelfReaderTrOCRProcessor(device=args.device)
+        processor = ShelfReaderTrOCRProcessor(device=device)
         init_time = time.time() - start_init
         print(f"   Temps d'initialisation: {init_time:.2f}s")
         # Afficher les infos du modèle

@@ -7,16 +7,29 @@ Il gère la sélection et l'utilisation des différents moteurs OCR (EasyOCR, Te
 
 import time
 from typing import Dict, List, Optional, Tuple, Any
+
 from PIL import Image
+import numpy as np
+
 
 import sys
 import os
-# Ajouter le répertoire parent (src) au path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from engines.easyocr_engine import EasyOCRProcessor
-from engines.tesseract_engine import TesseractOCRProcessor
-from engines.trocr_engine import TrOCRProcessor
+# Ajouter le répertoire parent (src) au path
+SRC_PATH = os.path.join(
+    os.path.dirname(
+        os.path.dirname(
+            os.path.dirname(os.path.abspath(__file__))
+        )
+    ),
+    'src'
+)
+if SRC_PATH not in sys.path:
+    sys.path.append(SRC_PATH)
+
+from engines.easyocr.logic.orchestrator import EasyOCRProcessor
+from engines.tesseract.logic.orchestrator import TesseractOCRProcessor
+from engines.trocr.logic.orchestrator import ShelfReaderTrOCRProcessor
 
 
 class OCRProcessor:
@@ -62,7 +75,9 @@ class OCRProcessor:
             elif engine_name == 'Tesseract':
                 self.engines[engine_name] = TesseractOCRProcessor('eng', confidence, use_gpu)
             elif engine_name == 'TrOCR':
-                self.engines[engine_name] = TrOCRProcessor(['en'], confidence, use_gpu)
+                # TrOCR only needs device argument, not languages/confidence/use_gpu
+                device = 'cuda' if use_gpu else 'cpu'
+                self.engines[engine_name] = ShelfReaderTrOCRProcessor(device)
 
         return self.engines[engine_name]
 
@@ -119,10 +134,31 @@ class OCRProcessor:
                     spine_method="shelfie"  # Méthode optimisée pour étagères
                 )
 
-            elif engine_name in ['Tesseract', 'TrOCR']:
-                # Traitement standard pour Tesseract et TrOCR
+            elif engine_name == 'Tesseract':
+                # Traitement standard pour Tesseract
                 boxes = processor.get_boxes(pil_image)
                 text, avg_confidence = processor.get_text_and_confidence(pil_image)
+            elif engine_name == 'TrOCR':
+                # TrOCR: process_image returns list of dicts with text/confidence/bbox
+                image_np = np.array(pil_image)
+                trocr_results = processor.process_image(image_np)
+
+                # Convert TrOCR format to standard format expected by visualization
+                boxes = []
+                for result in trocr_results:
+                    if 'bbox' in result and len(result['bbox']) >= 4:
+                        x, y, w, h = result['bbox']
+                        boxes.append({
+                            'x': x,
+                            'y': y,
+                            'width': w,
+                            'height': h,
+                            'text': result.get('text', ''),
+                            'confidence': result.get('confidence', 0.0)
+                        })
+
+                text = '\n'.join([r.get('text','') for r in trocr_results]) if trocr_results else ''
+                avg_confidence = (sum([r.get('confidence',0) for r in trocr_results])/len(trocr_results)) if trocr_results else 0.0
 
             else:
                 raise ValueError(f"Moteur OCR non supporté : {engine_name}")

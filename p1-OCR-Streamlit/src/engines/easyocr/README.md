@@ -48,7 +48,7 @@ flowchart TD
 
 ```bash
 # Depuis src/engines/easyocr
-python main.py ../../../../test_images/books1.jpg --device cpu --lang en
+python main.py ../../../test_images/books1.jpg --device cpu --lang en
 ```
 
 - `main.py` permet de lancer le pipeline complet sur une image.

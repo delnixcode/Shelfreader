@@ -86,7 +86,7 @@ class ShelfReaderTrOCRProcessor:
             grouped_lines = self.grouper.group_text_lines(text_results)
 
             # Filtrer les résultats de faible confiance
-            filtered_results = self.grouper.filter_low_confidence(grouped_lines)
+            filtered_results = self.grouper.filter_low_confidence(grouped_lines, min_confidence=0.1)
 
             return filtered_results
 
@@ -130,7 +130,7 @@ class ShelfReaderTrOCRProcessor:
             # Calculer une confiance approximative (TrOCR ne fournit pas de scores de confiance directs)
             confidence = self._estimate_confidence(generated_text)
 
-            if confidence > 0.3:  # Seuil minimum
+            if confidence > 0.1:  # Seuil plus permissif comme l'ancienne implémentation
                 return {
                     'text': generated_text.strip(),
                     'bbox': list(bbox),
@@ -157,11 +157,11 @@ class ShelfReaderTrOCRProcessor:
             return 0.0
 
         # Facteurs simples pour estimer la confiance
-        length_score = min(len(text.strip()) / 20, 1.0)  # Plus c'est long, mieux c'est
+        length_score = min(len(text.strip()) / 10, 1.0)  # Plus c'est long, mieux c'est (divisé par 10 au lieu de 20)
         alpha_ratio = sum(c.isalnum() for c in text) / len(text) if text else 0  # Ratio de caractères alphanumériques
 
-        # Score composite
-        confidence = (length_score * 0.6) + (alpha_ratio * 0.4)
+        # Score composite plus généreux
+        confidence = (length_score * 0.5) + (alpha_ratio * 0.5)
 
         return min(confidence, 1.0)
 

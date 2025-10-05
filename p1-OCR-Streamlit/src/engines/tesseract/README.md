@@ -64,7 +64,7 @@ flowchart TD
 
 ```bash
 # Depuis src/engines/tesseract
-python main.py ../../../../test_images/books1.jpg --lang eng
+python main.py ../../../test_images/books1.jpg --lang eng
 ```
 
 - `main.py` lance le pipeline complet sur une image.

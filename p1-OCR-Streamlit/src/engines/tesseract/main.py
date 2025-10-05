@@ -44,12 +44,25 @@ Exemples d'utilisation:
                        help='Seuil de confiance minimum (0.0-1.0)')
     parser.add_argument('--psm', type=str, default='6',
                        help='Page Segmentation Mode (ex: 6, 8, 11)')
+    parser.add_argument('--cpu', action='store_true',
+                       help='Forcer l\'utilisation du CPU (Tesseract est CPU-only)')
+    parser.add_argument('--gpu', action='store_true',
+                       help='Non supporté par Tesseract (CPU-only)')
+    parser.add_argument('--debug', action='store_true',
+                       help='Mode debug avec informations détaillées')
     parser.add_argument('--benchmark', action='store_true',
                        help='Afficher les métriques de performance')
     parser.add_argument('--output', type=str,
                        help='Fichier de sortie pour les résultats (JSON)')
 
     args = parser.parse_args()
+
+    # Validation des arguments
+    if args.gpu:
+        print("⚠️ Avertissement: Tesseract est CPU-only, l'option --gpu est ignorée")
+    if args.cpu and args.gpu:
+        print("❌ Erreur: --cpu et --gpu sont mutuellement exclusifs")
+        return 1
 
     # Vérifier que l'image existe
     if not os.path.exists(args.image_path):
@@ -67,11 +80,17 @@ Exemples d'utilisation:
 
         print(f"📊 Dimensions: {image.shape[1]}x{image.shape[0]} pixels")
 
+        # Mode debug
+        if args.debug:
+            print(f"🐛 DEBUG - Arguments: {vars(args)}")
+            print(f"🐛 DEBUG - Tesseract est CPU-only")
+
         # Initialiser le processeur
         print("🚀 Initialisation du moteur Tesseract...")
         print(f"   Langues: {args.lang}")
         print(f"   Seuil de confiance: {args.confidence}")
         print(f"   PSM: {args.psm}")
+        print(f"   Device: CPU (Tesseract est CPU-only)")
 
         start_init = time.time()
         processor = TesseractOCRProcessor(

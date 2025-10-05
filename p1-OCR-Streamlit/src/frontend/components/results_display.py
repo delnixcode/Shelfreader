@@ -243,29 +243,42 @@ Moteurs: {', '.join(selected_engines)}
             st.write("Ces commandes auraient produit les mêmes résultats :")
 
             # Construction des commandes terminal pour chaque moteur
+            reconstructed_commands = {}
             for engine in selected_engines:
-                cmd_parts = ["python", "main.py", "image_path", "--engine", engine]
+                # Utiliser le vrai chemin du script comme dans les vraies commandes
+                if engine == 'EasyOCR':
+                    cmd_parts = ["python", "src/engines/easyocr/main.py", "image_path"]
+                elif engine == 'Tesseract':
+                    cmd_parts = ["python", "src/engines/tesseract/main.py", "image_path"]
+                elif engine == 'TrOCR':
+                    cmd_parts = ["python", "src/engines/trocr/main.py", "image_path"]
 
+                # Paramètres globaux - TOUJOURS inclus
                 if global_use_gpu:
                     cmd_parts.append("--gpu")
-                if global_confidence != 0.3:  # Si différent de la valeur par défaut
-                    cmd_parts.extend(["--confidence", str(global_confidence)])
+                else:
+                    cmd_parts.append("--cpu")
+                
+                cmd_parts.extend(["--confidence", str(global_confidence)])
 
-                # Paramètres avancés pour ce moteur
+                # Paramètres avancés pour ce moteur - TOUJOURS inclus selon le moteur
                 if advanced_params and engine in advanced_params:
                     engine_adv_params = advanced_params[engine]
                     if engine == 'EasyOCR':
-                        if engine_adv_params.get('spine_method') and engine_adv_params['spine_method'] != 'shelfie':
-                            cmd_parts.extend(["--spine-method", engine_adv_params['spine_method']])
-                        if engine_adv_params.get('languages') and engine_adv_params['languages'] != ['en']:
-                            cmd_parts.extend(["--languages"] + engine_adv_params['languages'])
+                        cmd_parts.extend(["--spine-method", engine_adv_params.get('spine_method', 'vertical_lines')])
+                        if engine_adv_params.get('languages'):
+                            cmd_parts.extend(["--lang"] + engine_adv_params['languages'])
                     elif engine == 'Tesseract':
-                        if engine_adv_params.get('lang') and engine_adv_params['lang'] != 'eng':
-                            cmd_parts.extend(["--tesseract-lang", engine_adv_params['lang']])
-                        if engine_adv_params.get('psm') and engine_adv_params['psm'] != 6:
-                            cmd_parts.extend(["--tesseract-psm", str(engine_adv_params['psm'])])
+                        if engine_adv_params.get('lang'):
+                            cmd_parts.extend(["--lang", engine_adv_params['lang']])
+                        if engine_adv_params.get('psm') is not None:
+                            cmd_parts.extend(["--psm", str(engine_adv_params['psm'])])
+                    elif engine == 'TrOCR':
+                        if engine_adv_params.get('device'):
+                            cmd_parts.extend(["--device", engine_adv_params['device']])
 
                 terminal_cmd = " ".join(cmd_parts)
+                reconstructed_commands[engine] = terminal_cmd
                 st.code(f"**{engine}:**\n{terminal_cmd}", language="bash")
 
             # Comparaison si les commandes sont disponibles
@@ -273,10 +286,15 @@ Moteurs: {', '.join(selected_engines)}
                 differences_found = False
                 for engine in selected_engines:
                     executed = executed_commands.get(engine, "")
-                    reconstructed = " ".join(cmd_parts).replace("image_path", "[IMAGE_PATH]")
-                    if executed and executed.replace("[IMAGE_PATH]", "image_path") != reconstructed.replace("[IMAGE_PATH]", "image_path"):
-                        differences_found = True
-                        break
+                    reconstructed = reconstructed_commands.get(engine, "")
+                    if executed and reconstructed:
+                        # Normaliser pour la comparaison (remplacer les chemins temporaires)
+                        executed_normalized = executed.replace("/tmp/", "[TEMP]/").split()
+                        reconstructed_normalized = reconstructed.replace("image_path", "[TEMP]/image.jpg").split()
+                        
+                        if executed_normalized != reconstructed_normalized:
+                            differences_found = True
+                            break
 
                 if differences_found:
                     st.warning("⚠️ **Différences détectées** : Certaines commandes exécutées ne correspondent pas aux reconstructions")

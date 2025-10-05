@@ -330,49 +330,25 @@ curl -s https://openlibrary.org/api/books?bibkeys=ISBN:9780140449136&format=json
 - **GPU recommandé** : NVIDIA GTX 1060 ou supérieur
 - **CUDA** : Version 11.0+ (pour GPU)
 
-## 🗺️ Roadmap et évolutions
+- **CUDA** : Version 11.0+ (pour GPU)
 
-### ✅ Phase 1 : MVP Desktop (Actuelle)
-- [x] 3 moteurs OCR opérationnels
-- [x] Interface ligne de commande
-- [x] Support GPU automatique
-- [x] Intégration Open Library
-- [x] Interface web Streamlit
+## 📈 Évolution du projet
 
-### 🚧 Phase 2 : Enhanced Desktop (En développement)
-- [ ] Interface graphique native (Qt/PySide)
-- [ ] Base de données locale SQLite
-- [ ] Système de cache intelligent
-- [ ] Export multi-formats (PDF, Excel, CSV)
-- [ ] Mode hors-ligne partiel
+### Phase 1 : Moteurs OCR ✅
+- Implémentation EasyOCR, Tesseract, TrOCR
+- Utilisation en ligne de commande
+- Support GPU automatique
 
-### 🔮 Phase 3 : Mobile Static
-- [ ] Application mobile Android/iOS
-- [ ] Capture photo en temps réel
-- [ ] Synchronisation cloud
-- [ ] Interface adaptative mobile
-- [ ] Optimisations pour appareils mobiles
+### Phase 2 : Enrichissement ✅
+- Intégration Open Library
+- Métadonnées des livres
+- Liens vers informations complètes
 
-### 🚀 Phase 4 : Mobile Real-time
-- [ ] Traitement vidéo temps réel
-- [ ] Détection de mouvement
-- [ ] Interface AR pour catalogage
-- [ ] Reconnaissance gestuelle
-- [ ] Mode collaboratif
-
-### 💡 Améliorations futures
-- **IA avancée** : Modèles personnalisés pour livres
-- **Multi-langues** : Support étendu (20+ langues)
-- **API REST** : Intégration tierce
-- **Plugins** : Architecture extensible
-- **Analytics** : Tableaux de bord statistiques
-- **IA générative** : Suggestions de lecture
-
-### 📅 Planning prévisionnel
-- **Q4 2024** : Finalisation Phase 2
-- **Q1 2025** : Lancement Phase 3 (Mobile)
-- **Q2 2025** : Phase 4 (Real-time)
-- **2025** : API publique et plugins
+### Phase 3 : Interface Web ✅
+- Application Streamlit moderne
+- Upload intuitif d'images
+- Comparaison multi-moteurs
+- Visualisations avancées
 
 ## 📋 Table des matières
 

@@ -1,5 +1,22 @@
 # 📚 ShelfReader - Guide des Dépendances
 
+## 📋 Table des matières
+
+- [Vue d'ensemble](#vue-densemble)
+- [📦 Organisation des Dépendances](#-organisation-des-dépendances)
+  - [🔄 Dépendances Existantes (Environnement de Base)](#-dépendances-existantes-environnement-de-base)
+- [🆕 Dépendances Ajoutées par Projet](#-dépendances-ajoutées-par-projet)
+  - [🎯 P1 - MVP Desktop (OCR + API + Interface Web)](#-p1---mvp-desktop-ocr--api--interface-web)
+  - [🚀 P2 - Enhanced Desktop (YOLOv8 + Cache Intelligent)](#-p2---enhanced-desktop-yolov8--cache-intelligent)
+  - [📱 P3 - Mobile Static (Interface Native + Offline)](#-p3---mobile-static-interface-native--offline)
+  - [⚡ P4 - Mobile Real-time (AR + Performance Maximale)](#-p4---mobile-real-time-ar--performance-maximale)
+- [🎯 Rôles par Projet](#-rôles-par-projet)
+- [📋 Installation](#-installation)
+- [⚠️ Notes Importantes](#️-notes-importantes)
+- [🔄 Mise à Jour des Dépendances](#-mise-à-jour-des-dépendances)
+
+---
+
 ## Vue d'ensemble
 
 Ce document détaille toutes les bibliothèques utilisées dans le projet **ShelfReader** et leur rôle dans chacun des 4 projets (P1-P4). Le fichier `requirements.txt` contient **118 dépendances** organisées par catégories pour garantir la compatibilité entre tous les projets.

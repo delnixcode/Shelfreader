@@ -1,8 +1,13 @@
 # 🏗️ **ShelfReader P1 - MVP Desktop**
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
-[![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)](https://streamlit.io/)
-[![EasyOCR](https://img.shields.io/badge/EasyOCR-1.7+-green.svg)](https://github.com/JaidedAI/EasyOCR)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)](https://streamlit.io## 📚 Documentation
+
+- [🏗️ Architecture & Documentation](docs/P1_Architecture_Documentation.md) - Vue d'ensemble complète du projet
+- [📊 État d'Avancement](docs/P1_Status_Report.md) - Suivi du développement et métriques
+- [🧪 Guide des Tests](docs/Testing_Guide.md) - Tests et validation
+- [🔧 Dépendances](docs/Dependencies.md) - Gestion des dépendances détaillée
+- [📖 Guide OCR](docs/OCR_Code_Explanation.md) - Explication technique du code OCR[EasyOCR](https://img.shields.io/badge/EasyOCR-1.7+-green.svg)](https://github.com/JaidedAI/EasyOCR)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 **Reconnaissance automatique de livres sur étagères avec OCR intelligent**
@@ -80,10 +85,16 @@ python src/ocr_tesseract.py test_images/books1.jpg
 python src/ocr_trocr.py test_images/books1.jpg --gpu
 ```
 
+#### 📁 Sauvegarde automatique des résultats
+Les résultats OCR sont automatiquement sauvegardés dans le dossier **`result-ocr/`** :
+- Fichiers texte avec les titres détectés
+- Images annotées avec les bounding boxes
+- Métriques de performance et statistiques
+
 #### Options communes :
 - `--gpu` : Accélération GPU (recommandé)
 - `--confidence 0.3` : Seuil de confiance (0.1-1.0)
-- `--output fichier.txt` : Sauvegarde résultats
+- `--output fichier.txt` : Sauvegarde résultats personnalisée
 
 ### 🖥️ Mode Interface Web (Débutants)
 
@@ -152,11 +163,13 @@ p1-MVP-Desktop/
 │   └── ocr_trocr.py             # Module OCR TrOCR
 ├── scripts/                      # Scripts utilitaires
 │   └── ocr_detect.py            # Script de détection unifié
-├── docs/                         # Documentation
+├── docs/                         # Documentation complète
 │   ├── README.md                # Guide utilisateur
-│   ├── P1_Architecture_Planning.md # Architecture & Planning
-│   ├── Dependencies.md          # Gestion des dépendances
-│   └── bookICCC2013.pdf         # Documentation PDF
+│   ├── P1_Architecture_Documentation.md # Architecture & Documentation
+│   ├── P1_Status_Report.md      # État d'avancement & métriques
+│   ├── Testing_Guide.md         # Guide des tests
+│   ├── Dependencies.md          # Gestion dépendances
+│   └── OCR_Code_Explanation.md  # Explication technique OCR
 ├── tests/                        # Tests unitaires
 │   └── __init__.py              # Package de tests
 ├── test_images/                  # Images de test
@@ -211,7 +224,7 @@ p1-MVP-Desktop/
 
 ## 📚 Documentation
 
-- [🏗️ Architecture & Planning](docs/P1_Architecture_Planning.md) - Vue d'ensemble complète du projet
+- [🏗️ Architecture & Documentation](docs/P1_Architecture_Documentation.md) - Vue d'ensemble complète du projet
 - [🔧 Dépendances](docs/Dependencies.md) - Gestion des dépendances détaillée
 - [📖 Guide OCR](docs/OCR_Code_Explanation.md) - Explication technique du code OCR
 

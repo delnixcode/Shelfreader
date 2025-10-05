@@ -1,5 +1,30 @@
 # 🏗️ **ShelfReader P1 - Architecture & Planning**
 
+## 📋 **Table des matières**
+
+- [🎯 Vue d'ensemble - Projet 1](#-vue-densemble---projet-1)
+  - [📋 Objectifs du Projet 1](#-objectifs-du-projet-1)
+  - [🎓 Objectifs pédagogiques](#-objectifs-pédagogiques)
+  - [🚀 Nouveau layout vertical desktop](#-nouveau-layout-vertical-desktop)
+- [📋 Roadmap & Phases - Projet 1](#-roadmap--phases---projet-1)
+  - [Phase 1.1 : Configuration et environnement](#phase-11--configuration-et-environnement)
+  - [Phase 1.2 : Module OCR de base](#phase-12--module-ocr-de-base)
+  - [Phase 1.3 : Client API Open Library](#phase-13--client-api-open-library)
+  - [Phase 1.4 : Interface Streamlit verticale](#phase-14--interface-streamlit-verticale)
+  - [Phase 1.5 : Intégration et tests](#phase-15--intégration-et-tests)
+- [🏛️ Architecture - Projet 1](#️-architecture---projet-1)
+- [🔧 Technologies - Projet 1](#-technologies---projet-1)
+  - [Installation Commands](#installation-commands)
+  - [Environment Requirements](#environment-requirements)
+- [🎯 Défis techniques - Projet 1](#-défis-techniques---projet-1)
+  - [Défi 1 : Précision OCR sur tranches de livres](#défi-1--précision-ocr-sur-tranches-de-livres)
+  - [Défi 2 : Gestion des erreurs et robustesse](#défi-2--gestion-des-erreurs-et-robustesse)
+  - [Défi 3 : Performance et optimisation](#défi-3--performance-et-optimisation)
+- [🔄 Architecture d'intégration - Projet 1](#-architecture-dintégration---projet-1)
+- [📂 Structure du projet ShelfReader P1](#-structure-du-projet-shelfreader-p1)
+
+---
+
 ## 🎯 Vue d'ensemble - Projet 1
 
 **ShelfReader Desktop MVP** est la première étape concrète du projet. C'est un prototype fonctionnel qui valide le concept de base : **extraire du texte des photos de tranches de livres et l'enrichir avec des données bibliographiques**.

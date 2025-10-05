@@ -18,6 +18,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 # Import de nos modules OCR
 from ocr_easyocr import EasyOCRProcessor
+from api_client import OpenLibraryClient
 
 # Configuration de la page
 st.set_page_config(
@@ -40,6 +41,7 @@ with st.sidebar:
     **Précision :** 93% (14/15 livres)
     **Méthode :** Shelfie avec fallback intelligent
     **GPU :** Support automatique
+    **Enrichissement :** Open Library intégré
     """)
 
     st.markdown("---")
@@ -100,13 +102,13 @@ def process_image_with_ocr(image_path, confidence=0.3, use_gpu=True, debug=False
         return None, 0
 
 # Fonction pour afficher les résultats
-def display_results(results, processing_time):
+def display_results(results, processing_time, enriched_books=None):
     """Affiche les résultats de l'OCR de manière structurée"""
     if not results or 'books' not in results:
         st.error("Aucun résultat OCR trouvé")
         return
 
-    books = results['books']
+    books = enriched_books if enriched_books else results['books']
 
     # Métriques principales
     col1, col2, col3, col4 = st.columns(4)
@@ -122,8 +124,8 @@ def display_results(results, processing_time):
         st.metric("⚡ Temps de traitement", f"{processing_time:.2f}s")
 
     with col4:
-        total_chars = sum(len(book.get('text', '')) for book in books)
-        st.metric("📝 Caractères totaux", total_chars)
+        enriched_count = sum(1 for book in books if book.get('enriched', False))
+        st.metric("� Enrichis Open Library", f"{enriched_count}/{len(books)}")
 
     st.markdown("---")
 
@@ -134,12 +136,15 @@ def display_results(results, processing_time):
         # Créer un DataFrame pour l'affichage
         books_data = []
         for i, book in enumerate(books, 1):
+            enriched = book.get('enriched', False)
             books_data.append({
                 "N°": i,
-                "Titre": book.get('text', 'N/A'),
+                "Titre OCR": book.get('text', 'N/A'),
+                "Titre OL": book.get('openlibrary_title', 'N/A') if enriched else 'Non enrichi',
+                "Auteur": book.get('openlibrary_author', 'N/A') if enriched else 'N/A',
+                "Année": book.get('openlibrary_year', 'N/A') if enriched else 'N/A',
                 "Confiance": f"{book.get('confidence', 0):.1%}",
-                "Position": f"x={book.get('x', 0)}, y={book.get('y', 0)}",
-                "Dimensions": f"{book.get('width', 0)}×{book.get('height', 0)}"
+                "Enrichi": "✅" if enriched else "❌"
             })
 
         df = pd.DataFrame(books_data)
@@ -148,19 +153,71 @@ def display_results(results, processing_time):
         # Affichage en format carte pour plus de lisibilité
         st.markdown("### 📋 Détails par livre")
         for i, book in enumerate(books, 1):
+            enriched = book.get('enriched', False)
             with st.expander(f"📖 Livre {i} - {book.get('text', 'N/A')[:50]}..."):
                 col1, col2 = st.columns(2)
 
                 with col1:
-                    st.write(f"**Texte complet :** {book.get('text', 'N/A')}")
+                    st.write(f"**Texte OCR :** {book.get('text', 'N/A')}")
                     st.write(f"**Confiance :** {book.get('confidence', 0):.1%}")
+                    if enriched:
+                        st.write(f"**Titre Open Library :** {book.get('openlibrary_title', 'N/A')}")
+                        st.write(f"**Auteur :** {book.get('openlibrary_author', 'N/A')}")
+                        st.write(f"**Année :** {book.get('openlibrary_year', 'N/A')}")
 
                 with col2:
                     st.write(f"**Position :** x={book.get('x', 0)}, y={book.get('y', 0)}")
                     st.write(f"**Dimensions :** {book.get('width', 0)}×{book.get('height', 0)} px")
+                    if enriched:
+                        cover_url = book.get('openlibrary_cover_url')
+                        if cover_url:
+                            st.image(cover_url, width=100, caption="Couverture")
+                        else:
+                            st.write("🖼️ *Pas de couverture disponible*")
+
+                        ol_url = book.get('openlibrary_url')
+                        if ol_url:
+                            st.markdown(f"[🔗 Voir sur Open Library]({ol_url})")
 
     else:
         st.warning("⚠️ Aucun livre détecté dans cette image")
+
+# Fonction pour enrichir les résultats OCR avec Open Library
+def enrich_books_with_openlibrary(books, client):
+    """Enrichit les résultats OCR avec des informations de Open Library"""
+    enriched_books = []
+
+    for book in books:
+        text = book.get('text', '').strip()
+        if text:
+            # Essayer d'enrichir avec Open Library
+            enriched_info = client.get_book_info_for_ocr_result(text)
+
+            if enriched_info:
+                # Fusionner les informations OCR avec celles de Open Library
+                enriched_book = book.copy()
+                enriched_book.update({
+                    'openlibrary_title': enriched_info.get('title'),
+                    'openlibrary_author': enriched_info.get('author'),
+                    'openlibrary_year': enriched_info.get('first_publish_year'),
+                    'openlibrary_cover_url': enriched_info.get('cover_url'),
+                    'openlibrary_url': enriched_info.get('open_library_url'),
+                    'openlibrary_description': enriched_info.get('description'),
+                    'openlibrary_subjects': enriched_info.get('subjects', []),
+                    'enriched': True
+                })
+                enriched_books.append(enriched_book)
+            else:
+                # Ajouter le livre OCR sans enrichissement
+                book_copy = book.copy()
+                book_copy['enriched'] = False
+                enriched_books.append(book_copy)
+        else:
+            book_copy = book.copy()
+            book_copy['enriched'] = False
+            enriched_books.append(book_copy)
+
+    return enriched_books
 
 # Fonction pour visualiser les zones détectées
 def visualize_detected_zones(image_path, books):
@@ -244,6 +301,12 @@ def main():
                 help="Affiche les analyses détaillées (plus lent)"
             )
 
+            enrich_with_ol = st.checkbox(
+                "Enrichir avec Open Library",
+                value=True,
+                help="Recherche les métadonnées des livres sur Open Library (nécessite connexion internet)"
+            )
+
             # Bouton de traitement
             if st.button("🚀 Lancer l'analyse OCR", type="primary", use_container_width=True):
                 with st.spinner("🔍 Analyse en cours avec algorithme adaptatif..."):
@@ -271,9 +334,16 @@ def main():
                         )
 
                         if results:
+                            # Enrichir avec Open Library si demandé
+                            enriched_books = None
+                            if enrich_with_ol and results.get('books'):
+                                with st.spinner("🔍 Enrichissement avec Open Library..."):
+                                    ol_client = OpenLibraryClient(timeout=10)
+                                    enriched_books = enrich_books_with_openlibrary(results['books'], ol_client)
+
                             # Afficher les résultats
-                            st.success("✅ Analyse terminée !")
-                            display_results(results, processing_time)
+                            st.success("✅ Analyse terminée !" + (" + Enrichissement OL" if enrich_with_ol else ""))
+                            display_results(results, processing_time, enriched_books)
 
                             # Visualisation des zones détectées
                             if books := results.get('books'):

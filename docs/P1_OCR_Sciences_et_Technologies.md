@@ -1,4 +1,22 @@
-# 🔬 Sciences et Technologies derrière ShelfReader OCR
+# 🔬 Sciences et Technologies derrière ShelfReader OCR - Approche P1
+
+## 🎯 Contexte et Vision du Projet
+
+**ShelfReader** est une application multi-étapes pour la reconnaissance optique de tranches de livres. Cette documentation détaille l'**Approche P1** : traitement OCR direct sur l'image complète du rayonnage.
+
+### 📈 Évolution Architecturale Prévue
+
+Cette approche P1 utilise un pipeline OCR traditionnel avec détection de tranches. Les futures versions exploreront des architectures plus avancées :
+
+- **P2-P4** : Applications desktop/mobile avec interface utilisateur
+- **Évolution Technique Future** :
+  - **YOLO/FastAI** : Détection et extraction individuelles des tranches avant OCR
+  - **PyTorch** : Modèles de deep learning personnalisés pour l'extraction de tranches
+  - **Segmentation sémantique** : Isolation précise de chaque livre avant reconnaissance
+
+**Pourquoi documenter P1 spécifiquement ?** Cette approche établit les bases techniques et sert de référence pour mesurer les améliorations des futures architectures.
+
+---
 
 ## 📋 Sommaire
 

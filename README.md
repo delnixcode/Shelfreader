@@ -208,8 +208,12 @@ python src/app_enhanced.py
 
 ### **Ressources Partagées**
 - **Images de test** : `shared/data/test_images/`
-- **Documentation** : `shared/docs/`
+- **Documentation** : `docs/` - Guides techniques et architecture
 - **Scripts utilitaires** : `shared/scripts/`
+
+### **Documentation Technique Détaillée**
+- **🔬 Sciences OCR P1** : [`docs/P1_OCR_Sciences_et_Technologies.md`](./docs/P1_OCR_Sciences_et_Technologies.md) - Pipeline OCR complet, algorithmes de détection, optimisations
+- **📚 Architecture Globale** : [`docs/README.md`](./docs/README.md) - Vue d'ensemble de l'architecture projet
 
 ### **Liens Externes**
 - **Repository** : [GitHub](https://github.com/delnixcode/Shelfreader)

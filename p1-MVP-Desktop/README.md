@@ -11,6 +11,8 @@
 
 - [📖 À propos de ShelfReader](#à-propos-de-shelfreader)
 - [🔍 Comment ça marche](#comment-ça-marche)
+- [📈 Évolution du projet](#évolution-du-projet)
+- [🗺️ Roadmap et évolutions](#roadmap-et-évolutions)
 - [🏗️ Architecture du projet](#architecture-du-projet)
 - [📦 Installation](#installation)
 - [🚀 Démarrage rapide](#démarrage-rapide)
@@ -20,8 +22,6 @@
 - [🚀 Utilisation détaillée](#utilisation-détaillée)
 - [📊 Métriques et performances](#métriques-et-performances)
 - [🔧 Dépannage](#dépannage)
-- [📈 Évolution du projet](#évolution-du-projet)
-- [🗺️ Roadmap et évolutions](#roadmap-et-évolutions)
 - [🎯 Algorithme optimisé](#algorithme-optimisé)
 - [📚 Documentation](#documentation)
 - [🤝 Contribution](#contribution)
@@ -81,6 +81,46 @@ ShelfReader propose **3 moteurs OCR spécialisés** :
 - **Connexion Open Library** : Récupération des métadonnées
 - **Informations complètes** : Auteur, éditeur, date, résumé
 - **Liens externes** : Accès aux ressources supplémentaires
+
+## 📈 Évolution du projet
+
+### Phase 1 : Moteurs OCR ✅
+- Implémentation EasyOCR, Tesseract, TrOCR
+- Utilisation en ligne de commande
+- Support GPU automatique
+
+### Phase 2 : Enrichissement ✅
+- Intégration Open Library
+- Métadonnées des livres
+- Liens vers informations complètes
+
+### Phase 3 : Interface Web ✅
+- Application Streamlit moderne
+- Upload intuitif d'images
+- Comparaison multi-moteurs
+- Visualisations avancées
+
+## 🗺️ Roadmap et évolutions
+
+### Phase 4 : Mobile (Static) - En cours
+- Application mobile pour Android/iOS
+- Capture directe depuis l'appareil photo
+- Traitement en temps réel limité
+
+### Phase 5 : Mobile (Real-time) - Planifié
+- Streaming vidéo temps réel
+- Détection continue des livres
+- Interface AR pour identification
+
+### Phase 6 : Cloud (SaaS) - Futur
+- Service web multi-utilisateurs
+- API REST pour intégrations
+- Dashboard d'administration
+
+### Phase 7 : IA Avancée - Futur
+- Modèles personnalisés par utilisateur
+- Apprentissage continu des préférences
+- Suggestions intelligentes de livres
 
 ## 🏗️ Architecture du projet
 
@@ -614,46 +654,6 @@ curl -s https://openlibrary.org/api/books?bibkeys=ISBN:9780140449136&format=json
 - 💬 **Discussions** : Questions générales
 - 📖 **Documentation** : Guides détaillés dans `/docs`
 - 🏷️ **Labels** : `bug`, `enhancement`, `question`
-
-## �� Évolution du projet
-
-### Phase 1 : Moteurs OCR ✅
-- Implémentation EasyOCR, Tesseract, TrOCR
-- Utilisation en ligne de commande
-- Support GPU automatique
-
-### Phase 2 : Enrichissement ✅
-- Intégration Open Library
-- Métadonnées des livres
-- Liens vers informations complètes
-
-### Phase 3 : Interface Web ✅
-- Application Streamlit moderne
-- Upload intuitif d'images
-- Comparaison multi-moteurs
-- Visualisations avancées
-
-## 🗺️ Roadmap et évolutions
-
-### Phase 4 : Mobile (Static) - En cours
-- Application mobile pour Android/iOS
-- Capture directe depuis l'appareil photo
-- Traitement en temps réel limité
-
-### Phase 5 : Mobile (Real-time) - Planifié
-- Streaming vidéo temps réel
-- Détection continue des livres
-- Interface AR pour identification
-
-### Phase 6 : Cloud (SaaS) - Futur
-- Service web multi-utilisateurs
-- API REST pour intégrations
-- Dashboard d'administration
-
-### Phase 7 : IA Avancée - Futur
-- Modèles personnalisés par utilisateur
-- Apprentissage continu des préférences
-- Suggestions intelligentes de livres
 
 ## 🎯 Algorithme optimisé
 - **Précision mesurée** : 93% (14/15 livres)

@@ -182,15 +182,21 @@ output:
 
 ### 💻 Mode Ligne de commande (Pour développeurs/experts)
 Utilisez directement les moteurs OCR depuis le terminal :
+
+**📁 Sauvegarde automatique** : Tous les résultats sont automatiquement sauvegardés dans le dossier `result-ocr/`
+
 ```bash
 # Moteur EasyOCR (recommandé)
 python src/engines/easyocr_engine.py test_images/books1.jpg --gpu --confidence 0.3
+# Résultat sauvegardé dans : result-ocr/books1_easyocr.json
 
 # Moteur Tesseract (rapide)
 python src/engines/tesseract_engine.py test_images/books1.jpg
+# Résultat sauvegardé dans : result-ocr/books1_tesseract.json
 
 # Moteur TrOCR (haute précision)
 python src/engines/trocr_engine.py test_images/books1.jpg --gpu
+# Résultat sauvegardé dans : result-ocr/books1_trocr.json
 ```
 
 ### 🖥️ Mode Interface Web (Pour débutants)
@@ -280,15 +286,20 @@ for livre in resultats:
 ### 💻 Mode Ligne de commande (Experts)
 Moteurs OCR disponibles :
 
+**📁 Sauvegarde automatique** : Tous les résultats sont automatiquement sauvegardés dans le dossier `result-ocr/`
+
 ```bash
 # EasyOCR (recommandé - précision 93%)
 python src/engines/easyocr_engine.py test_images/books1.jpg --gpu --confidence 0.3
+# Résultat : result-ocr/books1_easyocr.json
 
 # Tesseract (ultra rapide)
 python src/engines/tesseract_engine.py test_images/books1.jpg
+# Résultat : result-ocr/books1_tesseract.json
 
 # TrOCR (haute précision)
 python src/engines/trocr_engine.py test_images/books1.jpg --gpu
+# Résultat : result-ocr/books1_trocr.json
 ```
 
 Options communes :
@@ -392,6 +403,7 @@ pip install -r requirements.txt
 # Choisir votre mode :
 # Mode ligne de commande
 python src/engines/easyocr_engine.py test_images/books1.jpg --gpu
+# Résultat sauvegardé automatiquement dans : result-ocr/books1_easyocr.json
 
 # OU mode interface web
 streamlit run src/frontend/streamlit_app.py

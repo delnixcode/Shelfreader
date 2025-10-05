@@ -7,28 +7,31 @@ Ce fichier explique l'organisation des dossiers et fichiers du moteur EasyOCR da
 ```
 src/engines/easyocr/
 │   __init__.py           # Initialisation du module
-│   config.py             # Paramètres et configuration du moteur
-│   processor.py          # Classe principale EasyOCRProcessor
 │   main.py               # Script principal pour tests/CLI
+│   README.md             # Cette documentation
 │   explanations.md       # Documentation technique et exemples
+│
+├── logic/                # Logique métier du moteur
+│   ├── orchestrator.py   # Classe principale EasyOCRProcessor
+│   └── config.py         # Paramètres et configuration du moteur
 │
 ├── detection/            # Détection des zones de texte (algos, modèles)
 ├── grouping/             # Regroupement des résultats OCR (post-traitement)
-├── models/               # Modèles utilisés (weights, architectures)
-├── preprocessing/        # Prétraitement des images (filtres, resize, etc.)
-└── __pycache__/          # Fichiers compilés Python
+├── models/               # Structures de données (Line, etc.)
+└── preprocessing/        # Prétraitement des images (filtres, resize, etc.)
 ```
 
 ## Rôle de chaque composant
 
-- **config.py** : Définit les paramètres par défaut, la gestion du GPU, les langues, etc.
-- **processor.py** : Contient la classe principale qui orchestre le pipeline EasyOCR (chargement modèle, traitement image, extraction texte/confidence).
-- **main.py** : Permet de lancer des tests ou des traitements en ligne de commande.
-- **explanations.md** : Documentation sur l'architecture, l'utilisation, les exemples, les benchmarks.
-- **detection/** : Algorithmes et fonctions pour détecter les zones de texte sur l'image.
-- **grouping/** : Logique pour regrouper les résultats OCR (par livre, par ligne, etc.).
-- **models/** : Stockage ou chargement des modèles nécessaires au moteur.
-- **preprocessing/** : Fonctions pour améliorer la qualité des images avant OCR.
+- **`logic/config.py`** : Définit les paramètres par défaut, la gestion du GPU, les langues, etc.
+- **`logic/orchestrator.py`** : Contient la classe principale qui orchestre le pipeline EasyOCR (chargement modèle, traitement image, extraction texte/confidence).
+- **`main.py`** : Permet de lancer des tests ou des traitements en ligne de commande.
+- **`README.md`** : Cette documentation sur l'architecture et l'utilisation.
+- **`explanations.md`** : Documentation technique détaillée et exemples avancés.
+- **`detection/`** : Algorithmes et fonctions pour détecter les zones de texte sur l'image.
+- **`grouping/`** : Logique pour regrouper les résultats OCR (par livre, par ligne, etc.).
+- **`models/`** : Structures de données utilisées (Line, etc.).
+- **`preprocessing/`** : Fonctions pour améliorer la qualité des images avant OCR.
 
 ## Schéma d'interaction
 
@@ -68,8 +71,9 @@ Le moteur **EasyOCR** est spécialisé dans la reconnaissance de texte sur les t
 
 ```
 easyocr/
-├── processor.py           # Orchestrateur principal
-├── config.py             # Paramètres de configuration
+├── logic/
+│   ├── orchestrator.py    # Orchestrateur principal
+│   └── config.py         # Paramètres de configuration
 ├── preprocessing/        # Prétraitement d'images
 ├── detection/           # Détection de dos (SHELFIE + ICCV2013)
 ├── grouping/            # Regroupement adaptatif

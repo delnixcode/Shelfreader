@@ -182,14 +182,17 @@ nvidia-smi
 
 ### **Ajouter un test**
 ```python
+### **Ajouter un test**
+```python
 # tests/test_nouvelle_fonction.py
 import pytest
-from src.ocr_easyocr import EasyOCRProcessor
+from src.engines.easyocr.logic.orchestrator import EasyOCRProcessor
 
 def test_nouvelle_fonction():
     processor = EasyOCRProcessor()
     # Votre test ici
     assert True
+"
 ```
 
 ### **Bonnes pratiques**

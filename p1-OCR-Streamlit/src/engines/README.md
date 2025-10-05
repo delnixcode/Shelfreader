@@ -30,8 +30,9 @@ src/engines/
 │   └── grouping/      # Regroupement proximité
 ├── trocr/            # Moteur TrOCR manuscrit
 │   ├── README.md      # Documentation complète
-│   ├── processor.py   # Classe principale
-│   ├── config.py      # Paramètres génération
+│   ├── __init__.py    # Point d'entrée du module
+│   ├── main.py        # Script principal de test
+│   ├── logic/         # Logique métier (orchestrator, config)
 │   ├── preprocessing/ # Conversion RGB
 │   ├── detection/     # Segmentation bandes
 │   └── grouping/      # Regroupement temporel

@@ -153,11 +153,12 @@ p1-OCR-Streamlit/
 │   │   ├── __init__.py
 │   │   ├── easyocr/             # Moteur EasyOCR spécialisé tranches
 │   │   │   ├── __init__.py
-│   │   │   ├── processor.py     # Classe principale EasyOCRProcessor
-│   │   │   ├── config.py        # Paramètres et configuration
 │   │   │   ├── main.py          # Script CLI pour tests
-│   │   │   ├── STRUCTURE.md     # Documentation structure + commandes
+│   │   │   ├── README.md         # Documentation du moteur
 │   │   │   ├── explanations.md  # Documentation technique détaillée
+│   │   │   ├── logic/           # Logique métier et configuration
+│   │   │   │   ├── config.py    # Paramètres et configuration
+│   │   │   │   └── orchestrator.py # Classe principale EasyOCRProcessor
 │   │   │   ├── detection/       # Algos détection zones texte
 │   │   │   ├── grouping/        # Regroupement résultats OCR
 │   │   │   ├── models/          # Modèles et weights
@@ -165,11 +166,12 @@ p1-OCR-Streamlit/
 │   │   │   └── __pycache__/
 │   │   ├── tesseract/           # Moteur Tesseract rapide
 │   │   │   ├── __init__.py
-│   │   │   ├── processor.py     # Classe principale TesseractOCRProcessor
-│   │   │   ├── config.py        # Configurations PSM
 │   │   │   ├── main.py          # Script CLI
-│   │   │   ├── STRUCTURE.md     # Documentation structure + commandes
+│   │   │   ├── README.md         # Documentation du moteur
 │   │   │   ├── explanations.md  # Documentation technique
+│   │   │   ├── logic/           # Logique métier et configuration
+│   │   │   │   ├── config.py    # Configurations PSM
+│   │   │   │   └── orchestrator.py # Classe principale TesseractOCRProcessor
 │   │   │   ├── detection/       # Détection zones texte
 │   │   │   ├── grouping/        # Regroupement proximité
 │   │   │   ├── models/          # Configs Tesseract
@@ -177,11 +179,12 @@ p1-OCR-Streamlit/
 │   │   │   └── __pycache__/
 │   │   └── trocr/               # Moteur TrOCR haute précision
 │   │       ├── __init__.py
-│   │       ├── processor.py     # Classe principale ShelfReaderTrOCRProcessor
-│   │       ├── config.py        # Paramètres génération
 │   │       ├── main.py          # Script CLI
-│   │       ├── STRUCTURE.md     # Documentation structure + commandes
+│   │       ├── README.md         # Documentation du moteur
 │   │       ├── explanations.md  # Documentation technique
+│   │       ├── logic/           # Logique métier et configuration
+│   │       │   ├── config.py    # Paramètres génération
+│   │       │   └── orchestrator.py # Classe principale ShelfReaderTrOCRProcessor
 │   │       ├── detection/       # Segmentation bandes
 │   │       ├── grouping/        # Regroupement temporel
 │   │       ├── models/          # Modèles transformers
@@ -497,13 +500,13 @@ done
 ### 🔧 Intégration dans un script Python
 
 ```python
-from src.engines.ocr_easyocr import EasyOCREngine
+from src.engines.easyocr.logic.orchestrator import EasyOCRProcessor
 
 # Initialisation
-engine = EasyOCREngine(gpu=True, confidence=0.3)
+processor = EasyOCRProcessor(gpu=True, confidence=0.3)
 
 # Analyse d'image
-resultats = engine.process_image("etagere.jpg")
+resultats = processor.process_image("etagere.jpg")
 
 # Traitement des résultats
 for livre in resultats:

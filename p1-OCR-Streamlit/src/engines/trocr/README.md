@@ -7,10 +7,13 @@ Ce fichier explique l'organisation des dossiers et fichiers du moteur TrOCR dans
 ```
 src/engines/trocr/
 │   __init__.py           # Initialisation du module
-│   config.py             # Paramètres et configuration du moteur
-│   processor.py          # Classe principale ShelfReaderTrOCRProcessor
 │   main.py               # Script principal pour tests/CLI
+│   README.md             # Documentation du moteur
 │   explanations.md       # Documentation technique et exemples
+│
+├── logic/                # Logique métier et configuration
+│   ├── config.py         # Paramètres et configuration du moteur
+│   └── orchestrator.py   # Classe principale ShelfReaderTrOCRProcessor
 │
 ├── detection/            # Détection des zones de texte (algos, modèles)
 ├── grouping/             # Regroupement des résultats OCR (post-traitement)
@@ -21,9 +24,10 @@ src/engines/trocr/
 
 ## Rôle de chaque composant
 
-- **config.py** : Paramètres par défaut, gestion du GPU, langues, etc.
-- **processor.py** : Classe principale, pipeline TrOCR (chargement, traitement, extraction).
+- **logic/config.py** : Paramètres par défaut, gestion du GPU, langues, etc.
+- **logic/orchestrator.py** : Classe principale, pipeline TrOCR (chargement, traitement, extraction).
 - **main.py** : Script CLI pour lancer le moteur sur une image.
+- **README.md** : Documentation complète du moteur TrOCR.
 - **explanations.md** : Documentation sur l'architecture, l'utilisation, les exemples, les benchmarks.
 - **detection/** : Algorithmes pour détecter les zones de texte.
 - **grouping/** : Regroupement des résultats OCR.
@@ -78,8 +82,9 @@ Le moteur **TrOCR** (Transformer-based OCR) est spécialisé dans la reconnaissa
 
 ```
 trocr/
-├── processor.py           # Orchestrateur principal
-├── config.py             # Paramètres génération
+├── logic/
+│   ├── orchestrator.py    # Orchestrateur principal
+│   └── config.py         # Paramètres génération
 ├── preprocessing/        # Conversion RGB et segmentation
 ├── detection/            # Segmentation en bandes
 └── grouping/             # Regroupement temporel
@@ -97,7 +102,7 @@ trocr/
 - **Filtrage régions** : Élimination des zones vides
 - **Fusion régions** : Regroupement des bandes adjacentes
 
-### 3. OCR avec TrOCR (`processor.py`)
+### 3. OCR avec TrOCR (`logic/orchestrator.py`)
 - **Modèle VisionEncoderDecoder** : Architecture transformer
 - **Beam Search** : Génération avec recherche en faisceau
 - **Post-traitement** : Nettoyage et estimation de confiance
@@ -169,7 +174,7 @@ python -c "
 import sys
 import cv2
 sys.path.append('src')
-from engines.trocr import ShelfReaderTrOCRProcessor
+from engines.trocr.logic.orchestrator import ShelfReaderTrOCRProcessor
 
 # Test avec différents devices
 devices = ['cpu']

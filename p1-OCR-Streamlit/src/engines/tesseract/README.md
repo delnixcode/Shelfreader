@@ -1,4 +1,19 @@
-# 📦 Structure du moteur Tesseract
+# 📦 S```
+src/engines/tesseract/
+│   __init__.py           # Initialisation du module
+│   main.py               # Script principal pour tests/CLI
+│   README.md             # Cette documentation
+│   explanations.md       # Documentation technique et exemples
+│
+├── logic/                # Logique métier du moteur
+│   ├── orchestrator.py   # Classe principale TesseractOCRProcessor
+│   └── config.py         # Paramètres et configuration du moteur
+│
+├── detection/            # Détection des zones de texte (algos, modèles)
+├── grouping/             # Regroupement des résultats OCR (post-traitement)
+├── models/               # Configurations ou modèles spécifiques
+└── preprocessing/        # Prétraitement des images
+```teur Tesseract
 
 Ce fichier explique l'organisation des dossiers et fichiers du moteur Tesseract dans ShelfReader.
 
@@ -7,10 +22,13 @@ Ce fichier explique l'organisation des dossiers et fichiers du moteur Tesseract 
 ```
 src/engines/tesseract/
 │   __init__.py           # Initialisation du module
-│   config.py             # Paramètres et configuration du moteur
-│   processor.py          # Classe principale TesseractOCRProcessor
 │   main.py               # Script principal pour tests/CLI
+│   README.md             # Documentation du moteur
 │   explanations.md       # Documentation technique et exemples
+│
+├── logic/                # Logique métier et configuration
+│   ├── config.py         # Paramètres et configuration du moteur
+│   └── orchestrator.py   # Classe principale TesseractOCRProcessor
 │
 ├── detection/            # Détection des zones de texte (algos, modèles)
 ├── grouping/             # Regroupement des résultats OCR (post-traitement)
@@ -21,14 +39,15 @@ src/engines/tesseract/
 
 ## Rôle de chaque composant
 
-- **config.py** : Paramètres par défaut, gestion du GPU, langues, etc.
-- **processor.py** : Classe principale, pipeline Tesseract (chargement, traitement, extraction).
-- **main.py** : Script CLI pour lancer le moteur sur une image.
-- **explanations.md** : Documentation sur l'architecture, l'utilisation, les exemples, les benchmarks.
-- **detection/** : Algorithmes pour détecter les zones de texte.
-- **grouping/** : Regroupement des résultats OCR.
-- **models/** : Configurations ou modèles spécifiques à Tesseract.
-- **preprocessing/** : Amélioration de la qualité des images avant OCR.
+- **`logic/config.py`** : Paramètres par défaut, gestion du GPU, langues, etc.
+- **`logic/orchestrator.py`** : Classe principale, pipeline Tesseract (chargement, traitement, extraction).
+- **`main.py`** : Script CLI pour lancer le moteur sur une image.
+- **`README.md`** : Cette documentation sur l'architecture et l'utilisation.
+- **`explanations.md`** : Documentation technique détaillée et exemples avancés.
+- **`detection/`** : Algorithmes pour détecter les zones de texte.
+- **`grouping/`** : Regroupement des résultats OCR.
+- **`models/`** : Configurations ou modèles spécifiques à Tesseract.
+- **`preprocessing/`** : Amélioration de la qualité des images avant OCR.
 
 ## Schéma d'interaction
 
@@ -78,8 +97,9 @@ Le moteur **Tesseract** est une implémentation simplifiée et optimisée de Tes
 
 ```
 tesseract/
-├── processor.py           # Orchestrateur principal
-├── config.py             # Configurations PSM
+├── logic/
+│   ├── orchestrator.py    # Orchestrateur principal
+│   └── config.py         # Configurations PSM
 ├── preprocessing/        # Amélioration CLAHE
 └── grouping/             # Regroupement par proximité
 ```

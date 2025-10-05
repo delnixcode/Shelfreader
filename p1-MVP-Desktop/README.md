@@ -7,6 +7,27 @@
 
 **Reconnaissance automatique de livres sur étagères avec OCR intelligent**
 
+## 📋 Table des matières
+
+- [📖 À propos de ShelfReader](#à-propos-de-shelfreader)
+- [🔍 Comment ça marche](#comment-ça-marche)
+- [📦 Installation](#installation)
+- [⚙️ Configuration avancée](#configuration-avancée)
+- [🎯 Deux façons d'utiliser ShelfReader](#deux-facons-dutiliser-shelfreader)
+- [💡 Exemples d'utilisation](#exemples-dutilisation)
+- [🚀 Utilisation détaillée](#utilisation-détaillée)
+- [🚀 Démarrage rapide](#démarrage-rapide)
+- [📊 Métriques et performances](#métriques-et-performances)
+- [🔧 Dépannage](#dépannage)
+- [🏗️ Architecture du projet](#architecture-du-projet)
+- [📈 Évolution du projet](#évolution-du-projet)
+- [🗺️ Roadmap et évolutions](#roadmap-et-évolutions)
+- [✨ Fonctionnalités principales](#fonctionnalités-principales)
+- [🎯 Algorithme optimisé](#algorithme-optimisé)
+- [📚 Documentation](#documentation)
+- [🤝 Contribution](#contribution)
+- [📄 Licence](#licence)
+
 ## 📖 À propos de ShelfReader
 
 ShelfReader est une application intelligente de reconnaissance optique de caractères (OCR) spécialisée dans l'identification automatique des titres de livres sur les étagères. L'application utilise des technologies d'intelligence artificielle avancées pour analyser les images d'étagères de livres et extraire les titres avec une précision remarquable.
@@ -61,6 +82,41 @@ ShelfReader propose **3 moteurs OCR spécialisés** :
 - **Connexion Open Library** : Récupération des métadonnées
 - **Informations complètes** : Auteur, éditeur, date, résumé
 - **Liens externes** : Accès aux ressources supplémentaires
+
+## 📦 Installation
+
+### Prérequis
+- Python 3.8+
+- pip
+- Un GPU (optionnel, recommandé)
+
+### Étapes
+
+#### 1. Cloner le dépôt
+```bash
+git clone https://github.com/delnixcode/Shelfreader.git
+cd Shelfreader/p1-MVP-Desktop
+```
+
+#### 2. Activer l'environnement virtuel
+```bash
+# Linux/macOS
+source env-p1/bin/activate
+# Windows
+env-p1\Scripts\activate
+```
+
+#### 3. Installer les dépendances
+```bash
+pip install -r requirements.txt
+```
+
+#### 4. Lancer l'application
+```bash
+streamlit run src/frontend/streamlit_app.py
+```
+
+Ouvrir http://localhost:8501 dans votre navigateur.
 
 ## ⚙️ Configuration avancée
 
@@ -120,6 +176,28 @@ output:
   format: json
   include_metadata: true
   save_images: false
+```
+
+## 🎯 Deux façons d'utiliser ShelfReader
+
+### 💻 Mode Ligne de commande (Pour développeurs/experts)
+Utilisez directement les moteurs OCR depuis le terminal :
+```bash
+# Moteur EasyOCR (recommandé)
+python src/engines/easyocr_engine.py test_images/books1.jpg --gpu --confidence 0.3
+
+# Moteur Tesseract (rapide)
+python src/engines/tesseract_engine.py test_images/books1.jpg
+
+# Moteur TrOCR (haute précision)
+python src/engines/trocr_engine.py test_images/books1.jpg --gpu
+```
+
+### 🖥️ Mode Interface Web (Pour débutants)
+Interface Streamlit intuitive avec upload et visualisation :
+```bash
+streamlit run src/frontend/streamlit_app.py
+# Puis ouvrir http://localhost:8501
 ```
 
 ## 💡 Exemples d'utilisation
@@ -196,6 +274,178 @@ for livre in resultats:
     if livre.get('metadata'):
         print(f"Auteur: {livre['metadata']['author']}")
 ```
+
+## 🚀 Utilisation détaillée
+
+### 💻 Mode Ligne de commande (Experts)
+Moteurs OCR disponibles :
+
+```bash
+# EasyOCR (recommandé - précision 93%)
+python src/engines/easyocr_engine.py test_images/books1.jpg --gpu --confidence 0.3
+
+# Tesseract (ultra rapide)
+python src/engines/tesseract_engine.py test_images/books1.jpg
+
+# TrOCR (haute précision)
+python src/engines/trocr_engine.py test_images/books1.jpg --gpu
+```
+
+Options communes :
+
+- `--gpu` : Accélération GPU (recommandé)
+- `--confidence 0.3` : Seuil de confiance (0.1-1.0)
+- `--output fichier.txt` : Sauvegarde résultats
+
+### 🖥️ Mode Interface Web (Débutants)
+
+```bash
+streamlit run src/frontend/streamlit_app.py
+# Ouvrir http://localhost:8501
+```
+
+Fonctionnalités :
+
+- Upload d'images par glisser-déposer
+- Choix du moteur OCR
+- Comparaison multi-moteurs (page dédiée)
+- Visualisations avec bounding boxes
+
+### 💡 Conseils pour les images
+
+- **Qualité** : Bien éclairées, perpendiculaires à l'étagère
+- **Taille** : Minimum 1000px de largeur
+- **Formats** : JPG, PNG
+- **Contenu** : Titres de livres visibles
+
+### ⚡ Performance par moteur
+
+| Moteur | Précision | Vitesse | GPU |
+|--------|-----------|---------|-----|
+| EasyOCR | 93.3% | 3-5s | ✅ |
+| Tesseract | 73.3% | 1-2s | ❌ |
+| TrOCR | 80.7% | 8-15s | ✅ |
+
+### 🛠️ Technologies utilisées
+
+- **OCR** : EasyOCR, Tesseract, TrOCR
+- **IA** : Transformers (Hugging Face)
+- **Interface** : Streamlit
+- **API** : Open Library
+- **Langage** : Python 3.8+
+
+### 💻 Prérequis système
+
+- **OS** : Linux, macOS, Windows
+- **RAM** : 8GB minimum (16GB recommandé)
+- **GPU** : NVIDIA avec CUDA (optionnel mais recommandé)
+- **Stockage** : 2GB pour les modèles
+
+### 🏗️ Architecture
+
+```
+src/
+├── engines/          # Moteurs OCR
+│   ├── ocr_easyocr.py
+│   ├── ocr_tesseract.py
+│   └── ocr_trocr.py
+├── services/         # Services métier
+│   └── api_client.py
+├── frontend/         # Interface utilisateur
+│   └── app.py
+└── core/            # Noyau applicatif
+└── __init__.py
+```
+
+### 📦 Modules
+
+- **engines** : Classes OCR spécialisées
+- **services** : Client API Open Library
+- **frontend** : Interface Streamlit
+- **core** : Configuration et utilitaires
+
+### 🧪 Tests
+
+```bash
+# Tests unitaires
+python -m pytest tests/
+
+# Test GPU
+python test_gpu_usage.py
+```
+
+## 🚀 Démarrage rapide
+
+```bash
+# Cloner le projet
+git clone https://github.com/delnixcode/Shelfreader.git
+cd Shelfreader/p1-MVP-Desktop
+
+# Activer l'environnement virtuel
+source env-p1/bin/activate  # Linux/macOS
+# ou
+env-p1\Scripts\activate     # Windows
+
+# Installer les dépendances
+pip install -r requirements.txt
+
+# Choisir votre mode :
+# Mode ligne de commande
+python src/engines/easyocr_engine.py test_images/books1.jpg --gpu
+
+# OU mode interface web
+streamlit run src/frontend/streamlit_app.py
+```
+
+## 📊 Métriques et performances
+
+### Benchmarks détaillés
+
+#### Précision par moteur (sur 15 livres de test)
+
+| Moteur | Précision globale | Précision titres | Précision auteurs | Faux positifs |
+|--------|------------------|------------------|-------------------|---------------|
+| EasyOCR | 93.3% | 95.2% | 87.5% | 2.1% |
+| Tesseract | 73.3% | 78.6% | 65.2% | 8.7% |
+| TrOCR | 80.7% | 83.9% | 74.1% | 5.3% |
+
+#### Performances temporelles (moyenne sur 10 images)
+
+| Configuration | EasyOCR | Tesseract | TrOCR |
+|---------------|---------|-----------|-------|
+| CPU seul | 12.3s | 2.1s | 45.8s |
+| GPU NVIDIA RTX 3060 | 3.2s | 2.0s | 8.7s |
+| GPU NVIDIA RTX 4080 | 2.1s | 1.9s | 5.4s |
+
+### Facteurs influençant les performances
+
+#### ✅ Facteurs positifs
+- **Éclairage uniforme** : +15% précision
+- **Angle perpendiculaire** : +12% précision
+- **Texte bien contrasté** : +18% précision
+- **Résolution > 2000px** : +8% précision
+- **GPU activé** : 3-5x plus rapide
+
+#### ❌ Facteurs négatifs
+- **Texte courbé** : -25% précision
+- **Ombres portées** : -20% précision
+- **Flou de mouvement** : -30% précision
+- **Texte < 15px** : -40% précision
+- **Fond complexe** : -15% précision
+
+### Métriques système
+
+#### Consommation ressources (moyenne)
+- **CPU** : 45-85% (pic pendant l'analyse)
+- **RAM** : 2-4GB (selon la taille des images)
+- **GPU RAM** : 1-3GB (pour les modèles)
+- **Stockage** : 2GB (modèles OCR)
+
+#### Compatibilité matérielle
+- **CPU minimum** : Intel i5 / AMD Ryzen 5
+- **RAM minimum** : 8GB
+- **GPU recommandé** : NVIDIA GTX 1060 ou supérieur
+- **CUDA** : Version 11.0+ (pour GPU)
 
 ## 🔧 Dépannage
 
@@ -280,293 +530,6 @@ curl -s https://openlibrary.org/api/books?bibkeys=ISBN:9780140449136&format=json
 - 📖 **Documentation** : Guides détaillés dans `/docs`
 - 🏷️ **Labels** : `bug`, `enhancement`, `question`
 
-## 📊 Métriques et performances
-
-### Benchmarks détaillés
-
-#### Précision par moteur (sur 15 livres de test)
-
-| Moteur | Précision globale | Précision titres | Précision auteurs | Faux positifs |
-|--------|------------------|------------------|-------------------|---------------|
-| EasyOCR | 93.3% | 95.2% | 87.5% | 2.1% |
-| Tesseract | 73.3% | 78.6% | 65.2% | 8.7% |
-| TrOCR | 80.7% | 83.9% | 74.1% | 5.3% |
-
-#### Performances temporelles (moyenne sur 10 images)
-
-| Configuration | EasyOCR | Tesseract | TrOCR |
-|---------------|---------|-----------|-------|
-| CPU seul | 12.3s | 2.1s | 45.8s |
-| GPU NVIDIA RTX 3060 | 3.2s | 2.0s | 8.7s |
-| GPU NVIDIA RTX 4080 | 2.1s | 1.9s | 5.4s |
-
-### Facteurs influençant les performances
-
-#### ✅ Facteurs positifs
-- **Éclairage uniforme** : +15% précision
-- **Angle perpendiculaire** : +12% précision
-- **Texte bien contrasté** : +18% précision
-- **Résolution > 2000px** : +8% précision
-- **GPU activé** : 3-5x plus rapide
-
-#### ❌ Facteurs négatifs
-- **Texte courbé** : -25% précision
-- **Ombres portées** : -20% précision
-- **Flou de mouvement** : -30% précision
-- **Texte < 15px** : -40% précision
-- **Fond complexe** : -15% précision
-
-### Métriques système
-
-#### Consommation ressources (moyenne)
-- **CPU** : 45-85% (pic pendant l'analyse)
-- **RAM** : 2-4GB (selon la taille des images)
-- **GPU RAM** : 1-3GB (pour les modèles)
-- **Stockage** : 2GB (modèles OCR)
-
-#### Compatibilité matérielle
-- **CPU minimum** : Intel i5 / AMD Ryzen 5
-- **RAM minimum** : 8GB
-- **GPU recommandé** : NVIDIA GTX 1060 ou supérieur
-- **CUDA** : Version 11.0+ (pour GPU)
-
-- **CUDA** : Version 11.0+ (pour GPU)
-
-## 📈 Évolution du projet
-
-### Phase 1 : Moteurs OCR ✅
-- Implémentation EasyOCR, Tesseract, TrOCR
-- Utilisation en ligne de commande
-- Support GPU automatique
-
-### Phase 2 : Enrichissement ✅
-- Intégration Open Library
-- Métadonnées des livres
-- Liens vers informations complètes
-
-### Phase 3 : Interface Web ✅
-- Application Streamlit moderne
-- Upload intuitif d'images
-- Comparaison multi-moteurs
-- Visualisations avancées
-
-## 📋 Table des matières
-
-- [� À propos de ShelfReader](#à-propos-de-shelfreader)
-- [🔍 Comment ça marche](#comment-ça-marche)
-- [�📦 Installation](#installation)
-- [⚙️ Configuration avancée](#configuration-avancée)
-- [🎯 Deux façons d'utiliser ShelfReader](#deux-facons-dutiliser-shelfreader)
-- [� Exemples d'utilisation](#exemples-dutilisation)
-- [�🚀 Utilisation détaillée](#utilisation-détaillée)
-- [🚀 Démarrage rapide](#démarrage-rapide)
-- [📊 Métriques et performances](#métriques-et-performances)
-- [🔧 Dépannage](#dépannage)
-- [🏗️ Architecture du projet](#architecture-du-projet)
-- [📈 Évolution du projet](#évolution-du-projet)
-- [🗺️ Roadmap et évolutions](#roadmap-et-évolutions)
-- [✨ Fonctionnalités principales](#fonctionnalités-principales)
-- [🎯 Algorithme optimisé](#algorithme-optimisé)
-- [📚 Documentation](#documentation)
-- [🤝 Contribution](#contribution)
-- [📄 Licence](#licence)
-
-## 📦 Installation
-
-### Prérequis
-- Python 3.8+
-- pip
-- Un GPU (optionnel, recommandé)
-
-### Étapes
-
-#### 1. Cloner le dépôt
-```bash
-git clone https://github.com/delnixcode/Shelfreader.git
-cd Shelfreader/p1-MVP-Desktop
-```
-
-#### 2. Activer l'environnement virtuel
-```bash
-# Linux/macOS
-source env-p1/bin/activate
-# Windows
-env-p1\Scripts\activate
-```
-
-#### 3. Installer les dépendances
-```bash
-pip install -r requirements.txt
-```
-
-#### 4. Lancer l'application
-```bash
-streamlit run src/frontend/streamlit_app.py
-```
-
-Ouvrir http://localhost:8501 dans votre navigateur.
-
-## 🎯 Deux façons d'utiliser ShelfReader
-
-### 💻 Mode Ligne de commande (Pour développeurs/experts)
-Utilisez directement les moteurs OCR depuis le terminal :
-```bash
-# Moteur EasyOCR (recommandé)
-python src/engines/easyocr_engine.py test_images/books1.jpg --gpu --confidence 0.3
-
-# Moteur Tesseract (rapide)
-python src/engines/tesseract_engine.py test_images/books1.jpg
-
-# Moteur TrOCR (haute précision)
-python src/engines/trocr_engine.py test_images/books1.jpg --gpu
-```
-
-### 🖥️ Mode Interface Web (Pour débutants)
-Interface Streamlit intuitive avec upload et visualisation :
-```bash
-streamlit run src/frontend/streamlit_app.py
-# Puis ouvrir http://localhost:8501
-```
-
-## 🚀 Utilisation détaillée
-
-### 💻 Mode Ligne de commande (Experts)
-
-#### Moteurs OCR disponibles :
-```bash
-# EasyOCR (recommandé - précision 93%)
-python src/engines/easyocr_engine.py test_images/books1.jpg --gpu --confidence 0.3
-
-# Tesseract (ultra rapide)
-python src/engines/tesseract_engine.py test_images/books1.jpg
-
-# TrOCR (haute précision)
-python src/engines/trocr_engine.py test_images/books1.jpg --gpu
-```
-
-#### Options communes :
-- `--gpu` : Accélération GPU (recommandé)
-- `--confidence 0.3` : Seuil de confiance (0.1-1.0)
-- `--output fichier.txt` : Sauvegarde résultats
-
-### 🖥️ Mode Interface Web (Débutants)
-
-```bash
-streamlit run src/frontend/streamlit_app.py
-# Ouvrir http://localhost:8501
-```
-
-#### Fonctionnalités :
-- Upload d'images par glisser-déposer
-- Choix du moteur OCR
-- Comparaison multi-moteurs (page dédiée)
-- Visualisations avec bounding boxes
-
-### 💡 Conseils pour les images
-
-- **Qualité** : Bien éclairées, perpendiculaires à l'étagère
-- **Taille** : Minimum 1000px de largeur
-- **Formats** : JPG, PNG
-- **Contenu** : Titres de livres visibles
-
-### ⚡ Performance par moteur
-
-| Moteur | Précision | Vitesse | GPU |
-|--------|-----------|---------|-----|
-| EasyOCR | 93.3% | 3-5s | ✅ |
-| Tesseract | 73.3% | 1-2s | ❌ |
-| TrOCR | 80.7% | 8-15s | ✅ |
-
-### 🛠️ Technologies utilisées
-
-- **OCR** : EasyOCR, Tesseract, TrOCR
-- **IA** : Transformers (Hugging Face)
-- **Interface** : Streamlit
-- **API** : Open Library
-- **Langage** : Python 3.8+
-
-### 💻 Prérequis système
-
-- **OS** : Linux, macOS, Windows
-- **RAM** : 8GB minimum (16GB recommandé)
-- **GPU** : NVIDIA avec CUDA (optionnel mais recommandé)
-- **Stockage** : 2GB pour les modèles
-
-### 🏗️ Architecture
-
-```
-src/
-├── engines/          # Moteurs OCR
-│   ├── ocr_easyocr.py
-│   ├── ocr_tesseract.py
-│   └── ocr_trocr.py
-├── services/         # Services métier
-│   └── api_client.py
-├── frontend/         # Interface utilisateur
-│   └── app.py
-└── core/            # Noyau applicatif
-    └── __init__.py
-```
-
-### 📦 Modules
-
-- **engines** : Classes OCR spécialisées
-- **services** : Client API Open Library
-- **frontend** : Interface Streamlit
-- **core** : Configuration et utilitaires
-
-### 🧪 Tests
-
-```bash
-# Tests unitaires
-python -m pytest tests/
-
-# Test GPU
-python test_gpu_usage.py
-```
-
-### 🤝 Contribution
-
-1. Fork le projet
-2. Créer une branche (`git checkout -b feature/AmazingFeature`)
-3. Commit (`git commit -m 'Add some AmazingFeature'`)
-4. Push (`git push origin feature/AmazingFeature`)
-5. Ouvrir une Pull Request
-
-### 📄 Licence
-
-Distribué sous licence MIT. Voir `LICENSE` pour plus d'informations.
-
-### 🙏 Remerciements
-
-- **Open Library** pour l'API de données bibliographiques
-- **Hugging Face** pour les modèles TrOCR
-- **Streamlit** pour le framework d'interface
-- **EasyOCR** et **Tesseract** pour les moteurs OCR
-
-## 🚀 Démarrage rapide
-
-```bash
-# Cloner le projet
-git clone https://github.com/delnixcode/Shelfreader.git
-cd Shelfreader/p1-MVP-Desktop
-
-# Activer l'environnement virtuel
-source env-p1/bin/activate  # Linux/macOS
-# ou
-env-p1\Scripts\activate     # Windows
-
-# Installer les dépendances
-pip install -r requirements.txt
-
-# Choisir votre mode :
-# Mode ligne de commande
-python src/engines/easyocr_engine.py test_images/books1.jpg --gpu
-
-# OU mode interface web
-streamlit run src/frontend/streamlit_app.py
-```
-
 ## 🏗️ Architecture du projet
 
 ShelfReader P1 utilise une **architecture modulaire** permettant le développement et le test indépendants de chaque composant OCR.
@@ -608,7 +571,40 @@ p1-MVP-Desktop/
 └── README.md                    # Documentation principale
 ```
 
-## 📈 Évolution du projet
+### 🏗️ Architecture
+
+```
+src/
+├── engines/          # Moteurs OCR
+│   ├── ocr_easyocr.py
+│   ├── ocr_tesseract.py
+│   └── ocr_trocr.py
+├── services/         # Services métier
+│   └── api_client.py
+├── frontend/         # Interface utilisateur
+│   └── app.py
+└── core/            # Noyau applicatif
+└── __init__.py
+```
+
+### 📦 Modules
+
+- **engines** : Classes OCR spécialisées
+- **services** : Client API Open Library
+- **frontend** : Interface Streamlit
+- **core** : Configuration et utilitaires
+
+### 🧪 Tests
+
+```bash
+# Tests unitaires
+python -m pytest tests/
+
+# Test GPU
+python test_gpu_usage.py
+```
+
+## �� Évolution du projet
 
 ### Phase 1 : Moteurs OCR ✅
 - Implémentation EasyOCR, Tesseract, TrOCR
@@ -625,6 +621,28 @@ p1-MVP-Desktop/
 - Upload intuitif d'images
 - Comparaison multi-moteurs
 - Visualisations avancées
+
+## 🗺️ Roadmap et évolutions
+
+### Phase 4 : Mobile (Static) - En cours
+- Application mobile pour Android/iOS
+- Capture directe depuis l'appareil photo
+- Traitement en temps réel limité
+
+### Phase 5 : Mobile (Real-time) - Planifié
+- Streaming vidéo temps réel
+- Détection continue des livres
+- Interface AR pour identification
+
+### Phase 6 : Cloud (SaaS) - Futur
+- Service web multi-utilisateurs
+- API REST pour intégrations
+- Dashboard d'administration
+
+### Phase 7 : IA Avancée - Futur
+- Modèles personnalisés par utilisateur
+- Apprentissage continu des préférences
+- Suggestions intelligentes de livres
 
 ## ✨ Fonctionnalités principales
 - 📤 **Upload intuitif** d'images
@@ -662,4 +680,4 @@ Ce projet est sous licence MIT - voir le fichier [LICENSE](LICENSE) pour plus de
 
 *Développé avec ❤️ pour les amoureux des livres*
 
-Pour plus d'informations : [GitHub Issues](https://github.com/delnixcode/Shelfreader/issues)P Desktop**
+Pour plus d'informations : [GitHub Issues](https://github.com/delnixcode/Shelfreader/issues)

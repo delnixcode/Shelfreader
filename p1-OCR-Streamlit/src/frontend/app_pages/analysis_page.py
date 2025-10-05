@@ -58,26 +58,29 @@ def show():
                 help="Choisissez le moteur OCR à utiliser"
             )
 
-            # Récupérer les paramètres globaux de la sidebar
-            global_confidence = 0.3
-            global_use_gpu = True
-            if 'global_params' in st.session_state:
-                global_confidence = st.session_state.global_params.get('confidence', 0.3)
-                global_use_gpu = st.session_state.global_params.get('use_gpu', True)
-
-            # Afficher les paramètres globaux (lecture seule)
-            st.markdown("**Paramètres globaux (configurés dans la sidebar) :**")
-            col_conf, col_gpu = st.columns(2)
-            with col_conf:
-                st.metric("Confiance", f"{global_confidence}")
-            with col_gpu:
-                st.metric("GPU", "Activé" if global_use_gpu else "Désactivé")
-
             # Paramètres spécifiques selon le moteur
             advanced_params = {}
 
             if ocr_engine == "EasyOCR":
                 st.markdown("### 🎯 Paramètres EasyOCR")
+                
+                # Paramètres communs pour EasyOCR
+                easyocr_confidence = st.slider(
+                    "Seuil de confiance",
+                    min_value=0.1,
+                    max_value=1.0,
+                    value=0.3,
+                    step=0.1,
+                    help="Confiance minimale pour accepter un résultat (0.1 = plus de détections)",
+                    key="easyocr_confidence"
+                )
+                
+                easyocr_use_gpu = st.checkbox(
+                    "Utiliser GPU",
+                    value=True,
+                    help="Accélère considérablement le traitement si GPU disponible",
+                    key="easyocr_gpu"
+                )
                 
                 # Sélecteur de langue
                 easyocr_lang = st.multiselect(
@@ -96,6 +99,8 @@ def show():
                 )
 
                 advanced_params = {
+                    'confidence': easyocr_confidence,
+                    'use_gpu': easyocr_use_gpu,
                     'languages': easyocr_lang,
                     'spine_method': easyocr_spine_method
                 }
@@ -103,6 +108,24 @@ def show():
 
             elif ocr_engine == "Tesseract":
                 st.markdown("### 📝 Paramètres Tesseract")
+                
+                # Paramètres communs pour Tesseract
+                tesseract_confidence = st.slider(
+                    "Seuil de confiance",
+                    min_value=0.1,
+                    max_value=1.0,
+                    value=0.3,
+                    step=0.1,
+                    help="Confiance minimale pour accepter un résultat (0.1 = plus de détections)",
+                    key="tesseract_confidence"
+                )
+                
+                tesseract_use_gpu = st.checkbox(
+                    "Utiliser GPU",
+                    value=True,
+                    help="Accélère considérablement le traitement si GPU disponible",
+                    key="tesseract_gpu"
+                )
                 
                 # Sélecteur de langue
                 tesseract_lang = st.selectbox(
@@ -127,6 +150,8 @@ def show():
                 )[0]
 
                 advanced_params = {
+                    'confidence': tesseract_confidence,
+                    'use_gpu': tesseract_use_gpu,
                     'lang': tesseract_lang,
                     'psm': int(tesseract_psm)
                 }
@@ -134,6 +159,24 @@ def show():
 
             elif ocr_engine == "TrOCR":
                 st.markdown("### 🤖 Paramètres TrOCR")
+                
+                # Paramètres communs pour TrOCR
+                trocr_confidence = st.slider(
+                    "Seuil de confiance",
+                    min_value=0.1,
+                    max_value=1.0,
+                    value=0.3,
+                    step=0.1,
+                    help="Confiance minimale pour accepter un résultat (0.1 = plus de détections)",
+                    key="trocr_confidence"
+                )
+                
+                trocr_use_gpu = st.checkbox(
+                    "Utiliser GPU",
+                    value=True,
+                    help="Accélère considérablement le traitement si GPU disponible",
+                    key="trocr_gpu"
+                )
                 
                 # Device
                 trocr_device = st.selectbox(
@@ -143,7 +186,21 @@ def show():
                     help="Matériel pour exécuter le modèle (auto = détection automatique)"
                 )
 
+                # Validation des conflits pour TrOCR
+                conflict_warning = None
+                if trocr_use_gpu and trocr_device == "cpu":
+                    conflict_warning = "⚠️ **Conflit détecté** : GPU activé mais device CPU sélectionné. Le device CPU sera prioritaire."
+                    trocr_use_gpu = False  # Résoudre automatiquement le conflit
+                elif not trocr_use_gpu and trocr_device == "cuda":
+                    conflict_warning = "⚠️ **Conflit détecté** : GPU désactivé mais device CUDA sélectionné. Le device CUDA sera prioritaire."
+                    trocr_use_gpu = True  # Résoudre automatiquement le conflit
+
+                if conflict_warning:
+                    st.warning(conflict_warning)
+
                 advanced_params = {
+                    'confidence': trocr_confidence,
+                    'use_gpu': trocr_use_gpu,
                     'device': trocr_device
                 }
                 st.session_state.trocr_params = advanced_params
@@ -191,13 +248,25 @@ def show():
                     # Construction de la commande réellement exécutée (pour debug)
                     executed_cmd_parts = ["python", "main.py", temp_path]
                     
-                    # Paramètres globaux - TOUJOURS inclus
-                    if global_use_gpu:
+                    # Paramètres spécifiques au moteur sélectionné - TOUJOURS inclus
+                    engine_confidence = advanced_params.get('confidence', 0.3)
+                    engine_use_gpu = advanced_params.get('use_gpu', True)
+                    
+                    # Pour TrOCR, le device prend la priorité sur use_gpu
+                    if ocr_engine == 'TrOCR':
+                        trocr_device = advanced_params.get('device', 'auto')
+                        if trocr_device == 'cuda':
+                            engine_use_gpu = True
+                        elif trocr_device == 'cpu':
+                            engine_use_gpu = False
+                        # Pour 'auto', garder la valeur de use_gpu
+                    
+                    if engine_use_gpu:
                         executed_cmd_parts.append("--gpu")
                     else:
                         executed_cmd_parts.append("--cpu")
                     
-                    executed_cmd_parts.extend(["--confidence", str(global_confidence)])
+                    executed_cmd_parts.extend(["--confidence", str(engine_confidence)])
                     
                     if debug_mode:
                         executed_cmd_parts.append("--debug")
@@ -223,8 +292,8 @@ def show():
                     results, processing_time = ocr_processor.process_image(
                         temp_path,
                         engine_name=ocr_engine,
-                        confidence=global_confidence,
-                        use_gpu=global_use_gpu,
+                        confidence=advanced_params.get('confidence', 0.3),
+                        use_gpu=advanced_params.get('use_gpu', True),
                         debug=debug_mode,
                         advanced_params=advanced_params
                     )
@@ -247,8 +316,6 @@ def show():
                         # Affichage des résultats
                         display_results(results, processing_time, enriched_books,
                                       engine_name=ocr_engine,
-                                      global_confidence=global_confidence,
-                                      global_use_gpu=global_use_gpu,
                                       advanced_params=advanced_params,
                                       executed_command=executed_command)
 

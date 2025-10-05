@@ -57,6 +57,14 @@ Exemples d'utilisation:
         print("❌ Erreur: --cpu et --gpu sont mutuellement exclusifs")
         return 1
 
+    # Avertissements pour conflits explicites entre flags et --device
+    # On ne change pas la logique de priorité existante (flags > --device),
+    # mais on informe l'utilisateur si sa combinaison d'arguments est contradictoire.
+    if args.cpu and args.device == 'cuda':
+        print("⚠️ Conflit d'arguments: vous avez demandé '--cpu' mais aussi '--device cuda'. '--cpu' aura la priorité et forcera l'exécution sur CPU.")
+    if args.gpu and args.device == 'cpu':
+        print("⚠️ Conflit d'arguments: vous avez demandé '--gpu' mais aussi '--device cpu'. '--gpu' aura la priorité et forcera l'exécution sur GPU.")
+
     # Configuration du device
     if args.cpu:
         device = 'cpu'

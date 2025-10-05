@@ -8,17 +8,10 @@ Lance l'application web Streamlit (interface utilisateur)
 ./startfront.sh
 ```
 
-### 🔍 Scripts OCR Engines
-
-# Scripts de lancement ShelfReader P1
-
-## Scripts disponibles
-
-### 🚀 startfront.sh
-Lance l'application web Streamlit (interface utilisateur)
-```bash
-./startfront.sh
-```
+**✨ Nouvelles fonctionnalités de l'interface web :**
+- **Paramètres spécifiques par moteur** : Contrairement aux scripts CLI avec paramètres fixes, l'interface permet de configurer des paramètres individuels pour chaque moteur OCR
+- **Validation des conflits** : Détection automatique des paramètres contradictoires (ex: pour TrOCR, évite les conflits entre GPU et périphérique)
+- **Configuration flexible** : Ajustez le seuil de confiance, l'utilisation GPU, et autres paramètres par moteur selon vos besoins
 
 ### 🔍 Scripts OCR Engines
 
@@ -88,6 +81,21 @@ Lance l'application web Streamlit (interface utilisateur)
 | 13 | Raw line. Treat the image as a single text line, bypassing hacks that are Tesseract-specific | Ligne brute |
 
 ### 💡 Conseils d'utilisation
+
+#### Différences entre CLI et Interface Web
+
+**Scripts CLI (Paramètres fixes) :**
+- Paramètres définis au lancement du script
+- Idéal pour l'automatisation et les pipelines
+- Configuration rapide pour les tests
+- Paramètres cohérents pour tous les traitements
+
+**Interface Web (Paramètres flexibles) :**
+- Configuration interactive par moteur OCR
+- Paramètres ajustables en temps réel
+- Validation automatique des conflits
+- Comparaison facile de différentes configurations
+- Interface conviviale pour les utilisateurs non-techniques
 
 #### Choix du moteur OCR
 - **EasyOCR** : Meilleur pour les tranches de livres, support multi-langues natif

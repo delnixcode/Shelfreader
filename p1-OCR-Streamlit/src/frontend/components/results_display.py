@@ -14,8 +14,7 @@ from typing import Dict, List, Optional, Any
 
 def display_results(results: Dict, processing_time: float,
                    enriched_books: Optional[List[Dict]] = None,
-                   engine_name: str = None, global_confidence: float = None,
-                   global_use_gpu: bool = None, advanced_params: Dict = None,
+                   engine_name: str = None, advanced_params: Dict = None,
                    executed_command: str = None) -> None:
     """
     Affiche les résultats de l'OCR de manière structurée et complète.
@@ -36,35 +35,36 @@ def display_results(results: Dict, processing_time: float,
     books = enriched_books if enriched_books else results['books']
 
     # Section debug : commandes Streamlit vs Terminal
-    if engine_name and global_confidence is not None and global_use_gpu is not None:
+    if engine_name and advanced_params:
         with st.expander("🐛 Debug : Commandes exécutées"):
             st.markdown("### 📋 Paramètres utilisés dans Streamlit")
 
-            # Paramètres globaux
-            st.write("**Paramètres globaux :**")
+            # Paramètres spécifiques au moteur
+            st.write("**Paramètres du moteur :**")
+            engine_confidence = advanced_params.get('confidence', 0.3)
+            engine_use_gpu = advanced_params.get('use_gpu', True)
             st.code(f"""
-Confiance: {global_confidence}
-GPU: {'Activé' if global_use_gpu else 'Désactivé'}
+Confiance: {engine_confidence}
+GPU: {'Activé' if engine_use_gpu else 'Désactivé'}
 Moteur: {engine_name}
             """.strip())
 
             # Paramètres avancés par moteur
-            if advanced_params:
-                st.write("**Paramètres avancés :**")
-                if engine_name == 'EasyOCR' and advanced_params:
-                    st.code(f"""
+            st.write("**Paramètres avancés :**")
+            if engine_name == 'EasyOCR' and advanced_params:
+                st.code(f"""
 Langues: {advanced_params.get('languages', ['en'])}
-Méthode de détection: {advanced_params.get('spine_method', 'shelfie')}
-                    """.strip())
-                elif engine_name == 'Tesseract' and advanced_params:
-                    st.code(f"""
+Méthode de détection: {advanced_params.get('spine_method', 'vertical_lines')}
+                """.strip())
+            elif engine_name == 'Tesseract' and advanced_params:
+                st.code(f"""
 Langue: {advanced_params.get('lang', 'eng')}
 PSM: {advanced_params.get('psm', 6)}
-                    """.strip())
-                elif engine_name == 'TrOCR' and advanced_params:
-                    st.code(f"""
+                """.strip())
+            elif engine_name == 'TrOCR' and advanced_params:
+                st.code(f"""
 Device: {advanced_params.get('device', 'auto')}
-                    """.strip())
+                """.strip())
 
             st.markdown("### 💻 Commande réellement exécutée")
             if executed_command:
@@ -79,15 +79,15 @@ Device: {advanced_params.get('device', 'auto')}
             # Construction de la commande terminal
             cmd_parts = ["python", "main.py", "image_path"]
 
-            if global_use_gpu:
+            if engine_use_gpu:
                 cmd_parts.append("--gpu")
-            if global_confidence != 0.3:  # Si différent de la valeur par défaut
-                cmd_parts.extend(["--confidence", str(global_confidence)])
+            if engine_confidence != 0.3:  # Si différent de la valeur par défaut
+                cmd_parts.extend(["--confidence", str(engine_confidence)])
 
             # Paramètres avancés
             if advanced_params:
                 if engine_name == 'EasyOCR':
-                    if advanced_params.get('spine_method') and advanced_params['spine_method'] != 'shelfie':
+                    if advanced_params.get('spine_method') and advanced_params['spine_method'] != 'vertical_lines':
                         cmd_parts.extend(["--spine-method", advanced_params['spine_method']])
                     if advanced_params.get('languages') and advanced_params['languages'] != ['en']:
                         cmd_parts.extend(["--languages"] + advanced_params['languages'])
@@ -96,6 +96,9 @@ Device: {advanced_params.get('device', 'auto')}
                         cmd_parts.extend(["--tesseract-lang", advanced_params['lang']])
                     if advanced_params.get('psm') and advanced_params['psm'] != 6:
                         cmd_parts.extend(["--tesseract-psm", str(advanced_params['psm'])])
+                elif engine_name == 'TrOCR':
+                    if advanced_params.get('device') and advanced_params['device'] != 'auto':
+                        cmd_parts.extend(["--device", advanced_params['device']])
 
             terminal_cmd = " ".join(cmd_parts)
             st.code(terminal_cmd, language="bash")
@@ -196,55 +199,55 @@ def display_comparison_results(results_dict: Dict[str, Dict],
         advanced_params (Dict): Paramètres avancés par moteur
     """
     # Section debug : commandes Streamlit vs Terminal
-    if global_confidence is not None and global_use_gpu is not None:
+    if advanced_params:
         with st.expander("🐛 Debug : Commandes exécutées"):
             st.markdown("### 📋 Paramètres utilisés dans Streamlit")
 
-            # Paramètres globaux
-            st.write("**Paramètres globaux :**")
-            st.code(f"""
-Confiance: {global_confidence}
-GPU: {'Activé' if global_use_gpu else 'Désactivé'}
-Moteurs: {', '.join(selected_engines)}
-            """.strip())
+            # Paramètres par configuration
+            st.write("**Paramètres par configuration :**")
+            for config_name, config_params in advanced_params.items():
+                engine = config_params.get('engine', 'Unknown')
+                confidence = config_params.get('confidence', 0.3)
+                use_gpu = config_params.get('use_gpu', True)
+                st.code(f"""
+{config_name} ({engine}):
+  Confiance: {confidence}
+  GPU: {'Activé' if use_gpu else 'Désactivé'}
+                """.strip())
 
-            # Paramètres avancés par moteur
-            if advanced_params:
-                st.write("**Paramètres avancés par moteur :**")
-                for engine in selected_engines:
-                    if engine in advanced_params and advanced_params[engine]:
-                        engine_params = advanced_params[engine]
-                        if engine == 'EasyOCR':
-                            st.code(f"""
-{engine} - Langues: {engine_params.get('languages', ['en'])}
-{engine} - Méthode de détection: {engine_params.get('spine_method', 'shelfie')}
-                            """.strip())
-                        elif engine == 'Tesseract':
-                            st.code(f"""
-{engine} - Langue: {engine_params.get('lang', 'eng')}
-{engine} - PSM: {engine_params.get('psm', 6)}
-                            """.strip())
-                        elif engine == 'TrOCR':
-                            st.code(f"""
-{engine} - Device: {engine_params.get('device', 'auto')}
-                            """.strip())
+                # Paramètres avancés spécifiques
+                if engine == 'EasyOCR':
+                    st.code(f"""
+  Langues: {config_params.get('languages', ['en'])}
+  Méthode de détection: {config_params.get('spine_method', 'vertical_lines')}
+                    """.strip())
+                elif engine == 'Tesseract':
+                    st.code(f"""
+  Langue: {config_params.get('lang', 'eng')}
+  PSM: {config_params.get('psm', 6)}
+                    """.strip())
+                elif engine == 'TrOCR':
+                    st.code(f"""
+  Device: {config_params.get('device', 'auto')}
+                    """.strip())
 
             st.markdown("### 💻 Commandes réellement exécutées")
             st.write("Commandes capturées depuis les logs du terminal :")
 
             if executed_commands:
-                for engine in selected_engines:
-                    cmd = executed_commands.get(engine, "*Non capturée*")
-                    st.code(f"**{engine}:**\n{cmd}", language="bash")
+                for config_name, cmd in executed_commands.items():
+                    st.code(f"**{config_name}:**\n{cmd}", language="bash")
             else:
                 st.write("*Aucune commande capturée*")
 
             st.markdown("### 🔄 Commandes équivalentes reconstruites")
             st.write("Ces commandes auraient produit les mêmes résultats :")
 
-            # Construction des commandes terminal pour chaque moteur
+            # Construction des commandes terminal pour chaque configuration
             reconstructed_commands = {}
-            for engine in selected_engines:
+            for config_name, config_params in advanced_params.items():
+                engine = config_params.get('engine', 'Unknown')
+                
                 # Utiliser le vrai chemin du script comme dans les vraies commandes
                 if engine == 'EasyOCR':
                     cmd_parts = ["python", "src/engines/easyocr/main.py", "image_path"]
@@ -253,43 +256,44 @@ Moteurs: {', '.join(selected_engines)}
                 elif engine == 'TrOCR':
                     cmd_parts = ["python", "src/engines/trocr/main.py", "image_path"]
 
-                # Paramètres globaux - TOUJOURS inclus
-                if global_use_gpu:
+                # Paramètres spécifiques à cette configuration - TOUJOURS inclus
+                config_confidence = config_params.get('confidence', 0.3)
+                config_use_gpu = config_params.get('use_gpu', True)
+                
+                if config_use_gpu:
                     cmd_parts.append("--gpu")
                 else:
                     cmd_parts.append("--cpu")
                 
-                cmd_parts.extend(["--confidence", str(global_confidence)])
+                cmd_parts.extend(["--confidence", str(config_confidence)])
 
-                # Paramètres avancés pour ce moteur - TOUJOURS inclus selon le moteur
-                if advanced_params and engine in advanced_params:
-                    engine_adv_params = advanced_params[engine]
-                    if engine == 'EasyOCR':
-                        # Pour les spines : n'afficher que si différent du défaut (vertical_lines)
-                        if engine_adv_params.get('spine_method') and engine_adv_params['spine_method'] != 'vertical_lines':
-                            cmd_parts.extend(["--spine-method", engine_adv_params['spine_method']])
-                        # Pour les langues : TOUJOURS inclus
-                        if engine_adv_params.get('languages'):
-                            cmd_parts.extend(["--lang"] + engine_adv_params['languages'])
-                    elif engine == 'Tesseract':
-                        if engine_adv_params.get('lang'):
-                            cmd_parts.extend(["--lang", engine_adv_params['lang']])
-                        if engine_adv_params.get('psm') is not None:
-                            cmd_parts.extend(["--psm", str(engine_adv_params['psm'])])
-                    elif engine == 'TrOCR':
-                        if engine_adv_params.get('device'):
-                            cmd_parts.extend(["--device", engine_adv_params['device']])
+                # Paramètres avancés pour cette configuration - TOUJOURS inclus selon le moteur
+                if engine == 'EasyOCR':
+                    # Pour les spines : n'afficher que si différent du défaut (vertical_lines)
+                    if config_params.get('spine_method') and config_params['spine_method'] != 'vertical_lines':
+                        cmd_parts.extend(["--spine-method", config_params['spine_method']])
+                    # Pour les langues : TOUJOURS inclus
+                    if config_params.get('languages'):
+                        cmd_parts.extend(["--lang"] + config_params['languages'])
+                elif engine == 'Tesseract':
+                    if config_params.get('lang'):
+                        cmd_parts.extend(["--lang", config_params['lang']])
+                    if config_params.get('psm') is not None:
+                        cmd_parts.extend(["--psm", str(config_params['psm'])])
+                elif engine == 'TrOCR':
+                    if config_params.get('device'):
+                        cmd_parts.extend(["--device", config_params['device']])
 
                 terminal_cmd = " ".join(cmd_parts)
-                reconstructed_commands[engine] = terminal_cmd
-                st.code(f"**{engine}:**\n{terminal_cmd}", language="bash")
+                reconstructed_commands[config_name] = terminal_cmd
+                st.code(f"**{config_name}:**\n{terminal_cmd}", language="bash")
 
             # Comparaison si les commandes sont disponibles
             if executed_commands:
                 differences_found = False
-                for engine in selected_engines:
-                    executed = executed_commands.get(engine, "")
-                    reconstructed = reconstructed_commands.get(engine, "")
+                for config_name in advanced_params.keys():
+                    executed = executed_commands.get(config_name, "")
+                    reconstructed = reconstructed_commands.get(config_name, "")
                     if executed and reconstructed:
                         # Normaliser pour la comparaison (remplacer les chemins temporaires)
                         executed_normalized = executed.replace("/tmp/", "[TEMP]/").split()

@@ -116,6 +116,12 @@ ShelfReader propose **3 moteurs OCR spécialisés** :
 <a name="roadmap-et-evolutions"></a>
 ## 🗺️ Roadmap et évolutions
 
+### ✅ Améliorations récentes (Interface Web)
+- **Paramètres spécifiques par moteur** : Fin des paramètres globaux, configuration individuelle par moteur OCR
+- **Validation intelligente des conflits** : Détection automatique des paramètres contradictoires (ex: TrOCR GPU vs périphérique)
+- **Interface améliorée** : Contrôles séparés pour chaque moteur dans les pages Analyse et Comparaison
+- **Feedback utilisateur** : Alertes visuelles pour les conflits de paramètres avec résolution automatique
+
 ### Phase 4 : Mobile (Static) - En cours
 - Application mobile pour Android/iOS
 - Capture directe depuis l'appareil photo
@@ -330,26 +336,24 @@ streamlit run src/frontend/main.py
 <a name="configuration-avancee"></a>
 ## ⚙️ Configuration avancée
 
-### Paramètres OCR
+### Paramètres OCR par moteur
 
-#### Seuil de confiance (`--confidence`)
-- **Valeur** : 0.1 à 1.0 (défaut : 0.3)
-- **Effet** : Contrôle la sélectivité de la détection
-- **Recommandation** :
-  - `0.1-0.3` : Détection maximale (risque de faux positifs)
-  - `0.3-0.5` : Équilibre optimal (recommandé)
-  - `0.5-1.0` : Haute précision (risque de manquer des titres)
+Contrairement aux versions précédentes où les paramètres étaient globaux, ShelfReader P1 permet maintenant de configurer des paramètres spécifiques pour chaque moteur OCR directement dans l'interface web.
 
-#### Accélération GPU (`--gpu`)
-- **Type** : Booléen
-- **Effet** : Active l'accélération matérielle NVIDIA CUDA
-- **Impact** : 3-5x plus rapide sur les GPU compatibles
-- **Prérequis** : Drivers NVIDIA + CUDA toolkit
+#### 🥇 EasyOCR
+- **Seuil de confiance** : 0.1 à 1.0 (défaut : 0.3)
+- **Utilisation GPU** : Activation/désactivation de l'accélération GPU
+- **Langues** : Support multi-langues (français, anglais, etc.)
 
-#### Langue de détection (`--lang`)
-- **Valeur** : Code langue ISO (ex: 'fr', 'en', 'es')
-- **Effet** : Optimise la reconnaissance pour une langue spécifique
-- **Défaut** : Multi-langues automatique
+#### 🥈 Tesseract
+- **Seuil de confiance** : 0.1 à 1.0 (défaut : 0.5)
+- **Mode PSM** : Configuration du Page Segmentation Mode (défaut : 6)
+- **Langues** : Support multi-langues
+
+#### 🥉 TrOCR
+- **Périphérique** : Auto, CUDA (GPU), ou CPU
+- **Langues** : Support multi-langues
+- **⚠️ Validation automatique** : Détection et résolution des conflits entre paramètres GPU et périphérique
 
 ### Variables d'environnement
 
@@ -392,7 +396,7 @@ output:
 ## 🎯 Deux façons d'utiliser ShelfReader
 
 ### 💻 Mode Ligne de commande (Pour développeurs/experts)
-Utilisez directement les moteurs OCR depuis le terminal :
+Utilisez directement les moteurs OCR depuis le terminal avec des paramètres fixes :
 
 **📁 Sauvegarde automatique** : Tous les résultats sont automatiquement sauvegardés dans le dossier `result-ocr/`
 
@@ -426,19 +430,25 @@ python main.py ../test_images/books1.jpg --psm 6 --lang eng
 #### TrOCR (Haute précision - GPU requis)
 ```bash
 # Depuis le dossier trocr
-cd src/engines/trocr
 python main.py ../test_images/books1.jpg --device cuda --lang en
 
 # Avec benchmark
 python main.py ../test_images/books1.jpg --device cuda --benchmark
 ```
 
-### 🖥️ Mode Interface Web (Pour débutants)
-Interface Streamlit intuitive avec upload et visualisation :
+### 🖥️ Mode Interface Web (Pour débutants et utilisateurs avancés)
+Interface Streamlit intuitive avec configuration par moteur :
+
 ```bash
 streamlit run src/frontend/main.py
 # Puis ouvrir http://localhost:8501
 ```
+
+**✨ Nouvelles fonctionnalités :**
+- **Paramètres spécifiques par moteur** : Configurez le seuil de confiance, GPU, et autres paramètres individuellement pour chaque moteur OCR
+- **Validation intelligente** : Détection automatique des conflits de paramètres (ex: GPU vs périphérique pour TrOCR)
+- **Comparaison multi-moteurs** : Testez plusieurs configurations simultanément
+- **Visualisations avancées** : Aperçu des bounding boxes et résultats en temps réel
 
 <a name="exemples-dutilisation"></a>
 ## 💡 Exemples d'utilisation
@@ -520,7 +530,7 @@ for livre in resultats:
 ## 🚀 Utilisation détaillée
 
 ### 💻 Mode Ligne de commande (Experts)
-Moteurs OCR disponibles :
+Moteurs OCR disponibles avec paramètres fixes :
 
 **📁 Structure modulaire** : Chaque moteur est organisé dans son propre dossier avec documentation complète
 
@@ -551,18 +561,33 @@ Options communes :
 - `--benchmark` : Mesure des performances
 - `--output fichier.json` : Sauvegarde des résultats
 
-### 🖥️ Mode Interface Web (Débutants)
+### 🖥️ Mode Interface Web (Débutants et Avancés)
 
 ```bash
 streamlit run src/frontend/main.py
 # Ouvrir http://localhost:8501
 ```
 
-Fonctionnalités :
-- Upload d'images par glisser-déposer
-- Choix du moteur OCR
-- Comparaison multi-moteurs (page dédiée)
-- Visualisations avec bounding boxes
+#### Page Analyse (Traitement d'une seule image)
+- **Upload d'image** : Glisser-déposer ou sélectionner un fichier
+- **Configuration par moteur** : Paramètres spécifiques pour chaque moteur OCR :
+  - **EasyOCR** : Seuil de confiance (0.1-1.0), GPU on/off, langues
+  - **Tesseract** : Seuil de confiance (0.1-1.0), Mode PSM, langues
+  - **TrOCR** : Périphérique (Auto/CUDA/CPU), langues, validation automatique des conflits
+- **Validation intelligente** : Alerte automatique si conflit détecté (ex: GPU activé mais périphérique CPU pour TrOCR)
+- **Visualisations** : Bounding boxes et résultats en temps réel
+
+#### Page Comparaison (Multi-moteurs)
+- **Configuration multiple** : Paramètres individuels pour chaque moteur dans chaque configuration
+- **Comparaison côte à côte** : Résultats de plusieurs moteurs simultanément
+- **Validation par configuration** : Contrôle des conflits pour chaque setup TrOCR
+- **Métriques comparatives** : Précision, vitesse, nombre de détections
+
+Fonctionnalités communes :
+- **Navigation intuitive** : Menu latéral avec sélection de page
+- **Paramètres persistants** : Configuration sauvegardée pendant la session
+- **Export des résultats** : Téléchargement des données JSON
+- **Visualisations avancées** : Aperçu graphique des détections
 
 ### 💡 Conseils pour les images
 

@@ -1,4 +1,22 @@
-# 🏗️ **ShelfReader P1 - MVP Desktop**
+# 🏗️ **S## 📋 Table des matières
+
+- [📖 À propos de ShelfReader](#à-propos-de-shelfreader)
+- [🔍 Comment ça marche](#comment-ça-marche)
+- [📚 Documentation](#documentation)
+- [📈 Évolution du projet](#évolution-du-projet)
+- [🗺️ Roadmap et évolutions](#roadmap-et-évolutions)
+- [🏗️ Architecture du projet](#architecture-du-projet)
+- [📦 Installation](#installation)
+- [🚀 Démarrage rapide](#démarrage-rapide)
+- [⚙️ Configuration avancée](#configuration-avancée)
+- [🎯 Deux façons d'utiliser ShelfReader](#deux-facons-dutiliser-shelfreader)
+- [💡 Exemples d'utilisation](#exemples-dutilisation)
+- [🚀 Utilisation détaillée](#utilisation-détaillée)
+- [📊 Métriques et performances](#métriques-et-performances)
+- [🔧 Dépannage](#dépannage)
+- [🎯 Algorithme optimisé](#algorithme-optimisé)
+- [🤝 Contribution](#contribution)
+- [📄 Licence](#licence) Desktop**
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)](https://streamlit.io/)
@@ -11,8 +29,8 @@
 
 - [📖 À propos de ShelfReader](#à-propos-de-shelfreader)
 - [🔍 Comment ça marche](#comment-ça-marche)
-- [� Documentation](#documentation)
-- [�📈 Évolution du projet](#évolution-du-projet)
+- [📚 Documentation](#documentation)
+- [📈 Évolution du projet](#évolution-du-projet)
 - [🗺️ Roadmap et évolutions](#roadmap-et-évolutions)
 - [🏗️ Architecture du projet](#architecture-du-projet)
 - [📦 Installation](#installation)
@@ -82,13 +100,13 @@ ShelfReader propose **3 moteurs OCR spécialisés** :
 - **Informations complètes** : Auteur, éditeur, date, résumé
 - **Liens externes** : Accès aux ressources supplémentaires
 
-## � Documentation
+## 📚 Documentation
 
 - [🏗️ Architecture & Documentation](docs/P1_Architecture_Documentation.md) - Vue d'ensemble complète du projet
 - [🔧 Dépendances](docs/Dependencies.md) - Gestion des dépendances détaillée
 - [📖 Guide OCR](docs/OCR_Code_Explanation.md) - Explication technique du code OCR
 
-## �📈 Évolution du projet
+## 📈 Évolution du projet
 
 ### Phase 1 : Moteurs OCR ✅
 - Implémentation EasyOCR, Tesseract, TrOCR

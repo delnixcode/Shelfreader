@@ -1,4 +1,4 @@
-# P1 - MVP Desktop Requirements
+# P1 - OCR Streamlit Requirements
 # Core dependencies for basic OCR + API + Streamlit interface
 
 # OCR and Computer Vision

@@ -4,7 +4,7 @@
 [![Phase](https://img.shields.io/badge/Phase-P1%20MVP%20Desktop-blue.svg)]()
 [![Date](https://img.shields.io/badge/Dernière%20mise%20à%20jour-Octobre%202025-lightgrey.svg)]()
 
-**Suivi complet du développement de ShelfReader Phase 1 - MVP Desktop**
+**Suivi complet du développement de ShelfReader Phase 1 - P1 OCR Streamlit**
 
 ---
 
@@ -23,7 +23,7 @@
 
 ## 🎯 **Vue d'ensemble du projet**
 
-**ShelfReader P1 - MVP Desktop** : Application de reconnaissance automatique de livres sur étagères avec OCR intelligent et enrichissement via API Open Library.
+**ShelfReader P1 - OCR Streamlit** : Application de reconnaissance automatique de livres sur étagères avec OCR intelligent et enrichissement via API Open Library.
 
 ### **Objectifs initiaux (Réalisés ✅)**
 - **OCR fonctionnel** : 3 moteurs (EasyOCR, Tesseract, TrOCR)
@@ -279,7 +279,7 @@ p1-OCR-Streamlit/
 
 ---
 
-**🎉 P1 MVP Desktop - TERMINÉ avec succès !**
+**🎉 P1 OCR Streamlit - TERMINÉ avec succès !**
 **📊 Résultats : 93.3% précision, 3.7x accéléré GPU, interface moderne**
 **🚀 Prêt pour les phases suivantes du développement ShelfReader**
 

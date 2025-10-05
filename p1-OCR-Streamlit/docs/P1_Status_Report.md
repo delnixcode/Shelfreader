@@ -4,7 +4,7 @@
 [![Phase](https://img.shields.io/badge/Phase-P1%20MVP%20Desktop-blue.svg)]()
 [![Date](https://img.shields.io/badge/Dernière%20mise%20à%20jour-Octobre%202025-lightgrey.svg)]()
 
-**Suivi complet du développement de ShelfReader Phase 1 - MVP Desktop**
+**Suivi complet du développement de ShelfReader Phase 1 - P1 OCR Streamlit**
 
 ---
 

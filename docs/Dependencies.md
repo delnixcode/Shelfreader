@@ -57,7 +57,7 @@ Ces dépendances étaient déjà présentes dans l'environnement et ont été pr
 
 ## 🆕 Dépendances Ajoutées par Projet
 
-### 🎯 P1 - MVP Desktop (OCR + API + Interface Web)
+### 🎯 P1 - OCR Streamlit (OCR + API + Interface Web)
 
 #### PyTorch Ecosystem (Deep Learning)
 - **`torch>=2.0.0`** : Framework de deep learning principal
@@ -173,7 +173,7 @@ Ces dépendances étaient déjà présentes dans l'environnement et ont été pr
 
 ## 🎯 Rôles par Projet
 
-### P1 - MVP Desktop
+### P1 - OCR Streamlit
 **Focus** : Fonctionnalités de base OCR + API + Interface
 **Bibliothèques clés** : EasyOCR, OpenCV, Streamlit, PyTorch
 **Objectif** : Prouver la faisabilité technique

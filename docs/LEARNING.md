@@ -9,7 +9,7 @@
 ├── README.md              # Vue d'ensemble du projet
 ├── LEARNING.md            # ← Vous êtes ici (hub principal)
 └── docs/
-    └── phase1/            # Phase 1 : MVP Desktop
+    └── phase1/            # Phase 1 : P1 OCR Streamlit
         ├── api_client.md  # 🌐 Détails complets du client API
         ├── ocr_module.md  # 🔤 Détails complets de l'OCR (à venir)
         ├── app.md         # 🖥️ Détails de l'interface (à venir)
@@ -279,7 +279,7 @@ Caméra ouverte en continu
 
 Le projet est divisé en **5 phases progressives** pour apprendre pas à pas :
 
-### ✅ Phase 1 : MVP Desktop - Photo unique (EN COURS)
+### ✅ Phase 1 : P1 OCR Streamlit - Photo unique (EN COURS)
 **Objectif** : Apprendre les bases fondamentales
 - 📸 Upload photo → Détection → OCR → Matching → Affichage
 - 🎓 **Apprentissage** : OCR (EasyOCR), API REST, YOLOv8, Streamlit
@@ -413,7 +413,7 @@ class MobileBookOCR(BookOCR):
 
 ---
 
-## 🗂️ Phase 1 : MVP Desktop (OCR + API + Interface)
+## 🗂️ Phase 1 : P1 OCR Streamlit (OCR + API + Interface)
 
 ### Objectifs pédagogiques
 - ✅ Comprendre l'OCR avec EasyOCR

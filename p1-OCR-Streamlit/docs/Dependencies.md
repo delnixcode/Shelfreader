@@ -6,7 +6,7 @@
 - [📦 Organisation des Dépendances](#-organisation-des-dépendances)
   - [🔄 Dépendances Existantes (Environnement de Base)](#-dépendances-existantes-environnement-de-base)
 - [🆕 Dépendances Ajoutées par Projet](#-dépendances-ajoutées-par-projet)
-  - [🎯 P1 - MVP Desktop (OCR + API + Interface Web)](#-p1---mvp-desktop-ocr--api--interface-web)
+  - [🎯 P1 - OCR Streamlit (OCR + API + Interface Web)](#-p1---ocr-streamlit-ocr--api--interface-web)
   - [🚀 P2 - Enhanced Desktop (YOLOv8 + Cache Intelligent)](#-p2---enhanced-desktop-yolov8--cache-intelligent)
   - [📱 P3 - Mobile Static (Interface Native + Offline)](#-p3---mobile-static-interface-native--offline)
   - [⚡ P4 - Mobile Real-time (AR + Performance Maximale)](#-p4---mobile-real-time-ar--performance-maximale)
@@ -74,7 +74,7 @@ Ces dépendances étaient déjà présentes dans l'environnement et ont été pr
 
 ## 🆕 Dépendances Ajoutées par Projet
 
-### 🎯 P1 - MVP Desktop (OCR + API + Interface Web)
+### 🎯 P1 - OCR Streamlit (OCR + API + Interface Web)
 
 #### PyTorch Ecosystem (Deep Learning)
 - **`torch>=2.0.0`** : Framework de deep learning principal
@@ -190,7 +190,7 @@ Ces dépendances étaient déjà présentes dans l'environnement et ont été pr
 
 ## 🎯 Rôles par Projet
 
-### P1 - MVP Desktop
+### P1 - OCR Streamlit
 **Focus** : Fonctionnalités de base OCR + API + Interface
 **Bibliothèques clés** : EasyOCR, OpenCV, Streamlit, PyTorch
 **Objectif** : Prouver la faisabilité technique

@@ -1,5 +1,5 @@
 """
-Interface Streamlit pour ShelfReader P1 - MVP Desktop
+Interface Streamlit pour ShelfReader P1 - OCR Streamlit
 OCR adaptatif multi-échelle avec détection intelligente de livres
 """
 

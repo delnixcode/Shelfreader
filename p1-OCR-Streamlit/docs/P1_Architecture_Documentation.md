@@ -52,7 +52,7 @@
 
 ### 🚀 Nouveau layout vertical desktop
 
-Depuis octobre 2025, l'interface Streamlit du MVP Desktop propose un **layout vertical** :
+Depuis octobre 2025, l'interface Streamlit du P1 OCR Streamlit propose un **layout vertical** :
 
 ```
 1ère ligne : Image originale (gauche) + paramètres de traitement (droite)
@@ -195,7 +195,7 @@ python -c "import torch; print('CUDA available:', torch.cuda.is_available())"
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    PROJET 1 : MVP DESKTOP                       │
+│                    PROJET 1 : P1 OCR STREAMLIT                   │
 │                    OCR + API + Interface                        │
 └─────────────────────────────────────────────────────────────────┘
                                     │

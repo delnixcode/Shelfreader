@@ -190,7 +190,7 @@ class BookDetector:
 def test_detector():
     """Test function for the book detector"""
     import sys
-    sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'p1-MVP-Desktop', 'src'))
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'p1-OCR-Streamlit', 'src'))
 
     try:
         from PIL import Image

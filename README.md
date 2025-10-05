@@ -32,7 +32,7 @@ Développer une suite d'applications capables de reconnaître automatiquement le
 
 | Phase | Dossier | Description | Documentation | État |
 |-------|---------|-------------|---------------|------|
-| **P1** | [p1-OCR-Streamlit](./p1-OCR-Streamlit) | MVP Desktop avec Streamlit, 3 moteurs OCR | [README P1](./p1-OCR-Streamlit/README.md) | 🔄 EN COURS |
+| **P1** | [p1-OCR-Streamlit](./p1-OCR-Streamlit) | P1 OCR Streamlit avec 3 moteurs OCR | [README P1](./p1-OCR-Streamlit/README.md) | 🔄 EN COURS |
 | **P2** | [p2-Enhanced-Desktop](./p2-Enhanced-Desktop) | Desktop avancé, détection YOLOv8 | [README P2](./p2-Enhanced-Desktop/README.md) | 🔄 EN COURS |
 | **P3** | [p3-Mobile-Static](./p3-Mobile-Static) | Application mobile statique | [README P3](./p3-Mobile-Static/README.md) | ⏳ PLANIFIÉ |
 | **P4** | [p4-Mobile-Real-time](./p4-Mobile-Real-time) | Application mobile temps réel | [README P4](./p4-Mobile-Real-time/README.md) | ⏳ PLANIFIÉ |
@@ -47,7 +47,7 @@ ShelfReader/
 │   ├── data/test_images/   # Images de test
 │   ├── docs/              # Documentation partagée
 │   └── scripts/           # Outils communs
-├── p1-MVP-Desktop/        # 🏗️ Phase 1: OCR de base (EN COURS)
+├── p1-OCR-Streamlit/      # 🏗️ Phase 1: OCR Streamlit (EN COURS)
 ├── p2-Enhanced-Desktop/   # 🚀 Phase 2: YOLOv8 + Cache
 ├── p3-Mobile-Static/      # 📱 Phase 3: Mobile statique
 └── p4-Mobile-Real-time/   # ⚡ Phase 4: Mobile AR temps réel
@@ -57,7 +57,7 @@ ShelfReader/
 
 ## 📋 **Les 4 Phases de Développement**
 
-### 🏗️ **P1 - MVP Desktop** 🔄 EN COURS
+### 🏗️ **P1 - OCR Streamlit** 🔄 EN COURS
 **OCR basique + Interface web temporaire**
 - **Technologies** : EasyOCR, Tesseract, TrOCR, Streamlit
 - **Fonctionnalités** : Détection texte brute, API Open Library
@@ -144,7 +144,7 @@ ShelfReader/
 
 ### **Phase 1 (Actuelle)**
 ```bash
-cd p1-MVP-Desktop
+cd p1-OCR-Streamlit
 source env-p1/bin/activate
 pip install -r requirements.txt
 python ocr_easyocr.py test_images/books1.jpg --gpu
@@ -201,7 +201,7 @@ python src/app_enhanced.py
 ## 📖 **Ressources et Documentation**
 
 ### **Documentation par Phase**
-- **P1** : `p1-MVP-Desktop/README.md` - Guide complet utilisation
+- **P1** : `p1-OCR-Streamlit/README.md` - Guide complet utilisation
 - **P2** : `p2-Enhanced-Desktop/README.md` - Architecture avancée
 - **P3** : `p3-Mobile-Static/README.md` - Spécifications mobile
 - **P4** : `p4-Mobile-Real-time/README.md` - AR et performance

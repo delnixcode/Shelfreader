@@ -1,22 +1,4 @@
-# 🏗️ **S## 📋 Table des matières
-
-- [📖 À propos de ShelfReader](#à-propos-de-shelfreader)
-- [🔍 Comment ça marche](#comment-ça-marche)
-- [📚 Documentation](#documentation)
-- [📈 Évolution du projet](#évolution-du-projet)
-- [🗺️ Roadmap et évolutions](#roadmap-et-évolutions)
-- [🏗️ Architecture du projet](#architecture-du-projet)
-- [📦 Installation](#installation)
-- [🚀 Démarrage rapide](#démarrage-rapide)
-- [⚙️ Configuration avancée](#configuration-avancée)
-- [🎯 Deux façons d'utiliser ShelfReader](#deux-facons-dutiliser-shelfreader)
-- [💡 Exemples d'utilisation](#exemples-dutilisation)
-- [🚀 Utilisation détaillée](#utilisation-détaillée)
-- [📊 Métriques et performances](#métriques-et-performances)
-- [🔧 Dépannage](#dépannage)
-- [🎯 Algorithme optimisé](#algorithme-optimisé)
-- [🤝 Contribution](#contribution)
-- [📄 Licence](#licence) Desktop**
+# � ShelfReader P1 - OCR Adaptatif - Streamlit
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)](https://streamlit.io/)
@@ -27,24 +9,25 @@
 
 ## 📋 Table des matières
 
-- [📖 À propos de ShelfReader](#à-propos-de-shelfreader)
-- [🔍 Comment ça marche](#comment-ça-marche)
+- [📖 À propos de ShelfReader](#a-propos-de-shelfreader)
+- [🔍 Comment ça marche](#comment-ca-marche)
 - [📚 Documentation](#documentation)
-- [📈 Évolution du projet](#évolution-du-projet)
-- [🗺️ Roadmap et évolutions](#roadmap-et-évolutions)
+- [📈 Évolution du projet](#evolution-du-projet)
+- [🗺️ Roadmap et évolutions](#roadmap-et-evolutions)
 - [🏗️ Architecture du projet](#architecture-du-projet)
 - [📦 Installation](#installation)
-- [🚀 Démarrage rapide](#démarrage-rapide)
-- [⚙️ Configuration avancée](#configuration-avancée)
+- [🚀 Démarrage rapide](#demarrage-rapide)
+- [⚙️ Configuration avancée](#configuration-avancee)
 - [🎯 Deux façons d'utiliser ShelfReader](#deux-facons-dutiliser-shelfreader)
 - [💡 Exemples d'utilisation](#exemples-dutilisation)
-- [🚀 Utilisation détaillée](#utilisation-détaillée)
-- [📊 Métriques et performances](#métriques-et-performances)
-- [🔧 Dépannage](#dépannage)
-- [🎯 Algorithme optimisé](#algorithme-optimisé)
+- [🚀 Utilisation détaillée](#utilisation-detaillee)
+- [📊 Métriques et performances](#metriques-et-performances)
+- [🔧 Dépannage](#depannage)
+- [🎯 Algorithme optimisé](#algorithme-optimise)
 - [🤝 Contribution](#contribution)
 - [📄 Licence](#licence)
 
+<a name="a-propos-de-shelfreader"></a>
 ## 📖 À propos de ShelfReader
 
 ShelfReader est une application intelligente de reconnaissance optique de caractères (OCR) spécialisée dans l'identification automatique des titres de livres sur les étagères. L'application utilise des technologies d'intelligence artificielle avancées pour analyser les images d'étagères de livres et extraire les titres avec une précision remarquable.
@@ -58,6 +41,7 @@ Automatiser le catalogage de bibliothèques personnelles ou professionnelles en 
 - **Librairies** : Gestion des stocks par analyse visuelle
 - **Collectionneurs** : Suivi organisé des acquisitions
 
+<a name="comment-ca-marche"></a>
 ## 🔍 Comment ça marche
 
 ShelfReader utilise un **pipeline OCR multi-étapes** optimisé pour la reconnaissance de titres de livres :
@@ -100,12 +84,14 @@ ShelfReader propose **3 moteurs OCR spécialisés** :
 - **Informations complètes** : Auteur, éditeur, date, résumé
 - **Liens externes** : Accès aux ressources supplémentaires
 
+<a name="documentation"></a>
 ## 📚 Documentation
 
 - [🏗️ Architecture & Documentation](docs/P1_Architecture_Documentation.md) - Vue d'ensemble complète du projet
 - [🔧 Dépendances](docs/Dependencies.md) - Gestion des dépendances détaillée
 - [📖 Guide OCR](docs/OCR_Code_Explanation.md) - Explication technique du code OCR
 
+<a name="evolution-du-projet"></a>
 ## 📈 Évolution du projet
 
 ### Phase 1 : Moteurs OCR ✅
@@ -124,6 +110,7 @@ ShelfReader propose **3 moteurs OCR spécialisés** :
 - Comparaison multi-moteurs
 - Visualisations avancées
 
+<a name="roadmap-et-evolutions"></a>
 ## 🗺️ Roadmap et évolutions
 
 ### Phase 4 : Mobile (Static) - En cours
@@ -146,6 +133,7 @@ ShelfReader propose **3 moteurs OCR spécialisés** :
 - Apprentissage continu des préférences
 - Suggestions intelligentes de livres
 
+<a name="architecture-du-projet"></a>
 ## 🏗️ Architecture du projet
 
 ShelfReader P1 utilise une **architecture modulaire** permettant le développement et le test indépendants de chaque composant OCR.
@@ -220,6 +208,7 @@ python -m pytest tests/
 python test_gpu_usage.py
 ```
 
+<a name="installation"></a>
 ## 📦 Installation
 
 ### Prérequis
@@ -255,6 +244,7 @@ streamlit run src/frontend/streamlit_app.py
 
 Ouvrir http://localhost:8501 dans votre navigateur.
 
+<a name="demarrage-rapide"></a>
 ## 🚀 Démarrage rapide
 
 ```bash
@@ -279,6 +269,7 @@ python src/engines/easyocr_engine.py test_images/books1.jpg --gpu
 streamlit run src/frontend/streamlit_app.py
 ```
 
+<a name="configuration-avancee"></a>
 ## ⚙️ Configuration avancée
 
 ### Paramètres OCR
@@ -339,6 +330,7 @@ output:
   save_images: false
 ```
 
+<a name="deux-facons-dutiliser-shelfreader"></a>
 ## 🎯 Deux façons d'utiliser ShelfReader
 
 ### 💻 Mode Ligne de commande (Pour développeurs/experts)
@@ -367,6 +359,7 @@ streamlit run src/frontend/streamlit_app.py
 # Puis ouvrir http://localhost:8501
 ```
 
+<a name="exemples-dutilisation"></a>
 ## 💡 Exemples d'utilisation
 
 ### 📚 Catalogue d'une bibliothèque personnelle
@@ -442,6 +435,7 @@ for livre in resultats:
         print(f"Auteur: {livre['metadata']['author']}")
 ```
 
+<a name="utilisation-detaillee"></a>
 ## 🚀 Utilisation détaillée
 
 ### 💻 Mode Ligne de commande (Experts)
@@ -531,6 +525,7 @@ python -m pytest tests/
 python test_gpu_usage.py
 ```
 
+<a name="metriques-et-performances"></a>
 ##  Métriques et performances
 
 ### Benchmarks détaillés
@@ -581,6 +576,7 @@ python test_gpu_usage.py
 - **GPU recommandé** : NVIDIA GTX 1060 ou supérieur
 - **CUDA** : Version 11.0+ (pour GPU)
 
+<a name="depannage"></a>
 ## 🔧 Dépannage
 
 ### Problèmes courants et solutions
@@ -664,12 +660,14 @@ curl -s https://openlibrary.org/api/books?bibkeys=ISBN:9780140449136&format=json
 - 📖 **Documentation** : Guides détaillés dans `/docs`
 - 🏷️ **Labels** : `bug`, `enhancement`, `question`
 
+<a name="algorithme-optimise"></a>
 ## 🎯 Algorithme optimisé
 - **Précision mesurée** : 93% (14/15 livres)
 - **Détection adaptative multi-échelle**
 - **Support GPU automatique**
 - **3 moteurs OCR** : EasyOCR, Tesseract, TrOCR
 
+<a name="contribution"></a>
 ## 🤝 Contribution
 
 Les contributions sont les bienvenues ! N'hésitez pas à :
@@ -678,6 +676,7 @@ Les contributions sont les bienvenues ! N'hésitez pas à :
 - Proposer une amélioration via une Pull Request
 - Partager vos idées dans les discussions
 
+<a name="licence"></a>
 ## 📄 Licence
 
 Ce projet est sous licence MIT - voir le fichier [LICENSE](LICENSE) pour plus de détails.

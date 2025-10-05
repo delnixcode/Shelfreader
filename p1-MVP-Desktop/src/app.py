@@ -110,22 +110,27 @@ def display_results(results, processing_time, enriched_books=None):
 
     books = enriched_books if enriched_books else results['books']
 
-    # Métriques principales
-    col1, col2, col3, col4 = st.columns(4)
+    # Centrer toute la section des résultats
+    col_left, col_center, col_right = st.columns([0.05, 0.9, 0.05])
 
-    with col1:
-        st.metric("📚 Livres détectés", len(books))
-
-    with col2:
-        avg_confidence = np.mean([book.get('confidence', 0) for book in books]) if books else 0
-        st.metric("🎯 Confiance moyenne", f"{avg_confidence:.1%}")
-
-    with col3:
-        st.metric("⚡ Temps de traitement", f"{processing_time:.2f}s")
-
-    with col4:
-        enriched_count = sum(1 for book in books if book.get('enriched', False))
-        st.metric("� Enrichis Open Library", f"{enriched_count}/{len(books)}")
+    with col_center:
+        # Métriques principales
+            st.subheader("📊 Résultats de l'analyse")
+            col1, col2, col3, col4 = st.columns(4)
+    
+        with col1:
+            st.metric("📚 Livres détectés", len(books))
+    
+        with col2:
+            avg_confidence = np.mean([book.get('confidence', 0) for book in books]) if books else 0
+            st.metric("🎯 Confiance moyenne", f"{avg_confidence:.1%}")
+    
+        with col3:
+            st.metric("⚡ Temps de traitement", f"{processing_time:.2f}s")
+    
+        with col4:
+            enriched_count = sum(1 for book in books if book.get('enriched', False))
+            st.metric("📚 Enrichis Open Library", f"{enriched_count}/{len(books)}")
 
     st.markdown("---")
 
@@ -137,18 +142,24 @@ def display_results(results, processing_time, enriched_books=None):
         books_data = []
         for i, book in enumerate(books, 1):
             enriched = book.get('enriched', False)
+            year = book.get('openlibrary_year', 'N/A') if enriched else 'N/A'
+            # Convertir l'année en string pour éviter les problèmes de type
+            year_str = str(year) if year != 'N/A' else 'N/A'
+
             books_data.append({
                 "N°": i,
                 "Titre OCR": book.get('text', 'N/A'),
                 "Titre OL": book.get('openlibrary_title', 'N/A') if enriched else 'Non enrichi',
                 "Auteur": book.get('openlibrary_author', 'N/A') if enriched else 'N/A',
-                "Année": book.get('openlibrary_year', 'N/A') if enriched else 'N/A',
+                "Année": year_str,
                 "Confiance": f"{book.get('confidence', 0):.1%}",
                 "Enrichi": "✅" if enriched else "❌"
             })
 
         df = pd.DataFrame(books_data)
-        st.dataframe(df, width='stretch')
+
+        # Afficher le tableau en pleine largeur
+        st.dataframe(df, use_container_width=True, hide_index=True)
 
         # Affichage en format carte pour plus de lisibilité
         st.markdown("### 📋 Détails par livre")
@@ -343,30 +354,39 @@ def main():
 
                             # Afficher les résultats
                             st.success("✅ Analyse terminée !" + (" + Enrichissement OL" if enrich_with_ol else ""))
+
+                            # Espacement après les colonnes principales
+                            st.markdown("---")
+
+                            # Afficher les métriques centrées
                             display_results(results, processing_time, enriched_books)
 
-                            # Visualisation des zones détectées
+                            # Visualisation des zones détectées (centrée)
                             if books := results.get('books'):
                                 st.markdown("---")
-                                st.subheader("👁️ Visualisation des zones détectées")
 
-                                # Créer la visualisation
-                                viz_image = visualize_detected_zones(temp_path, books)
+                                # Centrer la section de visualisation
+                                col_left_viz, col_center_viz, col_right_viz = st.columns([0.1, 0.8, 0.1])
+                                with col_center_viz:
+                                    st.subheader("👁️ Visualisation des zones détectées")
 
-                                if viz_image is not None:
-                                    col1, col2 = st.columns(2)
+                                    # Créer la visualisation
+                                    viz_image = visualize_detected_zones(temp_path, books)
 
-                                    with col1:
-                                        st.markdown("**📷 Image originale**")
-                                        st.image(image, width='stretch')
+                                    if viz_image is not None:
+                                        col1, col2 = st.columns(2)
 
-                                    with col2:
-                                        st.markdown("**🎯 Zones détectées**")
-                                        st.image(viz_image, caption=f"{len(books)} livres détectés", width='stretch')
+                                        with col1:
+                                            st.markdown("**📷 Image originale**")
+                                            st.image(image, width='stretch')
 
-                                    st.info("💡 **Légende :** Chaque rectangle coloré représente un livre détecté avec son numéro")
-                                else:
-                                    st.warning("⚠️ Impossible de créer la visualisation")
+                                        with col2:
+                                            st.markdown("**🎯 Zones détectées**")
+                                            st.image(viz_image, caption=f"{len(books)} livres détectés", width='stretch')
+
+                                        st.info("💡 **Légende :** Chaque rectangle coloré représente un livre détecté avec son numéro")
+                                    else:
+                                        st.warning("⚠️ Impossible de créer la visualisation")
 
                             # Informations techniques
                             with st.expander("🔧 Informations techniques"):

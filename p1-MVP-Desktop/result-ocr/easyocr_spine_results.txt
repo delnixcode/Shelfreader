@@ -1,5 +1,5 @@
 === RÉSULTATS OCR AVEC DÉTECTION DE TRANCHES - test_images/books1.jpg ===
-Date: 2025-10-04 20:25:42
+Date: 2025-10-04 21:35:44
 Nombre de livres détectés: 14
 Confiance moyenne: 0.921
 Détection de tranches: Activée

@@ -90,9 +90,9 @@ ShelfReader propose **3 moteurs OCR spécialisés** :
 - [🏗️ Architecture & Documentation](docs/P1_Architecture_Documentation.md) - Vue d'ensemble complète du projet
 - [🔧 Dépendances](docs/Dependencies.md) - Gestion des dépendances détaillée
 - [📖 Guide OCR](docs/OCR_Code_Explanation.md) - Explication technique du code OCR
-- [📋 Structure EasyOCR](src/engines/easyocr/STRUCTURE.md) - Architecture et commandes du moteur EasyOCR
-- [📋 Structure Tesseract](src/engines/tesseract/STRUCTURE.md) - Architecture et commandes du moteur Tesseract
-- [📋 Structure TrOCR](src/engines/trocr/STRUCTURE.md) - Architecture et commandes du moteur TrOCR
+- [📋 Structure EasyOCR](src/engines/easyocr/README.md) - Architecture et commandes du moteur EasyOCR
+- [📋 Structure Tesseract](src/engines/tesseract/README.md) - Architecture et commandes du moteur Tesseract
+- [📋 Structure TrOCR](src/engines/trocr/README.md) - Architecture et commandes du moteur TrOCR
 
 <a name="evolution-du-projet"></a>
 ## 📈 Évolution du projet

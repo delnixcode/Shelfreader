@@ -49,7 +49,7 @@ flowchart TD
 
 ```bash
 # Depuis src/engines/trocr
-python main.py ../../../test_images/books1.jpg --device cpu --lang en
+python main.py ../test_images/books1.jpg --device cpu --lang en
 ```
 
 - `main.py` lance le pipeline complet sur une image.
@@ -120,18 +120,18 @@ Un script `main.py` est disponible dans ce dossier pour tester facilement le mot
 
 ```bash
 cd src/engines/trocr
-python main.py ../../../test_images/books1.jpg --device cpu --benchmark
+python main.py ../test_images/books1.jpg --device cpu --benchmark
 ```
 
 ### Test Basique avec une Image
 
 ```bash
-python main.py ../../../test_images/books1.jpg
+python main.py ../test_images/books1.jpg
 ```
 
 **Résultat typique :**
 ```
-📷 Chargement de l'image: ../../../test_images/books1.jpg
+📷 Chargement de l'image: ../test_images/books1.jpg
 📊 Dimensions: 1280x872 pixels
 🚀 Initialisation du moteur TrOCR...
 🔍 Analyse de l'image en cours...
@@ -146,19 +146,19 @@ python main.py ../../../test_images/books1.jpg
 
 ```bash
 # Utilisation automatique (GPU si disponible, sinon CPU)
-python main.py ../../../test_images/books1.jpg --device auto
+python main.py ../test_images/books1.jpg --device auto
 
 # Forcer l'utilisation du GPU
-python main.py ../../../test_images/books1.jpg --device cuda
+python main.py ../test_images/books1.jpg --device cuda
 
 # Forcer l'utilisation du CPU
-python main.py ../../../test_images/books1.jpg --device cpu
+python main.py ../test_images/books1.jpg --device cpu
 ```
 
 ### Test avec Benchmark
 
 ```bash
-python main.py ../../../test_images/books1.jpg --benchmark --output results.json
+python main.py ../test_images/books1.jpg --benchmark --output results.json
 ```
 
 **Performances mesurées :**
@@ -182,7 +182,7 @@ import torch
 if torch.cuda.is_available():
     devices.append('cuda')
 
-image = cv2.imread('../../../test_images/books1.jpg')
+image = cv2.imread('../test_images/books1.jpg')
 
 for device in devices:
     print(f'\\n=== Test avec {device.upper()} ===')

@@ -15,30 +15,36 @@ def render_comparison_sidebar():
     Inclut :
     - Objectif de la comparaison
     - Conseils pour la comparaison
+    - Paramètres avancés des engines OCR
     - Informations sur les moteurs
     """
     with st.sidebar:
-        st.markdown("### 🎯 Objectif de la comparaison")
-        st.markdown("""
-        Cette fonctionnalité vous permet de:
 
-        - **Comparer les performances** de différents moteurs OCR
-        - **Évaluer la précision** de détection des livres
-        - **Analyser les différences** de reconnaissance de texte
-        - **Choisir le moteur optimal** selon vos besoins
-        """)
+            # Note: informations globales et paramètres avancés sont affichés
+            # dans la sidebar principale (components.sidebar) juste après la navigation.
 
-        st.markdown("### 💡 Conseils pour la comparaison")
-        st.markdown("""
-        - **Sélectionnez 2-3 moteurs** pour un comparatif équilibré
-        - **Utilisez des images variées** (différentes qualités, angles)
-        - **Comparez les temps de traitement** et la précision
-        - **Analysez les différences** de détection de zones
-        """)
+            # Conseils d'utilisation
+            st.markdown("### 💡 Conseils d'utilisation")
+            st.markdown("""
+            - **Qualité d'image** : Photos bien éclairées, perpendiculaires à l'étagère
+            - **Taille minimale** : 1000 pixels de largeur recommandée
+            - **Formats** : JPG ou PNG
+            - **Contenu** : Étageres de livres avec titres visibles
+            """)
 
-        st.markdown("### 🔧 Moteurs disponibles")
-        st.markdown("""
-        - **EasyOCR** : Spécialisé pour les textes complexes, excellent pour les livres
-        - **Tesseract** : Moteur classique, rapide et fiable
-        - **TrOCR** : Basé sur transformers, très précis pour l'impression
-        """)
+            # Paramètres recommandés (détail)
+            st.markdown("### ⚙️ Paramètres recommandés")
+            st.markdown("""
+            - **Moteur OCR** : EasyOCR (recommandé)
+            - **Confiance** : 0.3 (optimisé)
+            - **GPU** : Activé si disponible
+            - **Enrichissement OL** : Activé pour métadonnées
+            """)
+
+            # Moteurs OCR
+            st.markdown("### 🔧 Moteurs OCR")
+            st.markdown("""
+            - **EasyOCR** : Spécialisé textes complexes
+            - **Tesseract** : Rapide et fiable
+            - **TrOCR** : Très précis (transformers)
+            """)

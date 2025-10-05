@@ -19,7 +19,7 @@ fi
 # Lancement de Streamlit
 echo "📚 Démarrage de l'application..."
 echo "   URL locale: http://localhost:8501"
-echo "   URL réseau: http://$(hostname -I | awk '{print $1}'):8501"
+echo "   URL réseau: http://$(hostname):8501"
 echo "   Appuyez sur Ctrl+C pour arrêter le serveur"
 echo ""
 

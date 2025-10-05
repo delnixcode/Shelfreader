@@ -8,7 +8,8 @@ sur la même image, avec visualisations et graphiques comparatifs.
 import streamlit as st
 import tempfile
 import os
-from PIL imp                # Construction des commandes réellement exécutées (pour debug)om components.results_display import display_comparison_results, display_comparison_charts
+from PIL import Image
+from components.results_display import display_comparison_results, display_comparison_charts
 from components.visualization import display_comparison_visualizations
 from utils.ocr_processing import ocr_processor
 
@@ -128,7 +129,7 @@ def show():
                     # Méthode de détection de tranches
                     easyocr_spine_method = st.selectbox(
                         f"Méthode de détection ({config_name})",
-                        options=["shelfie", "iccc2013"],
+                        options=["vertical_lines", "horizontal_shelves"],
                         index=0,
                         help="Algorithme de détection des séparations entre livres",
                         key=f"comp_easyocr_spine_{config_index}"
@@ -210,14 +211,8 @@ def show():
                 temp_path = tmp_file.name
 
             try:
-                # Récupérer les paramètres avancés pour tous les moteurs
-                advanced_params = {}
-                if 'easyocr_params' in st.session_state:
-                    advanced_params['EasyOCR'] = st.session_state.easyocr_params
-                if 'tesseract_params' in st.session_state:
-                    advanced_params['Tesseract'] = st.session_state.tesseract_params
-                if 'trocr_params' in st.session_state:
-                    advanced_params['TrOCR'] = st.session_state.trocr_params
+                # Les advanced_params sont déjà définis plus haut dans la boucle de configuration
+                # Ils contiennent les paramètres spécifiques à chaque configuration
 
                 # Construction des commandes réellement exécutées (pour debug)
                 executed_commands = {}
@@ -236,7 +231,7 @@ def show():
                     # Paramètres avancés pour cette configuration
                     config_adv_params = advanced_params.get(config_name, {})
                     if engine == 'EasyOCR':
-                        if config_adv_params.get('spine_method') and config_adv_params['spine_method'] != 'shelfie':
+                        if config_adv_params.get('spine_method') and config_adv_params['spine_method'] != 'vertical_lines':
                             cmd_parts.extend(["--spine-method", config_adv_params['spine_method']])
                         if config_adv_params.get('languages') and config_adv_params['languages'] != ['en']:
                             cmd_parts.extend(["--languages"] + config_adv_params['languages'])
@@ -256,6 +251,8 @@ def show():
                     config_name = config['name']
                     config_params = advanced_params.get(config_name, {}).copy()
                     config_params.pop('engine', None)  # Retirer la clé 'engine' si elle existe
+                    # Pour les moteurs multiples du même type, on garde seulement la dernière configuration
+                    # car ocr_processor ne gère pas plusieurs configurations du même moteur
                     processor_advanced_params[engine] = config_params
 
                 # Traitement de chaque configuration individuellement

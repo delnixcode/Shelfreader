@@ -152,7 +152,7 @@ class OCRProcessor:
             # Traitement spécifique selon le moteur
             if engine_name == 'EasyOCR':
                 # Récupérer les paramètres avancés pour EasyOCR
-                spine_method = "shelfie"  # défaut
+                spine_method = "vertical_lines"  # défaut
                 if advanced_params and 'spine_method' in advanced_params:
                     spine_method = advanced_params['spine_method']
                 

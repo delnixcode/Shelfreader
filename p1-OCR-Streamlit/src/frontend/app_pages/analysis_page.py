@@ -58,21 +58,95 @@ def show():
                 help="Choisissez le moteur OCR à utiliser"
             )
 
-            # Paramètres de traitement
-            confidence = st.slider(
-                "Seuil de confiance OCR",
-                min_value=0.1,
-                max_value=1.0,
-                value=0.3,
-                step=0.1,
-                help="0.1 = tolérant, 0.5 = strict. Recommandé : 0.3"
-            )
+            # Récupérer les paramètres globaux de la sidebar
+            global_confidence = 0.3
+            global_use_gpu = True
+            if 'global_params' in st.session_state:
+                global_confidence = st.session_state.global_params.get('confidence', 0.3)
+                global_use_gpu = st.session_state.global_params.get('use_gpu', True)
 
-            use_gpu = st.checkbox(
-                "Utiliser le GPU (recommandé)",
-                value=True,
-                help="Accélère le traitement si GPU disponible"
-            )
+            # Afficher les paramètres globaux (lecture seule)
+            st.markdown("**Paramètres globaux (configurés dans la sidebar) :**")
+            col_conf, col_gpu = st.columns(2)
+            with col_conf:
+                st.metric("Confiance", f"{global_confidence}")
+            with col_gpu:
+                st.metric("GPU", "Activé" if global_use_gpu else "Désactivé")
+
+            # Paramètres spécifiques selon le moteur
+            advanced_params = {}
+
+            if ocr_engine == "EasyOCR":
+                st.markdown("### 🎯 Paramètres EasyOCR")
+                
+                # Sélecteur de langue
+                easyocr_lang = st.multiselect(
+                    "Langues",
+                    options=["en", "fr", "de", "es", "it"],
+                    default=["en"],
+                    help="Langues à utiliser pour la reconnaissance"
+                )
+
+                # Méthode de détection de tranches
+                easyocr_spine_method = st.selectbox(
+                    "Méthode de détection",
+                    options=["shelfie", "iccc2013"],
+                    index=0,
+                    help="Algorithme de détection des séparations entre livres"
+                )
+
+                advanced_params = {
+                    'languages': easyocr_lang,
+                    'spine_method': easyocr_spine_method
+                }
+                st.session_state.easyocr_params = advanced_params
+
+            elif ocr_engine == "Tesseract":
+                st.markdown("### 📝 Paramètres Tesseract")
+                
+                # Sélecteur de langue
+                tesseract_lang = st.selectbox(
+                    "Langue",
+                    options=["eng", "fra", "deu", "spa", "ita"],
+                    index=0,
+                    help="Langue principale pour la reconnaissance"
+                )
+
+                # PSM (Page Segmentation Mode)
+                tesseract_psm = st.selectbox(
+                    "Mode de segmentation (PSM)",
+                    options=[
+                        ("6", "Bloc uniforme de texte (recommandé)"),
+                        ("3", "Analyse automatique complète"),
+                        ("8", "Ligne de texte unique"),
+                        ("13", "Ligne brute")
+                    ],
+                    index=0,
+                    format_func=lambda x: x[1],
+                    help="Comment Tesseract analyse la structure de la page"
+                )[0]
+
+                advanced_params = {
+                    'lang': tesseract_lang,
+                    'psm': int(tesseract_psm)
+                }
+                st.session_state.tesseract_params = advanced_params
+
+            elif ocr_engine == "TrOCR":
+                st.markdown("### 🤖 Paramètres TrOCR")
+                
+                # Device
+                trocr_device = st.selectbox(
+                    "Device",
+                    options=["auto", "cuda", "cpu"],
+                    index=0,
+                    help="Matériel pour exécuter le modèle (auto = détection automatique)"
+                )
+
+                advanced_params = {
+                    'device': trocr_device
+                }
+                st.session_state.trocr_params = advanced_params
 
             debug_mode = st.checkbox(
                 "Mode debug",
@@ -105,13 +179,47 @@ def show():
                     temp_path = tmp_file.name
 
                 try:
-                    # Traitement OCR
+                    # Récupérer les paramètres avancés selon le moteur sélectionné
+                    advanced_params = None
+                    if ocr_engine == 'EasyOCR' and 'easyocr_params' in st.session_state:
+                        advanced_params = st.session_state.easyocr_params
+                    elif ocr_engine == 'Tesseract' and 'tesseract_params' in st.session_state:
+                        advanced_params = st.session_state.tesseract_params
+                    elif ocr_engine == 'TrOCR' and 'trocr_params' in st.session_state:
+                        advanced_params = st.session_state.trocr_params
+                    
+                    # Construction de la commande réellement exécutée (pour debug)
+                    executed_cmd_parts = ["python", "main.py", temp_path]
+                    if global_use_gpu:
+                        executed_cmd_parts.append("--gpu")
+                    if global_confidence != 0.3:
+                        executed_cmd_parts.extend(["--confidence", str(global_confidence)])
+                    if debug_mode:
+                        executed_cmd_parts.append("--debug")
+                    
+                    # Paramètres avancés
+                    if advanced_params:
+                        if ocr_engine == 'EasyOCR':
+                            if advanced_params.get('spine_method') and advanced_params['spine_method'] != 'shelfie':
+                                executed_cmd_parts.extend(["--spine-method", advanced_params['spine_method']])
+                            if advanced_params.get('languages') and advanced_params['languages'] != ['en']:
+                                executed_cmd_parts.extend(["--languages"] + advanced_params['languages'])
+                        elif ocr_engine == 'Tesseract':
+                            if advanced_params.get('lang') and advanced_params['lang'] != 'eng':
+                                executed_cmd_parts.extend(["--tesseract-lang", advanced_params['lang']])
+                            if advanced_params.get('psm') and advanced_params['psm'] != 6:
+                                executed_cmd_parts.extend(["--tesseract-psm", str(advanced_params['psm'])])
+                    
+                    executed_command = " ".join(executed_cmd_parts)
+                    
+                    # Traitement OCR avec paramètres avancés
                     results, processing_time = ocr_processor.process_image(
                         temp_path,
                         engine_name=ocr_engine,
-                        confidence=confidence,
-                        use_gpu=use_gpu,
-                        debug=debug_mode
+                        confidence=global_confidence,
+                        use_gpu=global_use_gpu,
+                        debug=debug_mode,
+                        advanced_params=advanced_params
                     )
 
                     if results:
@@ -130,7 +238,12 @@ def show():
                         st.markdown("---")
 
                         # Affichage des résultats
-                        display_results(results, processing_time, enriched_books)
+                        display_results(results, processing_time, enriched_books,
+                                      engine_name=ocr_engine,
+                                      global_confidence=global_confidence,
+                                      global_use_gpu=global_use_gpu,
+                                      advanced_params=advanced_params,
+                                      executed_command=executed_command)
 
                         # Section visualisation et détails
                         st.markdown("---")

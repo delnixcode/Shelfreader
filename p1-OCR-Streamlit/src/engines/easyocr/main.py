@@ -39,7 +39,7 @@ Exemples d'utilisation:
     parser.add_argument('image_path', help='Chemin vers l\'image à traiter')
     parser.add_argument('--lang', nargs='+', default=['en'],
                        help='Langues à utiliser (ex: en fr de)')
-    parser.add_argument('--confidence', type=float, default=0.5,
+    parser.add_argument('--confidence', type=float, default=0.1,
                        help='Seuil de confiance minimum (0.0-1.0)')
     parser.add_argument('--cpu', action='store_true',
                        help='Forcer l\'utilisation du CPU')
@@ -49,6 +49,9 @@ Exemples d'utilisation:
                        help='Mode debug avec informations détaillées')
     parser.add_argument('--benchmark', action='store_true',
                        help='Afficher les métriques de performance')
+    parser.add_argument('--spine-method', type=str, default='shelfie', 
+                       choices=['iccc2013', 'shelfie'],
+                       help='Méthode de détection de tranches (défaut: shelfie)')
     parser.add_argument('--output', type=str,
                        help='Fichier de sortie pour les résultats (JSON)')
 
@@ -101,7 +104,7 @@ Exemples d'utilisation:
         print("🔍 Analyse de l'image en cours...")
         start_process = time.time()
         pil_image = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-        results = processor.get_boxes(pil_image)
+        results = processor.get_boxes(pil_image, preprocess=False, use_spine_detection=True, debug=args.debug, spine_method=args.spine_method)
         process_time = time.time() - start_process
 
         # Afficher les résultats
@@ -139,6 +142,52 @@ Exemples d'utilisation:
             print(f"   Temps de traitement: {process_time:.2f}s")
             print(f"   Temps total: {init_time + process_time:.2f}s")
             print(f"   FPS: {1.0 / process_time:.1f}")
+
+        # Sauvegarde automatique dans result-ocr
+        from datetime import datetime
+        result_ocr_dir = current_dir.parent.parent.parent / "result-ocr"
+        result_ocr_dir.mkdir(exist_ok=True)
+        result_file = result_ocr_dir / "easyocr_spine_results.txt"
+
+        with open(result_file, 'w', encoding='utf-8') as f:
+            f.write(f"=== RÉSULTATS OCR AVEC DÉTECTION DE TRANCHES - {os.path.basename(args.image_path)} ===\n")
+            f.write(f"Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            f.write(f"Nombre de livres détectés: {len(results)}\n")
+
+            if results:
+                confidences = [r.get('confidence', 0) for r in results]
+                avg_confidence = sum(confidences) / len(confidences)
+                f.write(f"Confiance moyenne: {avg_confidence:.3f}\n")
+            else:
+                f.write("Confiance moyenne: 0.000\n")
+
+            f.write("Détection de tranches: Activée\n")
+            f.write("\nTEXTE COMPLET:\n")
+            if results:
+                for result in results:
+                    text = result.get('text', '').strip()
+                    confidence = result.get('confidence', 0)
+                    f.write(f"{text} (conf: {confidence:.2f})\n")
+            else:
+                f.write("(aucun texte détecté)\n")
+
+            f.write("\n")
+
+            if results:
+                f.write("DÉTAIL PAR LIVRE:\n")
+                for i, result in enumerate(results, 1):
+                    f.write(f"\n--- Livre {i} ---\n")
+                    confidence = result.get('confidence', 0)
+                    text = result.get('text', '').strip()
+                    x, y = result.get('x', 0), result.get('y', 0)
+                    width, height = result.get('width', 0), result.get('height', 0)
+                    f.write(f"Confiance: {confidence:.3f}\n")
+                    f.write(f"Texte: {text}\n")
+                    f.write(f"Position: ({x:.1f}, {y:.1f})\n")
+                    f.write(f"Dimensions: {width:.1f} x {height:.1f}\n")
+
+        print(f"💾 Résultats sauvegardés automatiquement dans: {result_file}")
+
         # Sauvegarder les résultats si demandé
         if args.output:
             import json

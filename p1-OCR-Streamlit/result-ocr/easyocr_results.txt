@@ -1,0 +1,15 @@
+=== RÉSULTATS OCR - books1.jpg ===
+Date: 2025-10-05 04:26:40
+Nombre de textes détectés: 9
+Confiance moyenne: 0.843
+
+TEXTE COMPLET:
+THE LANCUAGE (conf: 0.90)
+Referencc Manual The Dylan Shalit Addison Wesley (conf: 0.98)
+Second The_ Javam Editon Prograrming Language Arnold Cosling (conf: 0.96)
+The Little MLer Felleisen and Priedman (conf: 0.90)
+ULLMAN ELEMENTS PROGRAMMING LBTW EDITION (conf: 0.86)
+TheGratto ning Thompson (conf: 0.87)
+THE SCHEME PROGRAMMING LANGUAGE ASi _ SCIEME 26 (conf: 0.82)
+70 (conf: 0.61)
+52 (conf: 0.69)

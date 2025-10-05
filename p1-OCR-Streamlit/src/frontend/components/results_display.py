@@ -13,7 +13,10 @@ from typing import Dict, List, Optional, Any
 
 
 def display_results(results: Dict, processing_time: float,
-                   enriched_books: Optional[List[Dict]] = None) -> None:
+                   enriched_books: Optional[List[Dict]] = None,
+                   engine_name: str = None, global_confidence: float = None,
+                   global_use_gpu: bool = None, advanced_params: Dict = None,
+                   executed_command: str = None) -> None:
     """
     Affiche les résultats de l'OCR de manière structurée et complète.
 
@@ -31,6 +34,79 @@ def display_results(results: Dict, processing_time: float,
 
     # Utiliser les livres enrichis si disponibles
     books = enriched_books if enriched_books else results['books']
+
+    # Section debug : commandes Streamlit vs Terminal
+    if engine_name and global_confidence is not None and global_use_gpu is not None:
+        with st.expander("🐛 Debug : Commandes exécutées"):
+            st.markdown("### 📋 Paramètres utilisés dans Streamlit")
+
+            # Paramètres globaux
+            st.write("**Paramètres globaux :**")
+            st.code(f"""
+Confiance: {global_confidence}
+GPU: {'Activé' if global_use_gpu else 'Désactivé'}
+Moteur: {engine_name}
+            """.strip())
+
+            # Paramètres avancés par moteur
+            if advanced_params:
+                st.write("**Paramètres avancés :**")
+                if engine_name == 'EasyOCR' and advanced_params:
+                    st.code(f"""
+Langues: {advanced_params.get('languages', ['en'])}
+Méthode de détection: {advanced_params.get('spine_method', 'shelfie')}
+                    """.strip())
+                elif engine_name == 'Tesseract' and advanced_params:
+                    st.code(f"""
+Langue: {advanced_params.get('lang', 'eng')}
+PSM: {advanced_params.get('psm', 6)}
+                    """.strip())
+                elif engine_name == 'TrOCR' and advanced_params:
+                    st.code(f"""
+Device: {advanced_params.get('device', 'auto')}
+                    """.strip())
+
+            st.markdown("### 💻 Commande réellement exécutée")
+            if executed_command:
+                st.write("Commande capturée depuis les logs du terminal :")
+                st.code(executed_command, language="bash")
+            else:
+                st.write("*Commande non capturée*")
+
+            st.markdown("### 🔄 Commande équivalente reconstruite")
+            st.write("Cette commande aurait produit le même résultat :")
+
+            # Construction de la commande terminal
+            cmd_parts = ["python", "main.py", "image_path"]
+
+            if global_use_gpu:
+                cmd_parts.append("--gpu")
+            if global_confidence != 0.3:  # Si différent de la valeur par défaut
+                cmd_parts.extend(["--confidence", str(global_confidence)])
+
+            # Paramètres avancés
+            if advanced_params:
+                if engine_name == 'EasyOCR':
+                    if advanced_params.get('spine_method') and advanced_params['spine_method'] != 'shelfie':
+                        cmd_parts.extend(["--spine-method", advanced_params['spine_method']])
+                    if advanced_params.get('languages') and advanced_params['languages'] != ['en']:
+                        cmd_parts.extend(["--languages"] + advanced_params['languages'])
+                elif engine_name == 'Tesseract':
+                    if advanced_params.get('lang') and advanced_params['lang'] != 'eng':
+                        cmd_parts.extend(["--tesseract-lang", advanced_params['lang']])
+                    if advanced_params.get('psm') and advanced_params['psm'] != 6:
+                        cmd_parts.extend(["--tesseract-psm", str(advanced_params['psm'])])
+
+            terminal_cmd = " ".join(cmd_parts)
+            st.code(terminal_cmd, language="bash")
+
+            # Comparaison si les deux commandes sont disponibles
+            if executed_command and executed_command != terminal_cmd.replace("image_path", "[IMAGE_PATH]"):
+                st.warning("⚠️ **Différence détectée** : La commande exécutée ne correspond pas exactement à la reconstruction")
+            elif executed_command:
+                st.success("✅ **Correspondance parfaite** : Commande exécutée = commande reconstruite")
+
+        st.markdown("---")
 
     # Section métriques principales
     st.subheader("📊 Résultats de l'analyse")
@@ -104,14 +180,111 @@ def display_results(results: Dict, processing_time: float,
 
 
 def display_comparison_results(results_dict: Dict[str, Dict],
-                             selected_engines: List[str]) -> None:
+                             selected_engines: List[str],
+                             global_confidence: float = None,
+                             global_use_gpu: bool = None,
+                             advanced_params: Dict = None,
+                             executed_commands: Dict[str, str] = None) -> None:
     """
     Affiche les résultats de comparaison entre plusieurs moteurs OCR.
 
     Args:
         results_dict (Dict[str, Dict]): Résultats par moteur OCR
         selected_engines (List[str]): Liste des moteurs comparés
+        global_confidence (float): Seuil de confiance global
+        global_use_gpu (bool): Utilisation du GPU
+        advanced_params (Dict): Paramètres avancés par moteur
     """
+    # Section debug : commandes Streamlit vs Terminal
+    if global_confidence is not None and global_use_gpu is not None:
+        with st.expander("🐛 Debug : Commandes exécutées"):
+            st.markdown("### 📋 Paramètres utilisés dans Streamlit")
+
+            # Paramètres globaux
+            st.write("**Paramètres globaux :**")
+            st.code(f"""
+Confiance: {global_confidence}
+GPU: {'Activé' if global_use_gpu else 'Désactivé'}
+Moteurs: {', '.join(selected_engines)}
+            """.strip())
+
+            # Paramètres avancés par moteur
+            if advanced_params:
+                st.write("**Paramètres avancés par moteur :**")
+                for engine in selected_engines:
+                    if engine in advanced_params and advanced_params[engine]:
+                        engine_params = advanced_params[engine]
+                        if engine == 'EasyOCR':
+                            st.code(f"""
+{engine} - Langues: {engine_params.get('languages', ['en'])}
+{engine} - Méthode de détection: {engine_params.get('spine_method', 'shelfie')}
+                            """.strip())
+                        elif engine == 'Tesseract':
+                            st.code(f"""
+{engine} - Langue: {engine_params.get('lang', 'eng')}
+{engine} - PSM: {engine_params.get('psm', 6)}
+                            """.strip())
+                        elif engine == 'TrOCR':
+                            st.code(f"""
+{engine} - Device: {engine_params.get('device', 'auto')}
+                            """.strip())
+
+            st.markdown("### 💻 Commandes réellement exécutées")
+            st.write("Commandes capturées depuis les logs du terminal :")
+
+            if executed_commands:
+                for engine in selected_engines:
+                    cmd = executed_commands.get(engine, "*Non capturée*")
+                    st.code(f"**{engine}:**\n{cmd}", language="bash")
+            else:
+                st.write("*Aucune commande capturée*")
+
+            st.markdown("### 🔄 Commandes équivalentes reconstruites")
+            st.write("Ces commandes auraient produit les mêmes résultats :")
+
+            # Construction des commandes terminal pour chaque moteur
+            for engine in selected_engines:
+                cmd_parts = ["python", "main.py", "image_path", "--engine", engine]
+
+                if global_use_gpu:
+                    cmd_parts.append("--gpu")
+                if global_confidence != 0.3:  # Si différent de la valeur par défaut
+                    cmd_parts.extend(["--confidence", str(global_confidence)])
+
+                # Paramètres avancés pour ce moteur
+                if advanced_params and engine in advanced_params:
+                    engine_adv_params = advanced_params[engine]
+                    if engine == 'EasyOCR':
+                        if engine_adv_params.get('spine_method') and engine_adv_params['spine_method'] != 'shelfie':
+                            cmd_parts.extend(["--spine-method", engine_adv_params['spine_method']])
+                        if engine_adv_params.get('languages') and engine_adv_params['languages'] != ['en']:
+                            cmd_parts.extend(["--languages"] + engine_adv_params['languages'])
+                    elif engine == 'Tesseract':
+                        if engine_adv_params.get('lang') and engine_adv_params['lang'] != 'eng':
+                            cmd_parts.extend(["--tesseract-lang", engine_adv_params['lang']])
+                        if engine_adv_params.get('psm') and engine_adv_params['psm'] != 6:
+                            cmd_parts.extend(["--tesseract-psm", str(engine_adv_params['psm'])])
+
+                terminal_cmd = " ".join(cmd_parts)
+                st.code(f"**{engine}:**\n{terminal_cmd}", language="bash")
+
+            # Comparaison si les commandes sont disponibles
+            if executed_commands:
+                differences_found = False
+                for engine in selected_engines:
+                    executed = executed_commands.get(engine, "")
+                    reconstructed = " ".join(cmd_parts).replace("image_path", "[IMAGE_PATH]")
+                    if executed and executed.replace("[IMAGE_PATH]", "image_path") != reconstructed.replace("[IMAGE_PATH]", "image_path"):
+                        differences_found = True
+                        break
+
+                if differences_found:
+                    st.warning("⚠️ **Différences détectées** : Certaines commandes exécutées ne correspondent pas aux reconstructions")
+                else:
+                    st.success("✅ **Correspondance parfaite** : Toutes les commandes exécutées correspondent aux reconstructions")
+
+        st.markdown("---")
+
     st.markdown("## Résultats par moteur")
 
     # Affichage côte à côte

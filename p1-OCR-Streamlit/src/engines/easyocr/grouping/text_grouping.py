@@ -22,7 +22,7 @@ class EasyOCRTextGrouping:
     """Utilitaires de regroupement de textes pour EasyOCR."""
 
     @staticmethod
-    def group_texts_by_spine_lines(boxes, image, debug=False, method="iccc2013"):
+    def group_texts_by_spine_lines(boxes, image, debug=False, method="horizontal_shelves"):
         """Regroupe les textes par lignes de tranches détectées ou par proximité intelligente."""
         if not boxes:
             return boxes
@@ -32,22 +32,31 @@ class EasyOCRTextGrouping:
 
         print(f"🔍 [{method}] Lignes de tranches détectées: {len(spine_lines) if spine_lines else 0}")
 
-        # Seuil minimum: si trop peu de lignes détectées, utiliser le fallback adaptatif
+        # Seuil minimum: si trop peu de lignes détectées, utiliser le fallback spécifique à la méthode
         if not spine_lines or len(spine_lines) < MIN_SPINE_LINES_THRESHOLD:
             if spine_lines:
                 print(f"⚠️ Seulement {len(spine_lines)} ligne(s) détectée(s) (min: {MIN_SPINE_LINES_THRESHOLD}), utilisation du regroupement adaptatif")
             else:
                 print("⚠️ Aucune ligne de tranche détectée, utilisation du regroupement adaptatif")
-            return EasyOCRTextGrouping.group_by_vertical_proximity(boxes, debug)
+            
+            # Utiliser un fallback différent selon la méthode
+            if method == "vertical_lines":
+                # Pour les lignes verticales (shelfie), utiliser le regroupement adaptatif vertical
+                return EasyOCRTextGrouping.group_by_vertical_proximity(boxes, debug)
+            else:  # horizontal_shelves (iccc2013)
+                # Pour les étagères horizontales, utiliser le regroupement par proximité simple
+                # ou ne pas regrouper du tout si on veut être strict
+                print("📋 ICCC2013: Aucune étagère détectée, regroupement par proximité horizontale uniquement")
+                return EasyOCRTextGrouping.group_by_proximity(boxes)
 
-        # Pour shelfie: lignes verticales → trier par X et créer des blocs horizontaux
-        # Pour ICCC: lignes horizontales → trier par Y et créer des blocs verticaux
-        if method == "shelfie":
+        # Pour vertical_lines: lignes verticales → trier par X et créer des blocs horizontaux
+        # Pour horizontal_shelves: lignes horizontales → trier par Y et créer des blocs verticaux
+        if method == "vertical_lines":
             # Trier les lignes par position X (horizontale)
             spine_lines.sort(key=lambda line: line.center[0])
 
             if debug:
-                print(f"🔍 [Shelfie] Lignes de tranches triées par X: {[f'{line.center[0]:.0f}' for line in spine_lines]}")
+                print(f"🔍 [Vertical Lines] Lignes de tranches triées par X: {[f'{line.center[0]:.0f}' for line in spine_lines]}")
 
             # Créer des blocs entre les lignes verticales
             blocks = [[] for _ in range(len(spine_lines) + 1)]
@@ -81,12 +90,12 @@ class EasyOCRTextGrouping:
                     # Par défaut, mettre dans le dernier bloc
                     blocks[-1].append(box)
 
-        else:  # ICCC2013
+        else:  # horizontal_shelves
             # Trier les lignes par position Y (verticale)
             spine_lines.sort(key=lambda line: line.center[1])
 
             if debug:
-                print(f"🔍 [ICCC] Lignes de tranches triées par Y: {[f'{line.center[1]:.0f}' for line in spine_lines]}")
+                print(f"🔍 [Horizontal Shelves] Lignes de tranches triées par Y: {[f'{line.center[1]:.0f}' for line in spine_lines]}")
 
             # Créer des blocs entre les lignes horizontales
             blocks = [[] for _ in range(len(spine_lines) + 1)]

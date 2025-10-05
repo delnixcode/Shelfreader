@@ -48,7 +48,7 @@ flowchart TD
 
 ```bash
 # Depuis src/engines/easyocr
-python main.py ../../../test_images/books1.jpg --device cpu --lang en
+python main.py ../test_images/books1.jpg --device cpu --lang en
 ```
 
 - `main.py` permet de lancer le pipeline complet sur une image.
@@ -105,18 +105,18 @@ Un script `main.py` est disponible dans ce dossier pour tester facilement le mot
 
 ```bash
 cd src/engines/easyocr
-python main.py ../../../test_images/books1.jpg --gpu --benchmark
+python main.py ../test_images/books1.jpg --gpu --benchmark
 ```
 
 ### Test Basique avec une Image
 
 ```bash
-python main.py ../../../test_images/books1.jpg
+python main.py ../test_images/books1.jpg
 ```
 
 **Résultat typique :**
 ```
-📷 Chargement de l'image: ../../../test_images/books1.jpg
+📷 Chargement de l'image: ../test_images/books1.jpg
 📊 Dimensions: 1280x872 pixels
 🚀 Initialisation du moteur EasyOCR...
 🔍 Analyse de l'image en cours...
@@ -133,19 +133,19 @@ python main.py ../../../test_images/books1.jpg
 
 ```bash
 # Test avec GPU et benchmark
-python main.py ../../../test_images/books1.jpg --gpu --benchmark
+python main.py ../test_images/books1.jpg --gpu --benchmark
 
 # Test avec langue française
-python main.py ../../../test_images/books1.jpg --lang fr --confidence 0.7
+python main.py ../test_images/books1.jpg --lang fr --confidence 0.7
 
 # Sauvegarde des résultats en JSON
-python main.py ../../../test_images/books1.jpg --output results.json
+python main.py ../test_images/books1.jpg --output results.json
 ```
 
 ### Benchmark de Performance
 
 ```bash
-python main.py ../../../test_images/books1.jpg --benchmark
+python main.py ../test_images/books1.jpg --benchmark
 ```
 
 **Performances mesurées :**

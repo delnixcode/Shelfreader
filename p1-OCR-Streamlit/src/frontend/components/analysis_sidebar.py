@@ -15,9 +15,12 @@ def render_analysis_sidebar():
     Inclut :
     - Conseils d'utilisation
     - Paramètres recommandés
+    - Paramètres avancés des engines OCR
     - Informations sur les moteurs OCR
     """
+
     with st.sidebar:
+        # ... les paramètres avancés globaux sont gérés dans `components.sidebar`
         st.markdown("### 💡 Conseils d'utilisation")
         st.markdown("""
         - **Qualité d'image** : Photos bien éclairées, perpendiculaires à l'étagère

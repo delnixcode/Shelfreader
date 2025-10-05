@@ -41,8 +41,9 @@ class TesseractOCRProcessor:
     def _detect_with_psm(self, image, psm_config):
         """Détection avec une configuration PSM spécifique."""
         try:
-            config = f'{psm_config} -l {self.languages}'
-            data = pytesseract.image_to_data(image, config=config, output_type=Output.DICT)
+            config = f'{psm_config}'
+            lang_str = '+'.join(self.languages) if isinstance(self.languages, list) else self.languages
+            data = pytesseract.image_to_data(image, config=config, lang=lang_str, output_type=Output.DICT)
 
             results = []
             n_boxes = len(data['text'])

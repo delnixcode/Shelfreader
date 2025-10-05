@@ -1,8 +1,43 @@
-=== RÉSULTATS OCR - test_images/books6.png ===
-Date: 2025-10-04 20:24:06
-Nombre de textes détectés: 0
-Confiance moyenne: 0.000
+=== RÉSULTATS OCR - books1.jpg ===
+Date: 2025-10-05 04:32:25
+Nombre de textes détectés: 7
+Confiance moyenne: 0.723
 
 TEXTE COMPLET:
+.M (conf: 0.65)
+Addlsen Gosling |23 |3& /4 (conf: 0.76)
+12 (conf: 0.66)
+EEE =1 THIRD EE EDITION (conf: 0.72)
+d’ (conf: 0.58)
+=3 (conf: 0.93)
+p- (conf: 0.76)
 
+DÉTAIL PAR LIVRE:
 
+--- Livre 1 ---
+Confiance: 0.650
+Texte: .M
+
+--- Livre 2 ---
+Confiance: 0.758
+Texte: Addlsen Gosling |23 |3& /4
+
+--- Livre 3 ---
+Confiance: 0.660
+Texte: 12
+
+--- Livre 4 ---
+Confiance: 0.724
+Texte: EEE =1 THIRD EE EDITION
+
+--- Livre 5 ---
+Confiance: 0.580
+Texte: d’
+
+--- Livre 6 ---
+Confiance: 0.930
+Texte: =3
+
+--- Livre 7 ---
+Confiance: 0.760
+Texte: p-

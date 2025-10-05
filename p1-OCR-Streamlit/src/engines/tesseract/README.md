@@ -1,6 +1,7 @@
 # 📦 S```
 src/engines/tesseract/
-│   __init__.py           # Initialisation du module
+│   __init__.py           # Init# Depuis src/engines/tesseract
+python main.py ../test_images/books1.jpg --lang englisation du module
 │   main.py               # Script principal pour tests/CLI
 │   README.md             # Cette documentation
 │   explanations.md       # Documentation technique et exemples
@@ -64,7 +65,7 @@ flowchart TD
 
 ```bash
 # Depuis src/engines/tesseract
-python main.py ../../../test_images/books1.jpg --lang eng
+python main.py ../test_images/books1.jpg --lang eng
 ```
 
 - `main.py` lance le pipeline complet sur une image.
@@ -129,7 +130,7 @@ Un script `main.py` est disponible dans ce dossier pour tester facilement le mot
 
 ```bash
 cd src/engines/tesseract
-python main.py ../../../test_images/books1.jpg --psm 8 --benchmark
+python main.py ../test_images/books1.jpg --psm 8 --benchmark
 ```
 
 ### ⚠️ Prérequis Important
@@ -149,12 +150,12 @@ export TESSDATA_PREFIX=/usr/share/tesseract-ocr/5/tessdata/
 ### Test Basique avec une Image
 
 ```bash
-python main.py ../../../test_images/books1.jpg
+python main.py ../test_images/books1.jpg
 ```
 
 **Résultat typique :**
 ```
-📷 Chargement de l'image: ../../../test_images/books1.jpg
+📷 Chargement de l'image: ../test_images/books1.jpg
 📊 Dimensions: 1280x872 pixels
 🚀 Initialisation du moteur Tesseract...
 🔍 Analyse de l'image en cours...
@@ -170,29 +171,29 @@ python main.py ../../../test_images/books1.jpg
 
 ```bash
 # Mode ligne uniforme (recommandé pour tranches)
-python main.py ../../../test_images/books1.jpg --psm 6
+python main.py ../test_images/books1.jpg --psm 6
 
 # Mode mot unique
-python main.py ../../../test_images/books1.jpg --psm 8
+python main.py ../test_images/books1.jpg --psm 8
 
 # Mode texte éparpillé
-python main.py ../../../test_images/books1.jpg --psm 11
+python main.py ../test_images/books1.jpg --psm 11
 ```
 
 ### Test avec Multi-langues
 
 ```bash
 # Anglais + Français
-python main.py ../../../test_images/books1.jpg --lang eng fra --confidence 0.6
+python main.py ../test_images/books1.jpg --lang eng fra --confidence 0.6
 
 # Avec benchmark de performance
-python main.py ../../../test_images/books1.jpg --benchmark --output results.json
+python main.py ../test_images/books1.jpg --benchmark --output results.json
 ```
 
 ### Benchmark de Performance
 
 ```bash
-python main.py ../../../test_images/books1.jpg --benchmark
+python main.py ../test_images/books1.jpg --benchmark
 ```
 
 **Performances mesurées :**

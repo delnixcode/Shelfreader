@@ -59,7 +59,7 @@ def main():
     if selected_page == "Analysis":
         render_analysis_sidebar()
         show_analysis_page()
-    elif selected_page == "comparaison":
+    elif selected_page == "Comparaison":
         render_comparison_sidebar()
         show_comparison_page()
 

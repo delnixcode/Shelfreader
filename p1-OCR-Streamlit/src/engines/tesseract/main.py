@@ -141,6 +141,47 @@ Exemples d'utilisation:
             print(f"   Temps de traitement: {process_time:.2f}s")
             print(f"   Temps total: {init_time + process_time:.2f}s")
             print(f"   FPS: {1.0 / process_time:.1f}")
+
+        # Sauvegarde automatique dans result-ocr
+        from datetime import datetime
+        result_ocr_dir = current_dir.parent.parent.parent / "result-ocr"
+        result_ocr_dir.mkdir(exist_ok=True)
+        result_file = result_ocr_dir / "tesseract_results.txt"
+
+        with open(result_file, 'w', encoding='utf-8') as f:
+            f.write(f"=== RÉSULTATS OCR - {os.path.basename(args.image_path)} ===\n")
+            f.write(f"Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            f.write(f"Nombre de textes détectés: {len(results)}\n")
+
+            if results:
+                confidences = [r.get('confidence', 0) for r in results]
+                avg_confidence = sum(confidences) / len(confidences)
+                f.write(f"Confiance moyenne: {avg_confidence:.3f}\n")
+            else:
+                f.write("Confiance moyenne: 0.000\n")
+
+            f.write("\nTEXTE COMPLET:\n")
+            if results:
+                for result in results:
+                    text = result.get('text', '').strip()
+                    confidence = result.get('confidence', 0)
+                    f.write(f"{text} (conf: {confidence:.2f})\n")
+            else:
+                f.write("(aucun texte détecté)\n")
+
+            f.write("\n")
+
+            if results:
+                f.write("DÉTAIL PAR LIVRE:\n")
+                for i, result in enumerate(results, 1):
+                    f.write(f"\n--- Livre {i} ---\n")
+                    confidence = result.get('confidence', 0)
+                    text = result.get('text', '').strip()
+                    f.write(f"Confiance: {confidence:.3f}\n")
+                    f.write(f"Texte: {text}\n")
+
+        print(f"💾 Résultats sauvegardés automatiquement dans: {result_file}")
+
         # Sauvegarder les résultats si demandé
         if args.output:
             import json

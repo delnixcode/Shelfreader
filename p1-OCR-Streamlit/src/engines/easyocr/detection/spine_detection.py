@@ -421,9 +421,9 @@ class EasyOCRSpineDetection:
             return []
 
     @classmethod
-    def detect_spine_lines(cls, image, debug=False, method="shelfie"):
+    def detect_spine_lines(cls, image, debug=False, method="vertical_lines"):
         """Détecte les lignes de tranches selon différentes méthodes."""
-        if method == "shelfie":
+        if method == "vertical_lines":
             return cls.detect_spine_lines_shelfie(image, debug)
-        else:  # iccc2013
+        else:  # horizontal_shelves
             return cls.detect_shelf_rows_iccc2013(image, debug)

@@ -400,13 +400,13 @@ Utilisez directement les moteurs OCR depuis le terminal :
 ```bash
 # Depuis le dossier easyocr
 cd src/engines/easyocr
-python main.py ../../../test_images/books1.jpg --device cpu --lang en
+python main.py ../test_images/books1.jpg --device cpu --lang en
 
 # Avec GPU (recommandé)
-python main.py ../../../test_images/books1.jpg --device cuda --lang en
+python main.py ../test_images/books1.jpg --device cuda --lang en
 
 # Avec benchmark de performance
-python main.py ../../../test_images/books1.jpg --device cuda --benchmark
+python main.py ../test_images/books1.jpg --device cuda --benchmark
 ```
 
 #### Tesseract (Ultra rapide)
@@ -417,20 +417,20 @@ cd src/engines/tesseract
 # Installation préalable requise sur Linux :
 # sudo apt-get install tesseract-ocr tesseract-ocr-eng tesseract-ocr-fra
 
-python main.py ../../../test_images/books1.jpg --lang eng
+python main.py ../test_images/books1.jpg --lang eng
 
 # Avec mode PSM spécifique
-python main.py ../../../test_images/books1.jpg --psm 6 --lang eng
+python main.py ../test_images/books1.jpg --psm 6 --lang eng
 ```
 
 #### TrOCR (Haute précision - GPU requis)
 ```bash
 # Depuis le dossier trocr
 cd src/engines/trocr
-python main.py ../../../test_images/books1.jpg --device cuda --lang en
+python main.py ../test_images/books1.jpg --device cuda --lang en
 
 # Avec benchmark
-python main.py ../../../test_images/books1.jpg --device cuda --benchmark
+python main.py ../test_images/books1.jpg --device cuda --benchmark
 ```
 
 ### 🖥️ Mode Interface Web (Pour débutants)
@@ -527,21 +527,21 @@ Moteurs OCR disponibles :
 #### EasyOCR (Recommandé - Précision 93%)
 ```bash
 cd src/engines/easyocr
-python main.py ../../../test_images/books1.jpg --device cuda --lang en
+python main.py ../test_images/books1.jpg --device cuda --lang en
 # Résultat : Affiché dans le terminal + sauvegarde optionnelle
 ```
 
 #### Tesseract (Ultra rapide)
 ```bash
 cd src/engines/tesseract
-python main.py ../../../test_images/books1.jpg --lang eng --psm 6
+python main.py ../test_images/books1.jpg --lang eng --psm 6
 # Résultat : Affiché dans le terminal + sauvegarde optionnelle
 ```
 
 #### TrOCR (Haute précision)
 ```bash
 cd src/engines/trocr
-python main.py ../../../test_images/books1.jpg --device cuda --lang en
+python main.py ../test_images/books1.jpg --device cuda --lang en
 # Résultat : Affiché dans le terminal + sauvegarde optionnelle
 ```
 

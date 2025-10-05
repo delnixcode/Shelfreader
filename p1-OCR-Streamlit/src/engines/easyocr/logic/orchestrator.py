@@ -64,7 +64,7 @@ class EasyOCRProcessor:
 
         return filtered_results
 
-    def get_text_and_confidence(self, pil_image, preprocess=True, use_spine_detection=True, reference_titles=None, spine_method="iccc2013"):
+    def get_text_and_confidence(self, pil_image, preprocess=True, use_spine_detection=True, reference_titles=None, spine_method="vertical_lines"):
         """Extrait le texte et la confiance moyenne."""
         boxes = self.get_boxes(pil_image, preprocess=preprocess, use_spine_detection=use_spine_detection, reference_titles=reference_titles, spine_method=spine_method)
 
@@ -76,7 +76,7 @@ class EasyOCRProcessor:
 
         return full_text, avg_confidence
 
-    def get_boxes(self, pil_image, preprocess=True, vertical_only=False, use_spine_detection=True, debug=False, reference_titles=None, spine_method="iccc2013"):
+    def get_boxes(self, pil_image, preprocess=True, vertical_only=False, use_spine_detection=True, debug=False, reference_titles=None, spine_method="vertical_lines"):
         """Extrait les boîtes de texte avec coordonnées, groupées par livre."""
         results = self.detect_text(pil_image, preprocess=preprocess)
 

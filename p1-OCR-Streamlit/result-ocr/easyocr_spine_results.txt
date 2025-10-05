@@ -1,42 +1,56 @@
-=== RÉSULTATS OCR AVEC DÉTECTION DE TRANCHES - test_images/books1.jpg ===
-Date: 2025-10-04 21:35:44
+=== RÉSULTATS OCR AVEC DÉTECTION DE TRANCHES - books1.jpg ===
+Date: 2025-10-05 04:31:02
 Nombre de livres détectés: 14
-Confiance moyenne: 0.921
+Confiance moyenne: 0.910
 Détection de tranches: Activée
+
 TEXTE COMPLET:
-Idman Construction With 95 | KERNICHAN THE LANCUACE SECOND EDITION PTR | THE C++ LANGUACE 01 | Apple The Reference Dylan Manual Shalit Addison Aaisam | Edition Programming Language Gosong JAVA | The Little MLer Felleisen and Friedman | ULLMAN ELEMENTS OF PROGRAMMING ML?7 EDITION | Miranda The Craft of Thompson | THIRD EDITION Programming Perl Christianscn Orwant Wall | Learning Lutz Ascher | Nelson Systems Programming with | THE SCHEME SCHEME PTR | Uuzdial Rose uado and Personal Multimedia Computing | SANGIORGI WALKER The Theory T-calculus of Mobile Processes
+Idman "Softwgre Construction With Ada 95 (conf: 0.69)
+KERNICHAN THE SECOND EDITION PTR (conf: 0.90)
+THE C++ LANGUACE 01 (conf: 0.87)
+Apple The Reference Dylan Manual Addison Aaisam (conf: 0.97)
+Peaecoys Edition Programming Language Gosong JAVA (conf: 0.77)
+The Little MLer Felleisen and Friedman (conf: 1.00)
+ULLMAN ELEMENTS OF PROGRAMMING L6IW EDITION (conf: 0.86)
+Miranda The Craft of Thompson (conf: 0.96)
+THIRD EDITION Programming Perl Christianscn Orwant Wall (conf: 0.90)
+Learning Lutz Ascher (conf: 1.00)
+Nelson Systems Programming with (conf: 1.00)
+THE SCHEME SCHEME PTR (conf: 0.99)
+Uuzdial Rose Open and Personal Multimedia Computing (conf: 0.95)
+SANGIORGI WALKER The Theory T-calculus of Mobile Processes VO (conf: 0.89)
 
 DÉTAIL PAR LIVRE:
 
 --- Livre 1 ---
-Confiance: 0.820
-Texte: Idman Construction With 95
+Confiance: 0.692
+Texte: Idman "Softwgre Construction With Ada 95
 Position: (0.0, 87.0)
 Dimensions: 74.0 x 653.0
 
 --- Livre 2 ---
-Confiance: 0.841
-Texte: KERNICHAN THE LANCUACE SECOND EDITION PTR
+Confiance: 0.897
+Texte: KERNICHAN THE SECOND EDITION PTR
 Position: (98.0, 27.0)
 Dimensions: 51.0 x 834.0
 
 --- Livre 3 ---
-Confiance: 0.866
+Confiance: 0.868
 Texte: THE C++ LANGUACE 01
 Position: (187.0, 175.0)
 Dimensions: 82.0 x 616.0
 
 --- Livre 4 ---
-Confiance: 0.935
-Texte: Apple The Reference Dylan Manual Shalit Addison Aaisam
-Position: (296.0, 62.0)
-Dimensions: 84.0 x 805.0
+Confiance: 0.974
+Texte: Apple The Reference Dylan Manual Addison Aaisam
+Position: (297.0, 62.0)
+Dimensions: 76.0 x 805.0
 
 --- Livre 5 ---
-Confiance: 0.886
-Texte: Edition Programming Language Gosong JAVA
-Position: (397.0, 246.0)
-Dimensions: 79.0 x 560.0
+Confiance: 0.775
+Texte: Peaecoys Edition Programming Language Gosong JAVA
+Position: (397.0, 140.0)
+Dimensions: 79.0 x 666.0
 
 --- Livre 6 ---
 Confiance: 1.000
@@ -45,19 +59,19 @@ Position: (500.0, 186.0)
 Dimensions: 28.0 x 563.0
 
 --- Livre 7 ---
-Confiance: 0.838
-Texte: ULLMAN ELEMENTS OF PROGRAMMING ML?7 EDITION
+Confiance: 0.858
+Texte: ULLMAN ELEMENTS OF PROGRAMMING L6IW EDITION
 Position: (548.0, 38.0)
 Dimensions: 45.0 x 778.0
 
 --- Livre 8 ---
-Confiance: 0.914
+Confiance: 0.963
 Texte: Miranda The Craft of Thompson
 Position: (602.0, 206.0)
 Dimensions: 96.0 x 596.0
 
 --- Livre 9 ---
-Confiance: 0.884
+Confiance: 0.897
 Texte: THIRD EDITION Programming Perl Christianscn Orwant Wall
 Position: (734.0, 112.0)
 Dimensions: 112.0 x 723.0
@@ -69,25 +83,25 @@ Position: (879.0, 147.0)
 Dimensions: 96.0 x 688.0
 
 --- Livre 11 ---
-Confiance: 0.999
+Confiance: 1.000
 Texte: Nelson Systems Programming with
 Position: (971.0, 38.0)
 Dimensions: 35.0 x 486.0
 
 --- Livre 12 ---
-Confiance: 0.971
+Confiance: 0.986
 Texte: THE SCHEME SCHEME PTR
 Position: (1023.0, 116.0)
 Dimensions: 41.0 x 735.0
 
 --- Livre 13 ---
-Confiance: 0.955
-Texte: Uuzdial Rose uado and Personal Multimedia Computing
+Confiance: 0.948
+Texte: Uuzdial Rose Open and Personal Multimedia Computing
 Position: (1089.0, 82.0)
 Dimensions: 67.0 x 716.0
 
 --- Livre 14 ---
-Confiance: 0.986
-Texte: SANGIORGI WALKER The Theory T-calculus of Mobile Processes
+Confiance: 0.889
+Texte: SANGIORGI WALKER The Theory T-calculus of Mobile Processes VO
 Position: (1195.0, 0.0)
-Dimensions: 82.0 x 697.0
+Dimensions: 82.0 x 869.0

@@ -495,21 +495,6 @@ Fonctionnalités :
 - **GPU** : NVIDIA avec CUDA (optionnel mais recommandé)
 - **Stockage** : 2GB pour les modèles
 
-### 🏗️ Architecture
-
-```
-src/
-├── engines/          # Moteurs OCR
-│   ├── ocr_easyocr.py
-│   ├── ocr_tesseract.py
-│   └── ocr_trocr.py
-├── services/         # Services métier
-│   └── api_client.py
-├── frontend/         # Interface utilisateur
-│   └── app.py
-└── core/            # Noyau applicatif
-└── __init__.py
-```
 
 ### 📦 Modules
 

@@ -90,6 +90,9 @@ ShelfReader propose **3 moteurs OCR spécialisés** :
 - [🏗️ Architecture & Documentation](docs/P1_Architecture_Documentation.md) - Vue d'ensemble complète du projet
 - [🔧 Dépendances](docs/Dependencies.md) - Gestion des dépendances détaillée
 - [📖 Guide OCR](docs/OCR_Code_Explanation.md) - Explication technique du code OCR
+- [📋 Structure EasyOCR](src/engines/easyocr/STRUCTURE.md) - Architecture et commandes du moteur EasyOCR
+- [📋 Structure Tesseract](src/engines/tesseract/STRUCTURE.md) - Architecture et commandes du moteur Tesseract
+- [📋 Structure TrOCR](src/engines/trocr/STRUCTURE.md) - Architecture et commandes du moteur TrOCR
 
 <a name="evolution-du-projet"></a>
 ## 📈 Évolution du projet
@@ -146,11 +149,44 @@ p1-OCR-Streamlit/
 │   ├── core/                    # Noyau de l'application (CLI, config)
 │   │   ├── __init__.py
 │   │   └── cli.py               # Interface ligne de commande
-│   ├── engines/                 # Moteurs OCR
+│   ├── engines/                 # Moteurs OCR modulaires
 │   │   ├── __init__.py
-│   │   ├── easyocr_engine.py    # Moteur EasyOCR
-│   │   ├── tesseract_engine.py  # Moteur Tesseract
-│   │   └── trocr_engine.py      # Moteur TrOCR
+│   │   ├── easyocr/             # Moteur EasyOCR spécialisé tranches
+│   │   │   ├── __init__.py
+│   │   │   ├── processor.py     # Classe principale EasyOCRProcessor
+│   │   │   ├── config.py        # Paramètres et configuration
+│   │   │   ├── main.py          # Script CLI pour tests
+│   │   │   ├── STRUCTURE.md     # Documentation structure + commandes
+│   │   │   ├── explanations.md  # Documentation technique détaillée
+│   │   │   ├── detection/       # Algos détection zones texte
+│   │   │   ├── grouping/        # Regroupement résultats OCR
+│   │   │   ├── models/          # Modèles et weights
+│   │   │   ├── preprocessing/   # Prétraitement images
+│   │   │   └── __pycache__/
+│   │   ├── tesseract/           # Moteur Tesseract rapide
+│   │   │   ├── __init__.py
+│   │   │   ├── processor.py     # Classe principale TesseractOCRProcessor
+│   │   │   ├── config.py        # Configurations PSM
+│   │   │   ├── main.py          # Script CLI
+│   │   │   ├── STRUCTURE.md     # Documentation structure + commandes
+│   │   │   ├── explanations.md  # Documentation technique
+│   │   │   ├── detection/       # Détection zones texte
+│   │   │   ├── grouping/        # Regroupement proximité
+│   │   │   ├── models/          # Configs Tesseract
+│   │   │   ├── preprocessing/   # CLAHE, denoising
+│   │   │   └── __pycache__/
+│   │   └── trocr/               # Moteur TrOCR haute précision
+│   │       ├── __init__.py
+│   │       ├── processor.py     # Classe principale ShelfReaderTrOCRProcessor
+│   │       ├── config.py        # Paramètres génération
+│   │       ├── main.py          # Script CLI
+│   │       ├── STRUCTURE.md     # Documentation structure + commandes
+│   │       ├── explanations.md  # Documentation technique
+│   │       ├── detection/       # Segmentation bandes
+│   │       ├── grouping/        # Regroupement temporel
+│   │       ├── models/          # Modèles transformers
+│   │       ├── preprocessing/   # RGB, CLAHE
+│   │       └── __pycache__/
 │   ├── services/                # Services externes
 │   │   ├── __init__.py
 │   │   └── openlibrary_client.py # Client API Open Library
@@ -357,18 +393,41 @@ Utilisez directement les moteurs OCR depuis le terminal :
 
 **📁 Sauvegarde automatique** : Tous les résultats sont automatiquement sauvegardés dans le dossier `result-ocr/`
 
+#### EasyOCR (Recommandé - Précision 93%)
 ```bash
-# Moteur EasyOCR (recommandé)
-python src/engines/easyocr_engine.py test_images/books1.jpg --gpu --confidence 0.3
-# Résultat sauvegardé dans : result-ocr/books1_easyocr.json
+# Depuis le dossier easyocr
+cd src/engines/easyocr
+python main.py ../../../../test_images/books1.jpg --device cpu --lang en
 
-# Moteur Tesseract (rapide)
-python src/engines/tesseract_engine.py test_images/books1.jpg
-# Résultat sauvegardé dans : result-ocr/books1_tesseract.json
+# Avec GPU (recommandé)
+python main.py ../../../../test_images/books1.jpg --device cuda --lang en
 
-# Moteur TrOCR (haute précision)
-python src/engines/trocr_engine.py test_images/books1.jpg --gpu
-# Résultat sauvegardé dans : result-ocr/books1_trocr.json
+# Avec benchmark de performance
+python main.py ../../../../test_images/books1.jpg --device cuda --benchmark
+```
+
+#### Tesseract (Ultra rapide)
+```bash
+# Depuis le dossier tesseract
+cd src/engines/tesseract
+
+# Installation préalable requise sur Linux :
+# sudo apt-get install tesseract-ocr tesseract-ocr-eng tesseract-ocr-fra
+
+python main.py ../../../../test_images/books1.jpg --lang eng
+
+# Avec mode PSM spécifique
+python main.py ../../../../test_images/books1.jpg --psm 6 --lang eng
+```
+
+#### TrOCR (Haute précision - GPU requis)
+```bash
+# Depuis le dossier trocr
+cd src/engines/trocr
+python main.py ../../../../test_images/books1.jpg --device cuda --lang en
+
+# Avec benchmark
+python main.py ../../../../test_images/books1.jpg --device cuda --benchmark
 ```
 
 ### 🖥️ Mode Interface Web (Pour débutants)
@@ -460,27 +519,34 @@ for livre in resultats:
 ### 💻 Mode Ligne de commande (Experts)
 Moteurs OCR disponibles :
 
-**📁 Sauvegarde automatique** : Tous les résultats sont automatiquement sauvegardés dans le dossier `result-ocr/`
+**📁 Structure modulaire** : Chaque moteur est organisé dans son propre dossier avec documentation complète
 
+#### EasyOCR (Recommandé - Précision 93%)
 ```bash
-# EasyOCR (recommandé - précision 93%)
-python src/engines/easyocr_engine.py test_images/books1.jpg --gpu --confidence 0.3
-# Résultat : result-ocr/books1_easyocr.json
+cd src/engines/easyocr
+python main.py ../../../../test_images/books1.jpg --device cuda --lang en
+# Résultat : Affiché dans le terminal + sauvegarde optionnelle
+```
 
-# Tesseract (ultra rapide)
-python src/engines/tesseract_engine.py test_images/books1.jpg
-# Résultat : result-ocr/books1_tesseract.json
+#### Tesseract (Ultra rapide)
+```bash
+cd src/engines/tesseract
+python main.py ../../../../test_images/books1.jpg --lang eng --psm 6
+# Résultat : Affiché dans le terminal + sauvegarde optionnelle
+```
 
-# TrOCR (haute précision)
-python src/engines/trocr_engine.py test_images/books1.jpg --gpu
-# Résultat : result-ocr/books1_trocr.json
+#### TrOCR (Haute précision)
+```bash
+cd src/engines/trocr
+python main.py ../../../../test_images/books1.jpg --device cuda --lang en
+# Résultat : Affiché dans le terminal + sauvegarde optionnelle
 ```
 
 Options communes :
-
-- `--gpu` : Accélération GPU (recommandé)
-- `--confidence 0.3` : Seuil de confiance (0.1-1.0)
-- `--output fichier.txt` : Sauvegarde résultats
+- `--device cuda/cpu/auto` : Configuration GPU/CPU
+- `--lang en/fr/de` : Langue de reconnaissance
+- `--benchmark` : Mesure des performances
+- `--output fichier.json` : Sauvegarde des résultats
 
 ### 🖥️ Mode Interface Web (Débutants)
 
@@ -490,7 +556,6 @@ streamlit run src/frontend/main.py
 ```
 
 Fonctionnalités :
-
 - Upload d'images par glisser-déposer
 - Choix du moteur OCR
 - Comparaison multi-moteurs (page dédiée)

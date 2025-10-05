@@ -42,7 +42,7 @@ pip install -r requirements.txt
 
 #### 4. Lancer l'application
 ```bash
-streamlit run src/app.py
+streamlit run src/frontend/streamlit_app.py
 ```
 
 Ouvrir http://localhost:8501 dans votre navigateur.
@@ -53,19 +53,19 @@ Ouvrir http://localhost:8501 dans votre navigateur.
 Utilisez directement les moteurs OCR depuis le terminal :
 ```bash
 # Moteur EasyOCR (recommandé)
-python src/ocr_easyocr.py test_images/books1.jpg --gpu --confidence 0.3
+python src/engines/easyocr_engine.py test_images/books1.jpg --gpu --confidence 0.3
 
 # Moteur Tesseract (rapide)
-python src/ocr_tesseract.py test_images/books1.jpg
+python src/engines/tesseract_engine.py test_images/books1.jpg
 
 # Moteur TrOCR (haute précision)
-python src/ocr_trocr.py test_images/books1.jpg --gpu
+python src/engines/trocr_engine.py test_images/books1.jpg --gpu
 ```
 
 ### **🖥️ Mode Interface Web** (Pour débutants)
 Interface Streamlit intuitive avec upload et visualisation :
 ```bash
-streamlit run src/app.py
+streamlit run src/frontend/streamlit_app.py
 # Puis ouvrir http://localhost:8501
 ```
 
@@ -76,13 +76,13 @@ streamlit run src/app.py
 #### Moteurs OCR disponibles :
 ```bash
 # EasyOCR (recommandé - précision 93%)
-python src/ocr_easyocr.py test_images/books1.jpg --gpu --confidence 0.3
+python src/engines/easyocr_engine.py test_images/books1.jpg --gpu --confidence 0.3
 
 # Tesseract (ultra rapide)
-python src/ocr_tesseract.py test_images/books1.jpg
+python src/engines/tesseract_engine.py test_images/books1.jpg
 
 # TrOCR (haute précision)
-python src/ocr_trocr.py test_images/books1.jpg --gpu
+python src/engines/trocr_engine.py test_images/books1.jpg --gpu
 ```
 
 #### 📁 Sauvegarde automatique des résultats
@@ -99,7 +99,7 @@ Les résultats OCR sont automatiquement sauvegardés dans le dossier **`result-o
 ### 🖥️ Mode Interface Web (Débutants)
 
 ```bash
-streamlit run src/app.py
+streamlit run src/frontend/streamlit_app.py
 # Ouvrir http://localhost:8501
 ```
 
@@ -141,10 +141,10 @@ pip install -r requirements.txt
 
 # Choisir votre mode :
 # Mode ligne de commande
-python src/ocr_easyocr.py test_images/books1.jpg --gpu
+python src/engines/easyocr_engine.py test_images/books1.jpg --gpu
 
 # OU mode interface web
-streamlit run src/app.py
+streamlit run src/frontend/streamlit_app.py
 ```
 
 ## 🏗️ Architecture du projet
@@ -156,11 +156,20 @@ ShelfReader P1 utilise une **architecture modulaire** permettant le développeme
 p1-MVP-Desktop/
 ├── src/                          # Code source principal
 │   ├── __init__.py              # Package Python
-│   ├── api_client.py            # Client API Open Library
-│   ├── app.py                   # Interface Streamlit
-│   ├── ocr_easyocr.py           # Module OCR EasyOCR
-│   ├── ocr_tesseract.py         # Module OCR Tesseract
-│   └── ocr_trocr.py             # Module OCR TrOCR
+│   ├── core/                    # Noyau de l'application
+│   │   ├── __init__.py          # Package core
+│   │   └── cli.py               # Interface ligne de commande
+│   ├── engines/                 # Moteurs OCR
+│   │   ├── __init__.py          # Package engines
+│   │   ├── easyocr_engine.py    # Moteur EasyOCR avancé
+│   │   ├── tesseract_engine.py  # Moteur Tesseract
+│   │   └── trocr_engine.py      # Moteur TrOCR
+│   ├── services/                # Services externes
+│   │   ├── __init__.py          # Package services
+│   │   └── openlibrary_client.py # Client API Open Library
+│   └── frontend/                # Interface utilisateur
+│       ├── __init__.py          # Package frontend
+│       └── streamlit_app.py     # Application Streamlit
 ├── scripts/                      # Scripts utilitaires
 │   └── ocr_detect.py            # Script de détection unifié
 ├── docs/                         # Documentation complète
@@ -283,7 +292,7 @@ pip install -r requirements.txt
 
 #### 4. Lancer l'application
 ```bash
-streamlit run src/app.py
+streamlit run src/frontend/streamlit_app.py
 ```
 
 Ouvrir http://localhost:8501 dans votre navigateur.
@@ -294,13 +303,13 @@ Ouvrir http://localhost:8501 dans votre navigateur.
 Utilisez directement les moteurs OCR depuis le terminal :
 ```bash
 # Moteur EasyOCR (recommandé)
-python src/ocr_easyocr.py test_images/books1.jpg --gpu --confidence 0.3
+python src/engines/easyocr_engine.py test_images/books1.jpg --gpu --confidence 0.3
 
 # Moteur Tesseract (rapide)
-python src/ocr_tesseract.py test_images/books1.jpg
+python src/engines/tesseract_engine.py test_images/books1.jpg
 
 # Moteur TrOCR (haute précision)
-python src/ocr_trocr.py test_images/books1.jpg --gpu
+python src/engines/trocr_engine.py test_images/books1.jpg --gpu
 ```
 
 ## 🚀 Utilisation détaillée
@@ -310,13 +319,13 @@ python src/ocr_trocr.py test_images/books1.jpg --gpu
 #### Moteurs OCR disponibles :
 ```bash
 # EasyOCR (recommandé - précision 93%)
-python src/ocr_easyocr.py test_images/books1.jpg --gpu --confidence 0.3
+python src/engines/easyocr_engine.py test_images/books1.jpg --gpu --confidence 0.3
 
 # Tesseract (ultra rapide)
-python src/ocr_tesseract.py test_images/books1.jpg
+python src/engines/tesseract_engine.py test_images/books1.jpg
 
 # TrOCR (haute précision)
-python src/ocr_trocr.py test_images/books1.jpg --gpu
+python src/engines/trocr_engine.py test_images/books1.jpg --gpu
 ```
 
 #### Options communes :
@@ -327,7 +336,7 @@ python src/ocr_trocr.py test_images/books1.jpg --gpu
 ### 🖥️ Mode Interface Web (Débutants)
 
 ```bash
-streamlit run src/app.py
+streamlit run src/frontend/streamlit_app.py
 # Ouvrir http://localhost:8501
 ```
 
@@ -369,10 +378,10 @@ pip install -r requirements.txt
 
 # Choisir votre mode :
 # Mode ligne de commande
-python src/ocr_easyocr.py test_images/books1.jpg --gpu
+python src/engines/easyocr_engine.py test_images/books1.jpg --gpu
 
 # OU mode interface web
-streamlit run src/app.py
+streamlit run src/frontend/streamlit_app.py
 ```
 
 ## 📈 **Évolution du projet**

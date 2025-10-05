@@ -10,7 +10,7 @@ import os
 # Ajouter le répertoire src au path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
-from api_client import OpenLibraryClient
+from src.services.openlibrary_client import OpenLibraryClient
 
 def test_api_client():
     """Teste les fonctionnalités du client Open Library"""

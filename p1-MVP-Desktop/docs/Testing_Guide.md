@@ -36,7 +36,7 @@ La suite de tests de ShelfReader P1 joue un rôle **critique** dans la validatio
 
 | Type | Objectif | Exemples |
 |------|----------|----------|
-| **Fonctionnels** | Validation des fonctionnalités OCR de base | `test_api_client.py` |
+| **Fonctionnels** | Validation des fonctionnalités OCR de base | `test_services/openlibrary_client.py` |
 | **Performance** | Mesure des améliorations GPU/CPU | `test_gpu_usage.py` |
 | **Algorithmes** | Validation des algorithmes avancés | `test_separation.py` |
 | **Démonstration** | Présentation des capacités | `demo_ocr_improvements.py` |
@@ -52,7 +52,7 @@ tests/
 ├── __init__.py                 # Package Python
 ├── README.md                   # Documentation locale
 ├── demo_ocr_improvements.py    # 🖥️ Démonstration interactive
-├── test_api_client.py          # 🔗 Tests API Open Library
+├── test_services/openlibrary_client.py          # 🔗 Tests API Open Library
 ├── test_easyocr_improvements.py # ⚡ Tests OCR avancés
 ├── test_gpu_usage.py           # 🚀 Tests performance GPU
 └── test_separation.py          # 📐 Tests algorithmes de séparation
@@ -79,7 +79,7 @@ requests>=2.31.0       # HTTP client pour API
 | Fichier | Type | Durée | Couverture | Description |
 |---------|------|-------|------------|-------------|
 | `demo_ocr_improvements.py` | Démo | ~10s | Interface utilisateur | Démonstration comparative des améliorations OCR |
-| `test_api_client.py` | Fonctionnel | ~5s | API Open Library | Tests complets du client API de métadonnées |
+| `test_services/openlibrary_client.py` | Fonctionnel | ~5s | API Open Library | Tests complets du client API de métadonnées |
 | `test_easyocr_improvements.py` | Unitaire | ~3s | OCR Engine | Tests des améliorations EasyOCR (shelfie, validation) |
 | `test_gpu_usage.py` | Performance | ~30s | GPU/CPU | Mesure comparative des performances |
 | `test_separation.py` | Algorithme | ~2s | Text Processing | Tests des algorithmes de groupement de textes |
@@ -123,7 +123,7 @@ python -m pytest tests/ -k "not gpu" --maxfail=3
 python -m pytest tests/test_gpu_usage.py -v
 
 # Tests API uniquement
-python -m pytest tests/test_api_client.py -v
+python -m pytest tests/test_services/openlibrary_client.py -v
 ```
 
 ### **Démonstrations interactives**
@@ -177,7 +177,7 @@ OCR + Validation: 13/14 titres corrects (93% de précision)
 - **Validation** : Prouve que les algorithmes fonctionnent sur des données réelles
 - **Benchmarking** : Établit des métriques de référence
 
-### **🔗 `test_api_client.py` - Tests API Open Library**
+### **🔗 `test_services/openlibrary_client.py` - Tests API Open Library**
 
 **Objectif :** Valider l'intégration avec l'API de métadonnées de livres
 

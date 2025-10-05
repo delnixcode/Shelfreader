@@ -116,7 +116,7 @@ Le projet est divisé en **5 phases progressives** pour apprendre étape par ét
 ShelfReader/
 ├── src/
 │   ├── ocr_module.py      # ← EN COURS : Classe BookOCR
-│   ├── api_client.py      # TODO : Client Open Library
+│   ├── services/openlibrary_client.py      # TODO : Client Open Library
 │   ├── app.py             # TODO : Interface Streamlit
 │   └── torch_utils.py     # TODO : Utilitaires PyTorch (Phase 2)
 ├── data/
@@ -288,11 +288,11 @@ ShelfReader P1 est organisé selon une architecture modulaire permettant le dév
 p1-MVP-Desktop/
 ├── src/                          # Code source principal
 │   ├── __init__.py              # Package Python
-│   ├── api_client.py            # Client API Open Library
+│   ├── services/openlibrary_client.py            # Client API Open Library
 │   ├── app.py                   # Interface Streamlit (futur)
-│   ├── ocr_easyocr.py           # Module OCR EasyOCR
-│   ├── ocr_tesseract.py         # Module OCR Tesseract
-│   └── ocr_trocr.py             # Module OCR TrOCR
+│   ├── engines/easyocr_engine.py           # Module OCR EasyOCR
+│   ├── engines/tesseract_engine.py         # Module OCR Tesseract
+│   └── engines/trocr_engine.py             # Module OCR TrOCR
 ├── scripts/                      # Scripts utilitaires
 │   └── ocr_detect.py            # Script de détection unifié
 ├── docs/                         # Documentation
@@ -310,32 +310,32 @@ p1-MVP-Desktop/
 
 ### 🔧 **Modules OCR** (`src/ocr_*.py`)
 
-#### `ocr_easyocr.py`
+#### `engines/easyocr_engine.py`
 - **Classe** : `EasyOCRProcessor`
 - **Spécialisation** : Détection précise avec support GPU
 - **Dépendances** : `easyocr`, `torch`, `torchvision`
 - **Usage** : Texte complexe, rotations, haute précision
 
-#### `ocr_tesseract.py`
+#### `engines/tesseract_engine.py`
 - **Classe** : `TesseractOCRProcessor`
 - **Spécialisation** : Performance et configurations PSM
 - **Dépendances** : `pytesseract`, `tesseract` (system)
 - **Usage** : Texte simple, rapidité, CPU uniquement
 
-#### `ocr_trocr.py`
+#### `engines/trocr_engine.py`
 - **Classe** : `TrOCRProcessor`
 - **Spécialisation** : Modèle transformer avancé
 - **Dépendances** : `transformers`, `torch`
 - **Usage** : Haute précision, GPU recommandé
 
-### 🌐 **API Client** (`src/api_client.py`)
+### 🌐 **API Client** (`src/services/openlibrary_client.py`)
 - **Classe** : `OpenLibraryClient`
 - **Responsabilités** : Requêtes vers Open Library API
 - **Dépendances** : `requests`
 - **Usage** : Récupération des métadonnées de livres
 
 
-### 🎨 **Interface** (`src/app.py`)
+### 🎨 **Interface** (`src/frontend/streamlit_app.py`)
 - **Framework** : Streamlit
 - **Responsabilités** : Interface utilisateur web verticale desktop
 - **Layout** : 1ère ligne (image+paramètres), 2ème ligne (résultats+livres), 3ème ligne (détails+visualisation)
@@ -411,7 +411,7 @@ python scripts/ocr_detect.py image.jpg --engine easyocr --gpu
 
 ### Mode individuel
 ```bash
-python src/ocr_easyocr.py --image image.jpg --gpu
+python src/engines/easyocr_engine.py --image image.jpg --gpu
 ```
 
 ### Développement

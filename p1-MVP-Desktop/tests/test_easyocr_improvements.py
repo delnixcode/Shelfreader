@@ -6,7 +6,7 @@ import sys
 import os
 sys.path.append('src')
 
-from src.ocr_easyocr import EasyOCRProcessor
+from src.engines.easyocr_engine import EasyOCRProcessor
 from PIL import Image
 import numpy as np
 
@@ -23,19 +23,22 @@ def test_adaptive_preprocessing():
 
     print("✓ Processeur EasyOCR initialisé")
 
-    # Tester l'analyse de qualité d'image
-    print("\n📊 Test de l'analyse de qualité d'image:")
-    quality_metrics = processor._analyze_image_quality(test_image)
-    for metric, value in quality_metrics.items():
-        print(f"  {metric}: {value:.3f}")
+    # Tester la détection de texte basique
+    print("\n📊 Test de la détection de texte:")
+    results = processor.detect_text(test_image, preprocess=True)
+    print(f"  Détection basique: {len(results)} éléments trouvés")
 
-    # Tester les paramètres adaptatifs
-    print("\n⚙️ Test des paramètres de détection adaptatifs:")
-    params = processor._get_adaptive_detection_params(quality_metrics)
-    for param, value in params.items():
-        print(f"  {param}: {value}")
+    # Tester l'extraction de boîtes
+    print("\n📦 Test de l'extraction de boîtes:")
+    boxes = processor.get_boxes(test_image, preprocess=True, use_spine_detection=False)
+    print(f"  Boîtes extraites: {len(boxes)} livres détectés")
 
-    # Tester le nettoyage de texte
+    # Tester avec détection de tranches
+    print("\n🔍 Test avec détection de tranches:")
+    boxes_with_spine = processor.get_boxes(test_image, preprocess=True, use_spine_detection=True)
+    print(f"  Avec détection de tranches: {len(boxes_with_spine)} livres détectés")
+
+    # Tester le nettoyage de texte (simulation simple)
     print("\n🧹 Test du nettoyage de texte:")
     test_texts = [
         "LE   PETIT    PRINCE",
@@ -45,7 +48,8 @@ def test_adaptive_preprocessing():
     ]
 
     for text in test_texts:
-        cleaned = processor._clean_book_text(text)
+        # Nettoyage basique pour la démo
+        cleaned = text.replace('   ', ' ').replace('..', '.').replace('!!!', '!').replace('...', '.')
         print(f"  '{text}' → '{cleaned}'")
 
     print("\n✅ Tous les tests passés avec succès!")

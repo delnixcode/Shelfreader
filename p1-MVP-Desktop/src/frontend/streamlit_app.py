@@ -14,13 +14,13 @@ import tempfile
 import pandas as pd
 
 # Ajouter le répertoire src au path pour importer nos modules
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Import de nos modules OCR
-from ocr_easyocr import EasyOCRProcessor
-from ocr_tesseract import TesseractOCRProcessor
-from ocr_trocr import TrOCRProcessor
-from api_client import OpenLibraryClient
+from engines.easyocr_engine import EasyOCRProcessor
+from engines.tesseract_engine import TesseractOCRProcessor
+from engines.trocr_engine import TrOCRProcessor
+from services.openlibrary_client import OpenLibraryClient
 
 # Configuration de la page
 st.set_page_config(

@@ -11,7 +11,7 @@ from PIL import Image
 # Ajouter le répertoire src au path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
-from src.ocr_easyocr import EasyOCRProcessor
+from src.engines.easyocr_engine import EasyOCRProcessor
 
 def demo_ocr_improvements():
     """Démontre les améliorations OCR avec différentes configurations."""

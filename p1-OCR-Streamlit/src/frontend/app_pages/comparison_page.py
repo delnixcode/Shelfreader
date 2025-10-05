@@ -220,26 +220,33 @@ def show():
                     engine = config['engine']
                     config_name = config['name']
                     
-                    cmd_parts = ["python", "main.py", temp_path, "--engine", engine]
+                    cmd_parts = ["python", f"src/engines/{engine.lower()}/main.py", temp_path]
+                    
+                    # Paramètres globaux - TOUJOURS inclus
                     if global_use_gpu:
                         cmd_parts.append("--gpu")
-                    if global_confidence != 0.3:
-                        cmd_parts.extend(["--confidence", str(global_confidence)])
+                    else:
+                        cmd_parts.append("--cpu")
+                    
+                    cmd_parts.extend(["--confidence", str(global_confidence)])
+                    
                     if debug_mode:
                         cmd_parts.append("--debug")
                     
-                    # Paramètres avancés pour cette configuration
+                    # Paramètres avancés pour cette configuration - TOUJOURS inclus
                     config_adv_params = advanced_params.get(config_name, {})
                     if engine == 'EasyOCR':
-                        if config_adv_params.get('spine_method') and config_adv_params['spine_method'] != 'vertical_lines':
-                            cmd_parts.extend(["--spine-method", config_adv_params['spine_method']])
-                        if config_adv_params.get('languages') and config_adv_params['languages'] != ['en']:
-                            cmd_parts.extend(["--languages"] + config_adv_params['languages'])
+                        cmd_parts.extend(["--spine-method", config_adv_params.get('spine_method', 'vertical_lines')])
+                        if config_adv_params.get('languages'):
+                            cmd_parts.extend(["--lang"] + config_adv_params['languages'])
                     elif engine == 'Tesseract':
-                        if config_adv_params.get('lang') and config_adv_params['lang'] != 'eng':
-                            cmd_parts.extend(["--tesseract-lang", config_adv_params['lang']])
-                        if config_adv_params.get('psm') and config_adv_params['psm'] != 6:
-                            cmd_parts.extend(["--tesseract-psm", str(config_adv_params['psm'])])
+                        if config_adv_params.get('lang'):
+                            cmd_parts.extend(["--lang", config_adv_params['lang']])
+                        if config_adv_params.get('psm') is not None:
+                            cmd_parts.extend(["--psm", str(config_adv_params['psm'])])
+                    elif engine == 'TrOCR':
+                        if config_adv_params.get('device'):
+                            cmd_parts.extend(["--device", config_adv_params['device']])
                     
                     executed_commands[config_name] = " ".join(cmd_parts)
 

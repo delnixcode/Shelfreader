@@ -90,7 +90,7 @@ def show():
                 # Méthode de détection de tranches
                 easyocr_spine_method = st.selectbox(
                     "Méthode de détection",
-                    options=["shelfie", "iccc2013"],
+                    options=["vertical_lines", "horizontal_shelves"],
                     index=0,
                     help="Algorithme de détection des séparations entre livres"
                 )
@@ -190,25 +190,32 @@ def show():
                     
                     # Construction de la commande réellement exécutée (pour debug)
                     executed_cmd_parts = ["python", "main.py", temp_path]
+                    
+                    # Paramètres globaux - TOUJOURS inclus
                     if global_use_gpu:
                         executed_cmd_parts.append("--gpu")
-                    if global_confidence != 0.3:
-                        executed_cmd_parts.extend(["--confidence", str(global_confidence)])
+                    else:
+                        executed_cmd_parts.append("--cpu")
+                    
+                    executed_cmd_parts.extend(["--confidence", str(global_confidence)])
+                    
                     if debug_mode:
                         executed_cmd_parts.append("--debug")
                     
-                    # Paramètres avancés
+                    # Paramètres avancés - TOUJOURS inclus selon le moteur
                     if advanced_params:
                         if ocr_engine == 'EasyOCR':
-                            if advanced_params.get('spine_method') and advanced_params['spine_method'] != 'shelfie':
-                                executed_cmd_parts.extend(["--spine-method", advanced_params['spine_method']])
-                            if advanced_params.get('languages') and advanced_params['languages'] != ['en']:
-                                executed_cmd_parts.extend(["--languages"] + advanced_params['languages'])
+                            executed_cmd_parts.extend(["--spine-method", advanced_params.get('spine_method', 'vertical_lines')])
+                            if advanced_params.get('languages'):
+                                executed_cmd_parts.extend(["--lang"] + advanced_params['languages'])
                         elif ocr_engine == 'Tesseract':
-                            if advanced_params.get('lang') and advanced_params['lang'] != 'eng':
-                                executed_cmd_parts.extend(["--tesseract-lang", advanced_params['lang']])
-                            if advanced_params.get('psm') and advanced_params['psm'] != 6:
-                                executed_cmd_parts.extend(["--tesseract-psm", str(advanced_params['psm'])])
+                            if advanced_params.get('lang'):
+                                executed_cmd_parts.extend(["--lang", advanced_params['lang']])
+                            if advanced_params.get('psm') is not None:
+                                executed_cmd_parts.extend(["--psm", str(advanced_params['psm'])])
+                        elif ocr_engine == 'TrOCR':
+                            if advanced_params.get('device'):
+                                executed_cmd_parts.extend(["--device", advanced_params['device']])
                     
                     executed_command = " ".join(executed_cmd_parts)
                     

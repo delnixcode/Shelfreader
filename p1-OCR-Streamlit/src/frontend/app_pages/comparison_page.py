@@ -58,13 +58,8 @@ def show():
                 help=f"Sélectionnez le moteur OCR pour la configuration {i+1}"
             )
         
-        with cols[1]:
-            config_name = st.text_input(
-                f"Nom de la config {i+1}",
-                value=f"{engine} #{i+1}",
-                key=f"config_name_{i}",
-                help=f"Nom descriptif pour cette configuration (ex: '{engine} seuil 0.8')"
-            )
+        # Générer automatiquement le nom de la configuration
+        config_name = f"Configuration {i+1} ({engine})"
         
         engine_configs.append({
             'engine': engine,
@@ -100,11 +95,11 @@ def show():
             config_name = config['name']
             config_index = config['index']
             
-            with st.expander(f"⚙️ {config_name} ({engine})"):
+            with st.expander(f"⚙️ {config_name}"):
                 if engine == "EasyOCR":
                     # Paramètres communs pour EasyOCR
                     easyocr_confidence = st.slider(
-                        f"Seuil de confiance ({config_name})",
+                        "Seuil de confiance",
                         min_value=0.1,
                         max_value=1.0,
                         value=0.3,
@@ -114,7 +109,7 @@ def show():
                     )
                     
                     easyocr_use_gpu = st.checkbox(
-                        f"Utiliser GPU ({config_name})",
+                        "Utiliser GPU",
                         value=True,
                         help="Accélère considérablement le traitement si GPU disponible",
                         key=f"comp_easyocr_gpu_{config_index}"
@@ -122,7 +117,7 @@ def show():
                     
                     # Sélecteur de langue
                     easyocr_lang = st.multiselect(
-                        f"Langues ({config_name})",
+                        "Langues",
                         options=["en", "fr", "de", "es", "it"],
                         default=["en"],
                         help="Langues à utiliser pour la reconnaissance",
@@ -131,7 +126,7 @@ def show():
 
                     # Méthode de détection de tranches
                     easyocr_spine_method = st.selectbox(
-                        f"Méthode de détection ({config_name})",
+                        "Méthode de détection",
                         options=["vertical_lines", "horizontal_shelves"],
                         index=0,
                         help="Algorithme de détection des séparations entre livres",
@@ -149,7 +144,7 @@ def show():
                 elif engine == "Tesseract":
                     # Paramètres communs pour Tesseract
                     tesseract_confidence = st.slider(
-                        f"Seuil de confiance ({config_name})",
+                        "Seuil de confiance",
                         min_value=0.1,
                         max_value=1.0,
                         value=0.3,
@@ -159,7 +154,7 @@ def show():
                     )
                     
                     tesseract_use_gpu = st.checkbox(
-                        f"Utiliser GPU ({config_name})",
+                        "Utiliser GPU",
                         value=True,
                         help="Accélère considérablement le traitement si GPU disponible",
                         key=f"comp_tesseract_gpu_{config_index}"
@@ -167,7 +162,7 @@ def show():
                     
                     # Sélecteur de langue
                     tesseract_lang = st.selectbox(
-                        f"Langue ({config_name})",
+                        "Langue",
                         options=["eng", "fra", "deu", "spa", "ita"],
                         index=0,
                         help="Langue principale pour la reconnaissance",
@@ -176,7 +171,7 @@ def show():
 
                     # PSM (Page Segmentation Mode)
                     tesseract_psm = st.selectbox(
-                        f"Mode de segmentation (PSM) ({config_name})",
+                        "Mode de segmentation (PSM)",
                         options=[
                             ("6", "Bloc uniforme de texte (recommandé)"),
                             ("3", "Analyse automatique complète"),
@@ -200,7 +195,7 @@ def show():
                 elif engine == "TrOCR":
                     # Paramètres communs pour TrOCR
                     trocr_confidence = st.slider(
-                        f"Seuil de confiance ({config_name})",
+                        "Seuil de confiance",
                         min_value=0.1,
                         max_value=1.0,
                         value=0.3,
@@ -210,7 +205,7 @@ def show():
                     )
                     
                     trocr_use_gpu = st.checkbox(
-                        f"Utiliser GPU ({config_name})",
+                        "Utiliser GPU",
                         value=True,
                         help="Accélère considérablement le traitement si GPU disponible",
                         key=f"comp_trocr_gpu_{config_index}"
@@ -218,7 +213,7 @@ def show():
                     
                     # Device
                     trocr_device = st.selectbox(
-                        f"Device ({config_name})",
+                        "Device",
                         options=["auto", "cuda", "cpu"],
                         index=0,
                         help="Matériel pour exécuter le modèle (auto = détection automatique)",

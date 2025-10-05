@@ -1,15 +1,40 @@
 # 🎯 **P4 - Mobile Real-time**
 ## AR temps réel + Performance + Intelligence
 
+[![ARCore](https://img.shields.io/badge/ARCore-1.42+-blue.svg)](https://developers.google.com/ar)
+[![ARKit](https://img.shields.io/badge/ARKit-6.0+-orange.svg)](https://developer.apple.com/augmented-reality/arkit/)
+[![TensorFlow Lite](https://img.shields.io/badge/TensorFlow_Lite-2.15+-orange.svg)](https://www.tensorflow.org/lite)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 **ShelfReader Mobile Real-time** est l'application finale avec réalité augmentée temps réel. Combine tous les apprentissages des projets précédents pour créer une expérience AR fluide et performante.
 
-### 🎯 **Objectifs**
+## 📋 Table des matières
+
+- [🎯 Objectifs](#objectifs)
+- [📁 Structure du projet](#structure-du-projet)
+- [🚀 Évolution par rapport P3](#evolution-par-rapport-p3)
+- [📋 Phases de développement](#phases-de-developpement)
+- [🛠️ Technologies avancées](#technologies-avancees)
+- [🎯 Défis techniques majeurs](#defis-techniques-majeurs)
+- [📊 Métriques cibles](#metriques-cibles)
+- [🚀 Démarrage rapide](#demarrage-rapide)
+- [🏆 Résultat final](#resultat-final)
+- [📋 Détails techniques complets](#details-techniques-complets)
+- [🏗️ Roadmap & Phases](#roadmap--phases)
+- [🏗️ Architecture](#architecture)
+- [🛠️ Technologies détaillées](#technologies-detaillees)
+- [�️ Architecture d'intégration](#architecture-dintegration)
+- [⚡ Optimisations temps réel implementées](#optimisations-temps-reel-implementees)
+
+<a name="objectifs"></a>
+### �🎯 **Objectifs**
 - ✅ **Temps réel** : AR fluide avec détection continue (5-10 FPS)
 - ✅ **Performance** : Optimisation maximale pour mobile
 - ✅ **Intelligence** : Cache prédictif et apprentissage automatique
 - ✅ **UX exceptionnelle** : Interface AR intuitive et responsive
 - ✅ **Production ready** : Application déployable sur stores
 
+<a name="structure-du-projet"></a>
 ### 📁 **Structure**
 ```
 p4-Mobile-Real-time/
@@ -32,10 +57,12 @@ p4-Mobile-Real-time/
 └── requirements.txt      # Dépendances finales
 ```
 
+<a name="evolution-par-rapport-p3"></a>
 ### 🚀 **Évolution par rapport P3**
 - **P3** : Mobile static → Portage et UX native
 - **P4** : Mobile real-time → AR temps réel et performance ultime
 
+<a name="phases-de-developpement"></a>
 ### 📋 **Phases de développement**
 1. **Phase 4.1** : Architecture temps réel (pipeline asynchrone)
 2. **Phase 4.2** : Modèles optimisés mobiles (YOLOv8 nano, OCR mobile)
@@ -44,6 +71,7 @@ p4-Mobile-Real-time/
 5. **Phase 4.5** : Optimisation performance (5-10 FPS stable)
 6. **Phase 4.6** : Tests et finalisation (déploiement stores)
 
+<a name="technologies-avancees"></a>
 ### 🛠️ **Technologies avancées**
 - **AR Frameworks** : ARCore (Android), ARKit (iOS)
 - **ML Mobile** : TensorFlow Lite, modèles quantisés
@@ -51,18 +79,21 @@ p4-Mobile-Real-time/
 - **Real-time Processing** : Pipeline asynchrone, frame skipping
 - **Cache Intelligence** : ML pour prédiction, LRU + TTL avancés
 
+<a name="defis-techniques-majeurs"></a>
 ### 🎯 **Défis techniques majeurs**
 - **Défi 10** : Performance temps réel critique (5-10 FPS)
 - **Défi 11** : AR précise et stable (tracking optique, SLAM)
 - **Défi 12** : Optimisation batterie (gestion thermique)
 - **Défi 13** : Cache prédictif intelligent
 
+<a name="metriques-cibles"></a>
 ### 📊 **Métriques cibles**
 - **Performance** : 5-10 FPS stable, < 500MB RAM
 - **Précision AR** : < 5mm de précision, stabilité > 95%
 - **Autonomie** : > 2h d'utilisation continue
 - **Taux succès** : > 90% de reconnaissance livres
 
+<a name="demarrage-rapide"></a>
 ### 🚀 **Démarrage rapide**
 ```bash
 cd p4-Mobile-Real-time
@@ -75,6 +106,7 @@ flutter build ios    # iOS (sur macOS)
 flutter run --profile
 ```
 
+<a name="resultat-final"></a>
 ### 🏆 **Résultat final**
 Application mobile professionnelle avec :
 - 📱 AR temps réel fluide

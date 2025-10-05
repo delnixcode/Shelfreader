@@ -1,14 +1,39 @@
 # 🚀 **P2 - Enhanced Desktop**
 ## YOLOv8 + Orientation + Cache intelligent
 
+[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
+[![YOLOv8](https://img.shields.io/badge/YOLOv8-8.0+-orange.svg)](https://github.com/ultralytics/ultralytics)
+[![Redis](https://img.shields.io/badge/Redis-7.0+-red.svg)](https://redis.io/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 **ShelfReader Enhanced Desktop** transforme le MVP basique en application optimisée et professionnelle. Se concentre sur **l'automatisation et les performances** pour créer une expérience utilisateur fluide.
 
+## 📋 Table des matières
+
+- [🎯 Objectifs](#objectifs)
+- [📁 Structure du projet](#structure-du-projet)
+- [🚀 Démarrage rapide](#demarrage-rapide)
+- [🧪 Tests](#tests)
+- [📈 Évolution par rapport P1](#evolution-par-rapport-p1)
+- [📋 Phases de développement](#phases-de-developpement)
+- [🛠️ Technologies ajoutées](#technologies-ajoutees)
+- [🎯 Défis techniques](#defis-techniques)
+- [🔗 Ressources partagées](#ressources-partagees)
+- [📋 Détails techniques complets](#details-techniques-complets)
+- [🏗️ Roadmap & Phases](#roadmap--phases)
+- [🏗️ Architecture](#architecture)
+- [🛠️ Technologies détaillées](#technologies-detaillees)
+- [🏗️ Architecture d'intégration](#architecture-dintegration)
+- [⚡ Optimisations implementées](#optimisations-implementees)
+
+<a name="objectifs"></a>
 ### 🎯 **Objectifs**
 - ✅ **Automatisation** : Détection automatique des tranches (YOLOv8)
 - ✅ **Performance** : Cache intelligent pour éviter recalculs
 - ✅ **Robustesse** : Gestion automatique orientation et conditions difficiles
 - ✅ **Métriques** : Monitoring performances et optimisation continue
 
+<a name="structure-du-projet"></a>
 ### 📁 **Structure**
 ```
 p2-Enhanced-Desktop/
@@ -25,6 +50,7 @@ p2-Enhanced-Desktop/
 └── requirements.txt       # Dépendances P2 (+ YOLOv8)
 ```
 
+<a name="demarrage-rapide"></a>
 ### 🚀 **Démarrage rapide**
 ```bash
 cd p2-Enhanced-Desktop
@@ -34,6 +60,7 @@ pip install -r requirements.txt
 python src/app_enhanced.py
 ```
 
+<a name="tests"></a>
 ### 🧪 **Tests**
 ```bash
 # Activer l'environnement virtuel
@@ -46,6 +73,7 @@ python -m pytest tests/
 python src/book_detector.py
 ```
 
+<a name="evolution-par-rapport-p1"></a>
 ### 🚀 **Évolution par rapport P1**
 - **P1** : OCR manuel + API basique → Prouver viabilité
 - **P2** : Détection auto + Cache intelligent → Optimiser expérience

@@ -1,8 +1,30 @@
 # 📱 **P3 - Mobile Static**
 ## Portage mobile + Interface native + Hors-ligne
 
+[![React Native](https://img.shields.io/badge/React_Native-0.72+-blue.svg)](https://reactnative.dev/)
+[![Flutter](https://img.shields.io/badge/Flutter-3.13+-blue.svg)](https://flutter.dev/)
+[![SQLite](https://img.shields.io/badge/SQLite-3.0+-green.svg)](https://www.sqlite.org/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 **ShelfReader Mobile Static** représente l'évolution naturelle du prototype desktop vers une application mobile native. Portage du code Python vers mobile avec UX native optimisée.
 
+## 📋 Table des matières
+
+- [🎯 Objectifs](#objectifs)
+- [📁 Structure du projet](#structure-du-projet)
+- [🚀 Évolution par rapport P2](#evolution-par-rapport-p2)
+- [📋 Phases de développement](#phases-de-developpement)
+- [🛠️ Technologies ajoutées](#technologies-ajoutees)
+- [🎯 Défis techniques](#defis-techniques)
+- [🚀 Démarrage rapide](#demarrage-rapide)
+- [📋 Détails techniques complets](#details-techniques-complets)
+- [🏗️ Roadmap & Phases](#roadmap--phases)
+- [🏗️ Architecture](#architecture)
+- [🛠️ Technologies détaillées](#technologies-detaillees)
+- [🏗️ Architecture d'intégration](#architecture-dintegration)
+- [⚡ Optimisations mobiles implementées](#optimisations-mobiles-implementees)
+
+<a name="objectifs"></a>
 ### 🎯 **Objectifs**
 - ✅ **Validation mobile** : Prouver concept fonctionne sur mobile
 - ✅ **UX native** : Interface mobile fluide avec capture photo intégrée
@@ -10,6 +32,7 @@
 - ✅ **Hors-ligne** : Cache local pour utilisation sans réseau
 - ✅ **Base temps réel** : Préparer architecture pour P4 (AR)
 
+<a name="structure-du-projet"></a>
 ### 📁 **Structure**
 ```
 p3-Mobile-Static/
@@ -25,10 +48,12 @@ p3-Mobile-Static/
 └── requirements.txt      # Dépendances P3
 ```
 
+<a name="evolution-par-rapport-p2"></a>
 ### 🚀 **Évolution par rapport P2**
 - **P2** : Desktop optimisé → Performance et automatisation
 - **P3** : Mobile static → Portage et UX native
 
+<a name="phases-de-developpement"></a>
 ### 📋 **Phases de développement**
 1. **Phase 3.1** : Choix framework mobile (React Native/Flutter)
 2. **Phase 3.2** : Portage code Python
@@ -36,6 +61,7 @@ p3-Mobile-Static/
 4. **Phase 3.4** : Mode hors-ligne et cache
 5. **Phase 3.5** : Tests et optimisation mobile
 
+<a name="technologies-ajoutees"></a>
 ### 🛠️ **Technologies ajoutées**
 - **Framework Mobile** : React Native ou Flutter
 - **Python Bridge** : Chaquopy (Android), alternatives iOS
@@ -43,11 +69,13 @@ p3-Mobile-Static/
 - **Storage** : react-native-sqlite (cache local)
 - **UI Components** : Material Design components
 
+<a name="defis-techniques"></a>
 ### 🎯 **Défis techniques**
 - **Défi 7** : Framework mobile cross-platform
 - **Défi 8** : Portage et adaptation code Python
 - **Défi 9** : Interface mobile native et UX
 
+<a name="demarrage-rapide"></a>
 ### 🚀 **Démarrage rapide**
 ```bash
 cd p3-Mobile-Static

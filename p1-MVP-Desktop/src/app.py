@@ -110,89 +110,85 @@ def display_results(results, processing_time, enriched_books=None):
 
     books = enriched_books if enriched_books else results['books']
 
-    # Centrer toute la section des résultats de manière plus responsive
-    # Utiliser des colonnes adaptatives pour desktop et mobile
-    col_left, col_center, col_right = st.columns([0.08, 0.84, 0.08])
+    # Affichage pleine largeur pour desktop
+    # Métriques principales
+    st.subheader("📊 Résultats de l'analyse")
+    col1, col2, col3, col4 = st.columns(4)
 
-    with col_center:
-        # Métriques principales
-        st.subheader("📊 Résultats de l'analyse")
-        col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.metric("📚 Livres détectés", len(books))
 
-        with col1:
-            st.metric("📚 Livres détectés", len(books))
+    with col2:
+        avg_confidence = np.mean([book.get('confidence', 0) for book in books]) if books else 0
+        st.metric("🎯 Confiance moyenne", f"{avg_confidence:.1%}")
 
-        with col2:
-            avg_confidence = np.mean([book.get('confidence', 0) for book in books]) if books else 0
-            st.metric("🎯 Confiance moyenne", f"{avg_confidence:.1%}")
+    with col3:
+        st.metric("⚡ Temps de traitement", f"{processing_time:.2f}s")
 
-        with col3:
-            st.metric("⚡ Temps de traitement", f"{processing_time:.2f}s")
+    with col4:
+        enriched_count = sum(1 for book in books if book.get('enriched', False))
+        st.metric("📚 Enrichis Open Library", f"{enriched_count}/{len(books)}")
 
-        with col4:
-            enriched_count = sum(1 for book in books if book.get('enriched', False))
-            st.metric("📚 Enrichis Open Library", f"{enriched_count}/{len(books)}")
+    st.markdown("---")
 
-        st.markdown("---")
+    # Affichage détaillé des livres
+    st.subheader("📖 Livres détectés")
 
-        # Affichage détaillé des livres
-        st.subheader("📖 Livres détectés")
+    if books:
+        # Créer un DataFrame pour l'affichage
+        books_data = []
+        for i, book in enumerate(books, 1):
+            enriched = book.get('enriched', False)
+            year = book.get('openlibrary_year', 'N/A') if enriched else 'N/A'
+            # Convertir l'année en string pour éviter les problèmes de type
+            year_str = str(year) if year != 'N/A' else 'N/A'
 
-        if books:
-            # Créer un DataFrame pour l'affichage
-            books_data = []
-            for i, book in enumerate(books, 1):
-                enriched = book.get('enriched', False)
-                year = book.get('openlibrary_year', 'N/A') if enriched else 'N/A'
-                # Convertir l'année en string pour éviter les problèmes de type
-                year_str = str(year) if year != 'N/A' else 'N/A'
+            books_data.append({
+                "N°": i,
+                "Titre OCR": book.get('text', 'N/A'),
+                "Titre OL": book.get('openlibrary_title', 'N/A') if enriched else 'Non enrichi',
+                "Auteur": book.get('openlibrary_author', 'N/A') if enriched else 'N/A',
+                "Année": year_str,
+                "Confiance": f"{book.get('confidence', 0):.1%}",
+                "Enrichi": "✅" if enriched else "❌"
+            })
 
-                books_data.append({
-                    "N°": i,
-                    "Titre OCR": book.get('text', 'N/A'),
-                    "Titre OL": book.get('openlibrary_title', 'N/A') if enriched else 'Non enrichi',
-                    "Auteur": book.get('openlibrary_author', 'N/A') if enriched else 'N/A',
-                    "Année": year_str,
-                    "Confiance": f"{book.get('confidence', 0):.1%}",
-                    "Enrichi": "✅" if enriched else "❌"
-                })
+        df = pd.DataFrame(books_data)
 
-            df = pd.DataFrame(books_data)
+        # Afficher le tableau en pleine largeur de manière responsive
+        st.dataframe(df, width='stretch', hide_index=True)
 
-            # Afficher le tableau en pleine largeur de manière responsive
-            st.dataframe(df, width='stretch', hide_index=True)
+        # Affichage en format carte pour plus de lisibilité
+        st.markdown("### 📋 Détails par livre")
+        for i, book in enumerate(books, 1):
+            enriched = book.get('enriched', False)
+            with st.expander(f"📖 Livre {i} - {book.get('text', 'N/A')[:50]}..."):
+                col1, col2 = st.columns(2)
 
-            # Affichage en format carte pour plus de lisibilité
-            st.markdown("### 📋 Détails par livre")
-            for i, book in enumerate(books, 1):
-                enriched = book.get('enriched', False)
-                with st.expander(f"📖 Livre {i} - {book.get('text', 'N/A')[:50]}..."):
-                    col1, col2 = st.columns(2)
+                with col1:
+                    st.write(f"**Texte OCR :** {book.get('text', 'N/A')}")
+                    st.write(f"**Confiance :** {book.get('confidence', 0):.1%}")
+                    if enriched:
+                        st.write(f"**Titre Open Library :** {book.get('openlibrary_title', 'N/A')}")
+                        st.write(f"**Auteur :** {book.get('openlibrary_author', 'N/A')}")
+                        st.write(f"**Année :** {book.get('openlibrary_year', 'N/A')}")
 
-                    with col1:
-                        st.write(f"**Texte OCR :** {book.get('text', 'N/A')}")
-                        st.write(f"**Confiance :** {book.get('confidence', 0):.1%}")
-                        if enriched:
-                            st.write(f"**Titre Open Library :** {book.get('openlibrary_title', 'N/A')}")
-                            st.write(f"**Auteur :** {book.get('openlibrary_author', 'N/A')}")
-                            st.write(f"**Année :** {book.get('openlibrary_year', 'N/A')}")
+                with col2:
+                    st.write(f"**Position :** x={book.get('x', 0)}, y={book.get('y', 0)}")
+                    st.write(f"**Dimensions :** {book.get('width', 0)}×{book.get('height', 0)} px")
+                    if enriched:
+                        cover_url = book.get('openlibrary_cover_url')
+                        if cover_url:
+                            st.image(cover_url, width=100, caption="Couverture")
+                        else:
+                            st.write("🖼️ *Pas de couverture disponible*")
 
-                    with col2:
-                        st.write(f"**Position :** x={book.get('x', 0)}, y={book.get('y', 0)}")
-                        st.write(f"**Dimensions :** {book.get('width', 0)}×{book.get('height', 0)} px")
-                        if enriched:
-                            cover_url = book.get('openlibrary_cover_url')
-                            if cover_url:
-                                st.image(cover_url, width=100, caption="Couverture")
-                            else:
-                                st.write("🖼️ *Pas de couverture disponible*")
+                        ol_url = book.get('openlibrary_url')
+                        if ol_url:
+                            st.markdown(f"[🔗 Voir sur Open Library]({ol_url})")
 
-                            ol_url = book.get('openlibrary_url')
-                            if ol_url:
-                                st.markdown(f"[🔗 Voir sur Open Library]({ol_url})")
-
-        else:
-            st.warning("⚠️ Aucun livre détecté dans cette image")
+    else:
+        st.warning("⚠️ Aucun livre détecté dans cette image")
 def enrich_books_with_openlibrary(books, client):
     """Enrichit les résultats OCR avec des informations de Open Library"""
     enriched_books = []
@@ -276,20 +272,17 @@ def main():
         help="Formats supportés : JPG, PNG. Taille recommandée : 1000px minimum"
     )
 
+
     if uploaded_file is not None:
-        # Afficher l'image uploadée
         image = Image.open(uploaded_file)
 
-        col1, col2 = st.columns([1, 1])
-
-        with col1:
+        # 1ère ligne : image originale + paramètres
+        col_img, col_params = st.columns([1, 1])
+        with col_img:
             st.subheader("📷 Image originale")
-            st.image(image, width='stretch')
-
-        with col2:
+            st.image(image, use_column_width=True)
+        with col_params:
             st.subheader("⚙️ Paramètres de traitement")
-
-            # Paramètres configurables
             confidence = st.slider(
                 "Seuil de confiance OCR",
                 min_value=0.1,
@@ -298,112 +291,97 @@ def main():
                 step=0.1,
                 help="0.1 = tolérant, 0.5 = strict. Recommandé : 0.3"
             )
-
             use_gpu = st.checkbox(
                 "Utiliser le GPU (recommandé)",
                 value=True,
                 help="Accélère le traitement si GPU disponible"
             )
-
             debug_mode = st.checkbox(
                 "Mode debug",
                 value=False,
                 help="Affiche les analyses détaillées (plus lent)"
             )
-
             enrich_with_ol = st.checkbox(
                 "Enrichir avec Open Library",
                 value=True,
                 help="Recherche les métadonnées des livres sur Open Library (nécessite connexion internet)"
             )
 
-            # Bouton de traitement
-            if st.button("🚀 Lancer l'analyse OCR", type="primary", use_container_width=True):
-                with st.spinner("🔍 Analyse en cours avec algorithme adaptatif..."):
-                    # Sauvegarder temporairement l'image
-                    with tempfile.NamedTemporaryFile(delete=False, suffix='.jpg') as tmp_file:
-                        # Convertir RGBA vers RGB si nécessaire (pour JPEG)
-                        if image.mode == 'RGBA':
-                            # Créer un fond blanc et coller l'image transparente
-                            background = Image.new('RGB', image.size, (255, 255, 255))
-                            background.paste(image, mask=image.split()[-1])  # Utiliser le canal alpha comme masque
-                            background.save(tmp_file.name, 'JPEG')
-                        else:
-                            # Convertir vers RGB si nécessaire
-                            rgb_image = image.convert('RGB')
-                            rgb_image.save(tmp_file.name, 'JPEG')
-                        temp_path = tmp_file.name
+        # 2ème ligne : résultats et livres détectés
+        st.markdown("---")
+        if st.button("🚀 Lancer l'analyse OCR", type="primary", use_container_width=True):
+            with st.spinner("🔍 Analyse en cours avec algorithme adaptatif..."):
+                with tempfile.NamedTemporaryFile(delete=False, suffix='.jpg') as tmp_file:
+                    if image.mode == 'RGBA':
+                        background = Image.new('RGB', image.size, (255, 255, 255))
+                        background.paste(image, mask=image.split()[-1])
+                        background.save(tmp_file.name, 'JPEG')
+                    else:
+                        rgb_image = image.convert('RGB')
+                        rgb_image.save(tmp_file.name, 'JPEG')
+                    temp_path = tmp_file.name
 
-                    try:
-                        # Traiter l'image
-                        results, processing_time = process_image_with_ocr(
-                            temp_path,
-                            confidence=confidence,
-                            use_gpu=use_gpu,
-                            debug=debug_mode
-                        )
+                try:
+                    results, processing_time = process_image_with_ocr(
+                        temp_path,
+                        confidence=confidence,
+                        use_gpu=use_gpu,
+                        debug=debug_mode
+                    )
 
-                        if results:
-                            # Enrichir avec Open Library si demandé
-                            enriched_books = None
-                            if enrich_with_ol and results.get('books'):
-                                with st.spinner("🔍 Enrichissement avec Open Library..."):
-                                    ol_client = OpenLibraryClient(timeout=10)
-                                    enriched_books = enrich_books_with_openlibrary(results['books'], ol_client)
+                    if results:
+                        enriched_books = None
+                        if enrich_with_ol and results.get('books'):
+                            with st.spinner("🔍 Enrichissement avec Open Library..."):
+                                ol_client = OpenLibraryClient(timeout=10)
+                                enriched_books = enrich_books_with_openlibrary(results['books'], ol_client)
 
-                            # Afficher les résultats
-                            st.success("✅ Analyse terminée !" + (" + Enrichissement OL" if enrich_with_ol else ""))
+                        st.success("✅ Analyse terminée !" + (" + Enrichissement OL" if enrich_with_ol else ""))
+                        st.markdown("---")
 
-                            # Espacement après les colonnes principales
-                            st.markdown("---")
+                        # 2ème ligne : résultats et livres détectés (pleine largeur)
+                        display_results(results, processing_time, enriched_books)
 
-                            # Afficher les métriques centrées
-                            display_results(results, processing_time, enriched_books)
-
-                            # Visualisation des zones détectées (centrée)
-                            if books := results.get('books'):
-                                st.markdown("---")
-
-                                # Centrer la section de visualisation de manière plus responsive
-                                col_left_viz, col_center_viz, col_right_viz = st.columns([0.05, 0.9, 0.05])
-                                with col_center_viz:
-                                    st.subheader("👁️ Visualisation des zones détectées")
-
-                                    # Créer la visualisation
-                                    viz_image = visualize_detected_zones(temp_path, books)
-
-                                    if viz_image is not None:
-                                        # Utiliser des colonnes plus équilibrées pour desktop
-                                        col1, col2 = st.columns([1, 1])
-
-                                        with col1:
-                                            st.markdown("**📷 Image originale**")
-                                            st.image(image, width='stretch')
-
-                                        with col2:
-                                            st.markdown("**🎯 Zones détectées**")
-                                            st.image(viz_image, caption=f"{len(books)} livres détectés", width='stretch')
-
-                                        st.info("💡 **Légende :** Chaque rectangle coloré représente un livre détecté avec son numéro")
-                                    else:
-                                        st.warning("⚠️ Impossible de créer la visualisation")
-
-                            # Informations techniques
-                            with st.expander("🔧 Informations techniques"):
-                                st.json(results)
-
-                        else:
-                            st.error("❌ Échec de l'analyse OCR")
-
-                    finally:
-                        # Nettoyer le fichier temporaire
-                        os.unlink(temp_path)
-
+                        # 3ème ligne : détails et visualisation des zones détectées
+                        st.markdown("---")
+                        st.subheader("👁️ Visualisation des zones détectées")
+                        books = results.get('books')
+                        if books:
+                            viz_image = visualize_detected_zones(temp_path, books)
+                            col_det, col_viz = st.columns([1, 1])
+                            with col_det:
+                                st.markdown("### 📋 Détails par livre")
+                                for i, book in enumerate(enriched_books if enriched_books else books, 1):
+                                    enriched = book.get('enriched', False)
+                                    with st.expander(f"� Livre {i} - {book.get('text', 'N/A')[:50]}..."):
+                                        st.write(f"**Texte OCR :** {book.get('text', 'N/A')}")
+                                        st.write(f"**Confiance :** {book.get('confidence', 0):.1%}")
+                                        if enriched:
+                                            st.write(f"**Titre Open Library :** {book.get('openlibrary_title', 'N/A')}")
+                                            st.write(f"**Auteur :** {book.get('openlibrary_author', 'N/A')}")
+                                            st.write(f"**Année :** {book.get('openlibrary_year', 'N/A')}")
+                                            cover_url = book.get('openlibrary_cover_url')
+                                            if cover_url:
+                                                st.image(cover_url, width=100, caption="Couverture")
+                                            else:
+                                                st.write("�️ *Pas de couverture disponible*")
+                                            ol_url = book.get('openlibrary_url')
+                                            if ol_url:
+                                                st.markdown(f"[🔗 Voir sur Open Library]({ol_url})")
+                            with col_viz:
+                                if viz_image is not None:
+                                    st.image(viz_image, caption=f"{len(books)} livres détectés", use_column_width=True)
+                                    st.info("💡 **Légende :** Chaque rectangle coloré représente un livre détecté avec son numéro")
+                                else:
+                                    st.warning("⚠️ Impossible de créer la visualisation")
+                        with st.expander("🔧 Informations techniques"):
+                            st.json(results)
+                    else:
+                        st.error("❌ Échec de l'analyse OCR")
+                finally:
+                    os.unlink(temp_path)
     else:
-        # Message d'accueil quand aucune image n'est uploadée
         st.info("👆 Veuillez uploader une image d'étagère de livres pour commencer l'analyse")
-
-        # Exemples d'utilisation
         st.markdown("### 💡 Conseils d'utilisation")
         st.markdown("""
         - **Qualité d'image** : Photos bien éclairées, perpendiculaires à l'étagère
@@ -411,14 +389,10 @@ def main():
         - **Formats** : JPG ou PNG
         - **Contenu** : Étageres de livres avec titres visibles
         """)
-
-        # Images d'exemple
         st.markdown("### 🖼️ Images de test disponibles")
         test_images_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "test_images")
-
         if os.path.exists(test_images_dir):
             test_images = [f for f in os.listdir(test_images_dir) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
-
             if test_images:
                 st.markdown("**Images disponibles pour test :**")
                 for img in test_images:

@@ -203,4 +203,4 @@ def test_nouvelle_fonction():
 **🎯 Tests validés :** Octobre 2025
 **📊 Couverture :** 85%+
 **⚡ Performance :** GPU 3x plus rapide</content>
-<parameter name="filePath">/home/delart/Documents/dev/python/Shelfreader/p1-MVP-Desktop/tests/README.md
+<parameter name="filePath">/home/delart/Documents/dev/python/Shelfreader/p1-OCR-Streamlit/tests/README.md

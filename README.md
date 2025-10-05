@@ -1,4 +1,4 @@
-# 🏗️ **ShelfReader P1 - MVP Desktop**
+# 🏗️ **ShelfReader P1 - OCR Streamlit**
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)](https://streamlit.io/)
@@ -92,7 +92,7 @@ ShelfReader propose **3 moteurs OCR spécialisés** :
 #### 1. Cloner le dépôt
 ```bash
 git clone https://github.com/delnixcode/Shelfreader.git
-cd Shelfreader/p1-MVP-Desktop
+cd Shelfreader/p1-OCR-Streamlit
 ```
 
 #### 2. Activer l'environnement virtuel
@@ -120,7 +120,7 @@ Ouvrir http://localhost:8501 dans votre navigateur.
 ```bash
 # Cloner le projet
 git clone https://github.com/delnixcode/Shelfreader.git
-cd Shelfreader/p1-MVP-Desktop
+cd Shelfreader/p1-OCR-Streamlit
 
 # Activer l'environnement virtuel
 source env-p1/bin/activate  # Linux/macOS
@@ -451,7 +451,7 @@ ShelfReader P1 utilise une **architecture modulaire** permettant le développeme
 
 ### Structure des dossiers
 ```
-p1-MVP-Desktop/
+p1-OCR-Streamlit/
 ├── src/                          # Code source principal
 │   ├── __init__.py              # Package Python
 │   ├── core/                    # Noyau de l'application

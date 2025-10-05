@@ -103,10 +103,10 @@
 ## 📚 **Références importantes**
 
 ### **Fichiers critiques**
-- `p1-MVP-Desktop/docs/README.md` - Guide utilisateur P1
-- `p1-MVP-Desktop/docs/OCR_Code_Explanation.md` - Architecture OCR
-- `p1-MVP-Desktop/docs/Structure.md` - Organisation projet
-- `p1-MVP-Desktop/TODO.md` - Plan détaillé P1
+- `p1-OCR-Streamlit/docs/README.md` - Guide utilisateur P1
+- `p1-OCR-Streamlit/docs/OCR_Code_Explanation.md` - Architecture OCR
+- `p1-OCR-Streamlit/docs/Structure.md` - Organisation projet
+- `p1-OCR-Streamlit/TODO.md` - Plan détaillé P1
 
 ### **Modules OCR**
 - `src/ocr_easyocr.py` - EasyOCR avec GPU

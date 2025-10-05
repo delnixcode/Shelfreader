@@ -93,14 +93,14 @@
 
 ### **Structure finale du projet**
 ```
-p1-MVP-Desktop/
+p1-OCR-Streamlit/
 ├── src/                          # Code source principal
 │   ├── __init__.py              # Package Python
-│   ├── api_client.py            # ✅ Client API Open Library
+│   ├── services/openlibrary_client.py            # ✅ Client API Open Library
 │   ├── app.py                   # ✅ Interface Streamlit
-│   ├── ocr_easyocr.py           # ✅ OCR EasyOCR avancé
-│   ├── ocr_tesseract.py         # ✅ OCR Tesseract
-│   └── ocr_trocr.py             # ✅ OCR TrOCR
+│   ├── engines/easyocr_engine.py           # ✅ OCR EasyOCR avancé
+│   ├── engines/tesseract_engine.py         # ✅ OCR Tesseract
+│   └── engines/trocr_engine.py             # ✅ OCR TrOCR
 ├── scripts/                      # Scripts utilitaires
 │   └── ocr_detect.py            # Script de détection unifié
 ├── docs/                         # Documentation complète
@@ -112,7 +112,7 @@ p1-MVP-Desktop/
 ├── tests/                        # Suite de tests complète
 │   ├── __init__.py              # Package de tests
 │   ├── demo_ocr_improvements.py # Démonstration interactive
-│   ├── test_api_client.py       # Tests API client
+│   ├── test_services/openlibrary_client.py       # Tests API client
 │   ├── test_easyocr_improvements.py # Tests OCR avancés
 │   ├── test_gpu_usage.py        # Tests performance GPU
 │   └── test_separation.py       # Tests algorithmes
@@ -126,14 +126,14 @@ p1-MVP-Desktop/
 
 ### **Composants clés implémentés**
 
-#### **🔧 Moteur OCR EasyOCR avancé** (`ocr_easyocr.py`)
+#### **🔧 Moteur OCR EasyOCR avancé** (`engines/easyocr_engine.py`)
 - Détection shelfie (lignes d'étagère)
 - Validation Jaccard pour éliminer les doublons
 - Prétraitement adaptatif des images
 - Support GPU automatique
 - Métriques de performance détaillées
 
-#### **🔗 Client API Open Library** (`api_client.py`)
+#### **🔗 Client API Open Library** (`services/openlibrary_client.py`)
 - Recherche par titre/auteur/ISBN
 - Récupération métadonnées complètes
 - Gestion d'erreurs et timeouts

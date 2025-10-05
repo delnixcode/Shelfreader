@@ -100,7 +100,7 @@ env-p1\Scripts\activate     # Windows
 pip install -r requirements.txt
 
 # 3. Dans le répertoire racine du projet
-cd p1-MVP-Desktop
+cd p1-OCR-Streamlit
 ```
 
 ### **Exécution complète (recommandé)**

@@ -285,7 +285,7 @@ ShelfReader P1 est organisé selon une architecture modulaire permettant le dév
 ## Structure des dossiers
 
 ```
-p1-MVP-Desktop/
+p1-OCR-Streamlit/
 ├── src/                          # Code source principal
 │   ├── __init__.py              # Package Python
 │   ├── services/openlibrary_client.py            # Client API Open Library

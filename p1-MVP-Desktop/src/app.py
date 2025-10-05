@@ -18,6 +18,8 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 # Import de nos modules OCR
 from ocr_easyocr import EasyOCRProcessor
+from ocr_tesseract import TesseractOCRProcessor
+from ocr_trocr import TrOCRProcessor
 from api_client import OpenLibraryClient
 
 # Configuration de la page
@@ -36,19 +38,16 @@ st.markdown("---")
 # Sidebar avec informations
 with st.sidebar:
     st.header("ℹ️ Informations")
-    st.markdown("""
-    **Algorithme :** OCR Adaptatif Multi-échelle
-    **Précision :** 93% (14/15 livres)
-    **Méthode :** Shelfie avec fallback intelligent
-    **GPU :** Support automatique
-    **Enrichissement :** Open Library intégré
-    """)
+    st.markdown("**Algorithme :** OCR Adaptatif Multi-échelle")
+    st.markdown("**Précision :** 93% (14/15 livres)")
+    st.markdown("**GPU :** Support automatique")
+    st.markdown("**Enrichissement :** Open Library intégré")
 
     st.markdown("---")
     st.markdown("**Paramètres recommandés :**")
     st.markdown("- **GPU** : Activé si disponible")
     st.markdown("- **Confiance** : 0.3 (optimisé)")
-    st.markdown("- **Méthode** : Shelfie (adaptatif)")
+    # (Supprimé : Méthode Shelfie)
 
     st.markdown("---")
     st.markdown("**Testé sur :**")
@@ -61,42 +60,49 @@ def process_image_with_ocr(image_path, confidence=0.3, use_gpu=True, debug=False
     try:
         start_time = time.time()
 
-        # Créer le processeur OCR
-        processor = EasyOCRProcessor(['en'], confidence, use_gpu)
-
-        # Charger l'image
-        pil_image = Image.open(image_path)
-
-        # Traitement avec l'algorithme adaptatif
-        boxes = processor.get_boxes(
-            pil_image,
-            preprocess=False,
-            use_spine_detection=True,
-            debug=debug,
-            reference_titles=None,
-            spine_method="shelfie"
-        )
-
-        text, avg_confidence = processor.get_text_and_confidence(
-            pil_image,
-            preprocess=False,
-            use_spine_detection=True,
-            reference_titles=None,
-            spine_method="shelfie"
-        )
+        # Sélection du moteur OCR
+        ocr_engine = st.session_state.get('ocr_engine', 'EasyOCR')
+        if ocr_engine == 'EasyOCR':
+            processor = EasyOCRProcessor(['en'], confidence, use_gpu)
+            st.markdown("**GPU :** Support automatique")
+            st.markdown("**Enrichissement :** Open Library intégré")
+            boxes = processor.get_boxes(
+                pil_image,
+                preprocess=False,
+                use_spine_detection=True,
+                debug=debug,
+                reference_titles=None,
+            )
+            text, avg_confidence = processor.get_text_and_confidence(
+                pil_image,
+                preprocess=False,
+                use_spine_detection=True,
+                reference_titles=None,
+                spine_method="shelfie"
+            )
+        elif ocr_engine == 'Tesseract':
+            processor = TesseractOCRProcessor('eng', confidence, use_gpu)
+            pil_image = Image.open(image_path)
+            # Tesseract retourne des boxes similaires
+            boxes = processor.get_boxes(pil_image)
+            text, avg_confidence = processor.get_text_and_confidence(pil_image)
+        elif ocr_engine == 'TrOCR':
+            processor = TrOCRProcessor(['en'], confidence, use_gpu)
+            pil_image = Image.open(image_path)
+            boxes = processor.get_boxes(pil_image)
+            text, avg_confidence = processor.get_text_and_confidence(pil_image)
+        else:
+            st.error(f"Moteur OCR inconnu : {ocr_engine}")
+            return None, 0
 
         processing_time = time.time() - start_time
-
-        # Formater les résultats comme attendu par display_results
         results = {
             'books': boxes,
             'text': text,
             'confidence': avg_confidence,
             'processing_time': processing_time
         }
-
         return results, processing_time
-
     except Exception as e:
         st.error(f"Erreur lors du traitement OCR : {str(e)}")
         return None, 0
@@ -140,9 +146,8 @@ def display_results(results, processing_time, enriched_books=None):
         for i, book in enumerate(books, 1):
             enriched = book.get('enriched', False)
             year = book.get('openlibrary_year', 'N/A') if enriched else 'N/A'
-            # Convertir l'année en string pour éviter les problèmes de type
             year_str = str(year) if year != 'N/A' else 'N/A'
-
+            ol_url = book.get('openlibrary_url') if enriched else None
             books_data.append({
                 "N°": i,
                 "Titre OCR": book.get('text', 'N/A'),
@@ -150,42 +155,33 @@ def display_results(results, processing_time, enriched_books=None):
                 "Auteur": book.get('openlibrary_author', 'N/A') if enriched else 'N/A',
                 "Année": year_str,
                 "Confiance": f"{book.get('confidence', 0):.1%}",
-                "Enrichi": "✅" if enriched else "❌"
+                "Enrichi": "✅" if enriched else "❌",
+                "Lien Open Library": ol_url if ol_url else ""
             })
 
-        df = pd.DataFrame(books_data)
+        # Rendre le lien Open Library cliquable dans le tableau
+        import html
+        def make_link(url):
+            if url:
+                return f'<a href="{html.escape(url)}" target="_blank">🔗 Open Library</a>'
+            return ""
 
-        # Afficher le tableau en pleine largeur de manière responsive
-        st.dataframe(df, width='stretch', hide_index=True)
+        # Créer une table HTML pour affichage cliquable
+        table_html = "<table style='width:100%; border-collapse:collapse;'>"
+        # En-têtes
+        headers = ["N°", "Titre OCR", "Titre OL", "Auteur", "Année", "Confiance", "Enrichi", "Lien Open Library"]
+        table_html += "<tr>" + "".join([f"<th style='border:1px solid #ccc; padding:4px'>{h}</th>" for h in headers]) + "</tr>"
+        # Lignes
+        for row in books_data:
+            table_html += "<tr>"
+            for h in headers[:-1]:
+                table_html += f"<td style='border:1px solid #ccc; padding:4px'>{html.escape(str(row[h]))}</td>"
+            # Lien cliquable
+            table_html += f"<td style='border:1px solid #ccc; padding:4px'>{make_link(row['Lien Open Library'])}</td>"
+            table_html += "</tr>"
+        table_html += "</table>"
+        st.markdown(table_html, unsafe_allow_html=True)
 
-        # Affichage en format carte pour plus de lisibilité
-        st.markdown("### 📋 Détails par livre")
-        for i, book in enumerate(books, 1):
-            enriched = book.get('enriched', False)
-            with st.expander(f"📖 Livre {i} - {book.get('text', 'N/A')[:50]}..."):
-                col1, col2 = st.columns(2)
-
-                with col1:
-                    st.write(f"**Texte OCR :** {book.get('text', 'N/A')}")
-                    st.write(f"**Confiance :** {book.get('confidence', 0):.1%}")
-                    if enriched:
-                        st.write(f"**Titre Open Library :** {book.get('openlibrary_title', 'N/A')}")
-                        st.write(f"**Auteur :** {book.get('openlibrary_author', 'N/A')}")
-                        st.write(f"**Année :** {book.get('openlibrary_year', 'N/A')}")
-
-                with col2:
-                    st.write(f"**Position :** x={book.get('x', 0)}, y={book.get('y', 0)}")
-                    st.write(f"**Dimensions :** {book.get('width', 0)}×{book.get('height', 0)} px")
-                    if enriched:
-                        cover_url = book.get('openlibrary_cover_url')
-                        if cover_url:
-                            st.image(cover_url, width=100, caption="Couverture")
-                        else:
-                            st.write("🖼️ *Pas de couverture disponible*")
-
-                        ol_url = book.get('openlibrary_url')
-                        if ol_url:
-                            st.markdown(f"[🔗 Voir sur Open Library]({ol_url})")
 
     else:
         st.warning("⚠️ Aucun livre détecté dans cette image")
@@ -280,9 +276,16 @@ def main():
         col_img, col_params = st.columns([1, 1])
         with col_img:
             st.subheader("📷 Image originale")
-            st.image(image, use_column_width=True)
+            st.image(image, use_container_width=True)
         with col_params:
             st.subheader("⚙️ Paramètres de traitement")
+            ocr_engine = st.selectbox(
+                "Moteur OCR",
+                ["EasyOCR", "Tesseract", "TrOCR"],
+                index=0,
+                help="Choisissez le moteur OCR à utiliser"
+            )
+            st.session_state['ocr_engine'] = ocr_engine
             confidence = st.slider(
                 "Seuil de confiance OCR",
                 min_value=0.1,
@@ -370,7 +373,7 @@ def main():
                                                 st.markdown(f"[🔗 Voir sur Open Library]({ol_url})")
                             with col_viz:
                                 if viz_image is not None:
-                                    st.image(viz_image, caption=f"{len(books)} livres détectés", use_column_width=True)
+                                    st.image(viz_image, caption=f"{len(books)} livres détectés", use_container_width=True)
                                     st.info("💡 **Légende :** Chaque rectangle coloré représente un livre détecté avec son numéro")
                                 else:
                                     st.warning("⚠️ Impossible de créer la visualisation")
@@ -389,16 +392,6 @@ def main():
         - **Formats** : JPG ou PNG
         - **Contenu** : Étageres de livres avec titres visibles
         """)
-        st.markdown("### 🖼️ Images de test disponibles")
-        test_images_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "test_images")
-        if os.path.exists(test_images_dir):
-            test_images = [f for f in os.listdir(test_images_dir) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
-            if test_images:
-                st.markdown("**Images disponibles pour test :**")
-                for img in test_images:
-                    st.code(f"test_images/{img}", language="text")
-            else:
-                st.info("Aucune image de test trouvée dans test_images/")
 
 if __name__ == "__main__":
     main()

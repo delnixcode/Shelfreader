@@ -2,15 +2,18 @@
 
 Application pour détecter et rechercher des livres sur une étagère.
 
-## 📱 Usage mobile principal
 
-1. L'utilisateur ouvre l'app mobile avec la caméra (flux vidéo continu).
-2. Il saisit un titre de livre ou une thématique (ex : "Python", "Dune").
-3. L'app analyse en continu le flux vidéo de l'étagère.
-4. L'OCR détecte en temps réel tous les titres de livres présents dans le flux.
-5. Pour chaque titre détecté, l'app interroge l'API Open Library pour récupérer les sujets/thématiques.
-6. L'app compare les sujets/thématiques des livres détectés avec la recherche de l'utilisateur.
-7. Les livres correspondants sont mis en évidence sur l'image (bounding box, surlignage) en temps réel.
+## �️ Nouveau layout desktop (MVP)
+
+Depuis octobre 2025, l'interface web du MVP Desktop propose un **layout vertical optimisé** :
+
+**Workflow utilisateur :**
+1. Upload d'une image d'étagère
+2. Première ligne : image originale + paramètres de traitement
+3. Deuxième ligne : résultats de l'analyse + tableau des livres détectés
+4. Troisième ligne : détails par livre + visualisation des zones détectées
+
+Ce flux vertical améliore la clarté et la navigation sur desktop.
 
 ## 🎯 Fonctionnalités
 
@@ -44,11 +47,12 @@ Consulte [docs/LEARNING.md](LEARNING.md) pour la documentation complète.
 python src/api_client.py
 ```
 
+
 ## 🎯 Phases du projet
 
 - ✅ **Phase 1** : Client API Open Library → `src/api_client.py`
 - ✅ **Phase 2** : OCR Modulaire (EasyOCR, Tesseract, TrOCR) → `src/ocr_*.py`
-- ⏳ **Phase 3** : Interface Streamlit → `src/app.py`
+- ✅ **Phase 3** : Interface Streamlit verticale desktop → `src/app.py`
 - ⏳ **Phase 4** : Tests → `tests/`
 
 ## 🧪 Tester les modules OCR (Phase 2)

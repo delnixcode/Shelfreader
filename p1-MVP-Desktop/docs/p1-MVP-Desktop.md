@@ -24,20 +24,20 @@
 - ✅ Créer une interface web moderne avec Streamlit
 - ✅ Gérer les formats d'images (PIL, NumPy, OpenCV)
 
-### 🚀 Vision finale du Projet 1
+
+### 🚀 Nouveau layout vertical desktop
+
+Depuis octobre 2025, l'interface Streamlit du MVP Desktop propose un **layout vertical** :
+
 ```
-👤 Utilisateur desktop
-     ↓
-📸 Upload photo d'étagère
-     ↓
-🔍 OCR analyse tranches de livres
-     ↓
-🌐 API enrichit avec métadonnées
-     ↓
-📊 Interface affiche résultats enrichis
+1ère ligne : Image originale (gauche) + paramètres de traitement (droite)
+2ème ligne : Résultats de l'analyse + tableau des livres détectés (pleine largeur)
+3ème ligne : Détails par livre (gauche) + visualisation des zones détectées (droite)
 ```
 
-**Résultat** : Un prototype qui prouve la viabilité technique et fonctionnelle !
+Ce flux vertical améliore la lisibilité et l'expérience utilisateur sur desktop.
+
+**Résultat** : Un prototype qui prouve la viabilité technique et offre une ergonomie optimale sur grand écran !
 
 ---
 
@@ -66,16 +66,19 @@ Le projet est divisé en **5 phases progressives** pour apprendre étape par ét
 - Tests unitaires
 - **Durée** : 3-4 jours
 
-### Phase 1.4 : Interface Streamlit
-**Objectif** : Créer l'interface utilisateur web
+
+### Phase 1.4 : Interface Streamlit verticale
+**Objectif** : Créer une interface utilisateur web verticale optimisée pour desktop
 - Upload d'images
 - Affichage des résultats OCR
 - Recherche par titre/thématique
+- Layout vertical : image+paramètres, résultats+livres, détails+visualisation
 - **Durée** : 2-3 jours
 
+
 ### Phase 1.5 : Intégration et tests
-**Objectif** : Assembler tous les composants
-- Pipeline complet : OCR → API → Interface
+**Objectif** : Assembler tous les composants et valider le layout vertical
+- Pipeline complet : OCR → API → Interface verticale
 - Tests end-to-end
 - Débogage et optimisation
 - **Durée** : 2-3 jours

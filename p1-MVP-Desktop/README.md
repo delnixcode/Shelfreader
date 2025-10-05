@@ -9,48 +9,51 @@
 
 ---
 
-## 📋 **Sommaire**
 
-- [🎯 Qu'est-ce que ShelfReader ?](#-quest-ce-que-shelfreader-)
-- [🚀 Installation (5 minutes)](#-installation-5-minutes)
-- [⚡ Démarrage rapide (3 étapes)](#-démarrage-rapide-3-étapes)
-- [💻 Comment utiliser](#-comment-utiliser)
-- [🎨 Interface web](#-interface-web)
-- [🔧 Options avancées](#-options-avancées)
-- [🛠️ Dépannage](#️-dépannage)
-- [❓ Questions fréquentes](#-questions-fréquentes)
-- [📚 Informations techniques](#-informations-techniques)
+### �️ Nouveau layout vertical desktop
 
----
+Depuis octobre 2025, l'interface web Streamlit propose un **layout vertical optimisé pour desktop** :
 
-## 🎯 **Qu'est-ce que ShelfReader ?**
+**Flux utilisateur après upload :**
+1. **Première ligne** : Image originale (gauche) + paramètres de traitement (droite)
+2. **Deuxième ligne** : Résultats de l'analyse (métriques) et tableau des livres détectés (pleine largeur)
+3. **Troisième ligne** : Détails par livre (gauche) + visualisation des zones détectées (droite)
 
-**ShelfReader** est une application qui reconnaît automatiquement les titres de livres sur des photos d'étagères.
+Ce layout améliore la lisibilité et l'expérience utilisateur sur grand écran.
 
-### **Comment ça marche ?**
-1. 📸 **Prenez une photo** d'une étagère de livres
-2. 🤖 **L'IA analyse** l'image et détecte les textes
-3. 📚 **Résultat** : Liste des livres identifiés avec leurs titres
+#### **Démarrage rapide**
+```bash
+# Linux/macOS
+cd p1-MVP-Desktop
+source env-p1/bin/activate
+streamlit run src/app.py
 
-### **Pour qui ?**
-- 📖 **Particuliers** : Inventorier sa bibliothèque personnelle
-- 🏪 **Libraires** : Gérer rapidement les stocks
-- 📚 **Étudiants** : Trouver des livres dans les bibliothèques
-- 🏛️ **Écoles** : Cataloguer automatiquement les collections
+# Windows
+cd p1-MVP-Desktop
+env-p1\Scripts\activate
+streamlit run src/app.py
+```
 
-### **Points forts**
-- ✅ **Facile à utiliser** : Interface simple et intuitive
-- ✅ **Rapide** : Analyse une étagère en quelques secondes
-- ✅ **Intelligent** : Détecte automatiquement les séparations entre livres
-- ✅ **Précis** : Corrige automatiquement les erreurs de reconnaissance
+Ouvrir http://localhost:8501 dans votre navigateur.
 
----
+#### **Fonctionnalités principales**
+- 📤 **Upload intuitif**
+- ⚙️ **Paramètres avancés**
+- 📊 **Résultats détaillés** (métriques, tableau)
+- 👁️ **Visualisation des zones détectées**
+- � **Détails par livre**
+- 💾 **Export automatique**
 
-## 🚀 **Installation (5 minutes)**
+#### **Avantages du layout vertical**
+- ✅ **Lisibilité accrue** sur desktop
+- ✅ **Navigation logique** : chaque étape est clairement séparée
+- ✅ **Responsive** : fonctionne aussi sur mobile
 
-### **Prérequis**
-- **Ordinateur** : Windows, macOS ou Linux
-- **Python** : Version 3.8 ou supérieure
+#### **Quand utiliser la ligne de commande**
+- � **Automatisation**
+- ⚡ **Performance**
+- 🔄 **Intégration**
+- 📊 **Batch processing**
 - **Connexion internet** : Pour télécharger les composants
 
 ### **Installation automatique**

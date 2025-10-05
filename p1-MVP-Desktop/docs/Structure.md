@@ -56,22 +56,31 @@ p1-MVP-Desktop/
 - **Dépendances** : `requests`
 - **Usage** : Récupération des métadonnées de livres
 
+
 ### 🎨 **Interface** (`src/app.py`)
 - **Framework** : Streamlit
-- **Responsabilités** : Interface utilisateur web
-- **État** : En développement (Phase 3)
+- **Responsabilités** : Interface utilisateur web verticale desktop
+- **Layout** : 1ère ligne (image+paramètres), 2ème ligne (résultats+livres), 3ème ligne (détails+visualisation)
+- **État** : Finalisée (Phase 3)
 
 ### 🚀 **Script unifié** (`scripts/ocr_detect.py`)
 - **Responsabilités** : Orchestration des modules OCR
 - **Arguments** : Sélection du moteur, options GPU, seuils
 - **Usage** : Point d'entrée principal pour les tests
 
-## Flux de données
+
+## Flux de données (layout vertical desktop)
 
 ```
-Image → Script unifié → Sélection moteur → Module OCR → Résultats
-                            ↓
-                    API Client → Métadonnées Open Library
+Image upload → Interface Streamlit verticale
+        ↓
+Image originale + paramètres (1ère ligne)
+        ↓
+Résultats + livres détectés (2ème ligne)
+        ↓
+Détails par livre + visualisation zones (3ème ligne)
+        ↓
+API Client → Métadonnées Open Library
 ```
 
 ## Architecture modulaire

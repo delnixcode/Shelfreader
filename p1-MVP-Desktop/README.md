@@ -176,7 +176,7 @@ p1-MVP-Desktop/
 │   ├── books1.jpg
 │   └── books2.jpg
 ├── requirements.txt             # Dépendances Python
-└── TODO.md                      # Liste des tâches
+└── README.md                    # Documentation principale
 ```
 
 ### Technologies utilisées

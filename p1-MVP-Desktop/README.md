@@ -11,18 +11,17 @@
 
 - [📖 À propos de ShelfReader](#à-propos-de-shelfreader)
 - [🔍 Comment ça marche](#comment-ça-marche)
+- [🏗️ Architecture du projet](#architecture-du-projet)
 - [📦 Installation](#installation)
+- [🚀 Démarrage rapide](#démarrage-rapide)
 - [⚙️ Configuration avancée](#configuration-avancée)
 - [🎯 Deux façons d'utiliser ShelfReader](#deux-facons-dutiliser-shelfreader)
 - [💡 Exemples d'utilisation](#exemples-dutilisation)
 - [🚀 Utilisation détaillée](#utilisation-détaillée)
-- [🚀 Démarrage rapide](#démarrage-rapide)
 - [📊 Métriques et performances](#métriques-et-performances)
 - [🔧 Dépannage](#dépannage)
-- [🏗️ Architecture du projet](#architecture-du-projet)
 - [📈 Évolution du projet](#évolution-du-projet)
 - [🗺️ Roadmap et évolutions](#roadmap-et-évolutions)
-- [✨ Fonctionnalités principales](#fonctionnalités-principales)
 - [🎯 Algorithme optimisé](#algorithme-optimisé)
 - [📚 Documentation](#documentation)
 - [🤝 Contribution](#contribution)
@@ -83,6 +82,80 @@ ShelfReader propose **3 moteurs OCR spécialisés** :
 - **Informations complètes** : Auteur, éditeur, date, résumé
 - **Liens externes** : Accès aux ressources supplémentaires
 
+## 🏗️ Architecture du projet
+
+ShelfReader P1 utilise une **architecture modulaire** permettant le développement et le test indépendants de chaque composant OCR.
+
+### Structure des dossiers
+```
+p1-MVP-Desktop/
+├── src/                          # Code source principal
+│   ├── __init__.py              # Package Python
+│   ├── core/                    # Noyau de l'application
+│   │   ├── __init__.py          # Package core
+│   │   └── cli.py               # Interface ligne de commande
+│   ├── engines/                 # Moteurs OCR
+│   │   ├── __init__.py          # Package engines
+│   │   ├── easyocr_engine.py    # Moteur EasyOCR avancé
+│   │   ├── tesseract_engine.py  # Moteur Tesseract
+│   │   └── trocr_engine.py      # Moteur TrOCR
+│   ├── services/                # Services externes
+│   │   ├── __init__.py          # Package services
+│   │   └── openlibrary_client.py # Client API Open Library
+│   └── frontend/                # Interface utilisateur
+│       ├── __init__.py          # Package frontend
+│       └── streamlit_app.py     # Application Streamlit
+├── scripts/                      # Scripts utilitaires
+│   └── ocr_detect.py            # Script de détection unifié
+├── docs/                         # Documentation complète
+│   ├── README.md                # Guide utilisateur
+│   ├── P1_Architecture_Documentation.md # Architecture & Documentation
+│   ├── P1_Status_Report.md      # État d'avancement & métriques
+│   ├── Testing_Guide.md         # Guide des tests
+│   ├── Dependencies.md          # Gestion dépendances
+│   └── OCR_Code_Explanation.md  # Explication technique OCR
+├── tests/                        # Tests unitaires
+│   └── __init__.py              # Package de tests
+├── test_images/                  # Images de test
+│   ├── books1.jpg
+│   └── books2.jpg
+├── requirements.txt             # Dépendances Python
+└── README.md                    # Documentation principale
+```
+
+### 🏗️ Architecture
+
+```
+src/
+├── engines/          # Moteurs OCR
+│   ├── ocr_easyocr.py
+│   ├── ocr_tesseract.py
+│   └── ocr_trocr.py
+├── services/         # Services métier
+│   └── api_client.py
+├── frontend/         # Interface utilisateur
+│   └── app.py
+└── core/            # Noyau applicatif
+└── __init__.py
+```
+
+### 📦 Modules
+
+- **engines** : Classes OCR spécialisées
+- **services** : Client API Open Library
+- **frontend** : Interface Streamlit
+- **core** : Configuration et utilitaires
+
+### 🧪 Tests
+
+```bash
+# Tests unitaires
+python -m pytest tests/
+
+# Test GPU
+python test_gpu_usage.py
+```
+
 ## 📦 Installation
 
 ### Prérequis
@@ -117,6 +190,30 @@ streamlit run src/frontend/streamlit_app.py
 ```
 
 Ouvrir http://localhost:8501 dans votre navigateur.
+
+## 🚀 Démarrage rapide
+
+```bash
+# Cloner le projet
+git clone https://github.com/delnixcode/Shelfreader.git
+cd Shelfreader/p1-MVP-Desktop
+
+# Activer l'environnement virtuel
+source env-p1/bin/activate  # Linux/macOS
+# ou
+env-p1\Scripts\activate     # Windows
+
+# Installer les dépendances
+pip install -r requirements.txt
+
+# Choisir votre mode :
+# Mode ligne de commande
+python src/engines/easyocr_engine.py test_images/books1.jpg --gpu
+# Résultat sauvegardé automatiquement dans : result-ocr/books1_easyocr.json
+
+# OU mode interface web
+streamlit run src/frontend/streamlit_app.py
+```
 
 ## ⚙️ Configuration avancée
 
@@ -385,31 +482,7 @@ python -m pytest tests/
 python test_gpu_usage.py
 ```
 
-## 🚀 Démarrage rapide
-
-```bash
-# Cloner le projet
-git clone https://github.com/delnixcode/Shelfreader.git
-cd Shelfreader/p1-MVP-Desktop
-
-# Activer l'environnement virtuel
-source env-p1/bin/activate  # Linux/macOS
-# ou
-env-p1\Scripts\activate     # Windows
-
-# Installer les dépendances
-pip install -r requirements.txt
-
-# Choisir votre mode :
-# Mode ligne de commande
-python src/engines/easyocr_engine.py test_images/books1.jpg --gpu
-# Résultat sauvegardé automatiquement dans : result-ocr/books1_easyocr.json
-
-# OU mode interface web
-streamlit run src/frontend/streamlit_app.py
-```
-
-## 📊 Métriques et performances
+##  Métriques et performances
 
 ### Benchmarks détaillés
 
@@ -542,80 +615,6 @@ curl -s https://openlibrary.org/api/books?bibkeys=ISBN:9780140449136&format=json
 - 📖 **Documentation** : Guides détaillés dans `/docs`
 - 🏷️ **Labels** : `bug`, `enhancement`, `question`
 
-## 🏗️ Architecture du projet
-
-ShelfReader P1 utilise une **architecture modulaire** permettant le développement et le test indépendants de chaque composant OCR.
-
-### Structure des dossiers
-```
-p1-MVP-Desktop/
-├── src/                          # Code source principal
-│   ├── __init__.py              # Package Python
-│   ├── core/                    # Noyau de l'application
-│   │   ├── __init__.py          # Package core
-│   │   └── cli.py               # Interface ligne de commande
-│   ├── engines/                 # Moteurs OCR
-│   │   ├── __init__.py          # Package engines
-│   │   ├── easyocr_engine.py    # Moteur EasyOCR avancé
-│   │   ├── tesseract_engine.py  # Moteur Tesseract
-│   │   └── trocr_engine.py      # Moteur TrOCR
-│   ├── services/                # Services externes
-│   │   ├── __init__.py          # Package services
-│   │   └── openlibrary_client.py # Client API Open Library
-│   └── frontend/                # Interface utilisateur
-│       ├── __init__.py          # Package frontend
-│       └── streamlit_app.py     # Application Streamlit
-├── scripts/                      # Scripts utilitaires
-│   └── ocr_detect.py            # Script de détection unifié
-├── docs/                         # Documentation complète
-│   ├── README.md                # Guide utilisateur
-│   ├── P1_Architecture_Documentation.md # Architecture & Documentation
-│   ├── P1_Status_Report.md      # État d'avancement & métriques
-│   ├── Testing_Guide.md         # Guide des tests
-│   ├── Dependencies.md          # Gestion dépendances
-│   └── OCR_Code_Explanation.md  # Explication technique OCR
-├── tests/                        # Tests unitaires
-│   └── __init__.py              # Package de tests
-├── test_images/                  # Images de test
-│   ├── books1.jpg
-│   └── books2.jpg
-├── requirements.txt             # Dépendances Python
-└── README.md                    # Documentation principale
-```
-
-### 🏗️ Architecture
-
-```
-src/
-├── engines/          # Moteurs OCR
-│   ├── ocr_easyocr.py
-│   ├── ocr_tesseract.py
-│   └── ocr_trocr.py
-├── services/         # Services métier
-│   └── api_client.py
-├── frontend/         # Interface utilisateur
-│   └── app.py
-└── core/            # Noyau applicatif
-└── __init__.py
-```
-
-### 📦 Modules
-
-- **engines** : Classes OCR spécialisées
-- **services** : Client API Open Library
-- **frontend** : Interface Streamlit
-- **core** : Configuration et utilitaires
-
-### 🧪 Tests
-
-```bash
-# Tests unitaires
-python -m pytest tests/
-
-# Test GPU
-python test_gpu_usage.py
-```
-
 ## �� Évolution du projet
 
 ### Phase 1 : Moteurs OCR ✅
@@ -655,14 +654,6 @@ python test_gpu_usage.py
 - Modèles personnalisés par utilisateur
 - Apprentissage continu des préférences
 - Suggestions intelligentes de livres
-
-## ✨ Fonctionnalités principales
-- 📤 **Upload intuitif** d'images
-- ⚙️ **Paramètres avancés** (moteurs OCR, seuil de confiance, GPU)
-- 📊 **Résultats détaillés** avec métriques et tableaux
-- 👁️ **Visualisation des zones détectées**
-- 🔍 **Comparaison multi-moteurs OCR** (nouvelle page)
-- 📚 **Enrichissement Open Library** (optionnel)
 
 ## 🎯 Algorithme optimisé
 - **Précision mesurée** : 93% (14/15 livres)

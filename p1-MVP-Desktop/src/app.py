@@ -110,8 +110,9 @@ def display_results(results, processing_time, enriched_books=None):
 
     books = enriched_books if enriched_books else results['books']
 
-    # Centrer toute la section des résultats
-    col_left, col_center, col_right = st.columns([0.05, 0.9, 0.05])
+    # Centrer toute la section des résultats de manière plus responsive
+    # Utiliser des colonnes adaptatives pour desktop et mobile
+    col_left, col_center, col_right = st.columns([0.08, 0.84, 0.08])
 
     with col_center:
         # Métriques principales
@@ -158,8 +159,8 @@ def display_results(results, processing_time, enriched_books=None):
 
             df = pd.DataFrame(books_data)
 
-            # Afficher le tableau en pleine largeur
-            st.dataframe(df, use_container_width=True, hide_index=True)
+            # Afficher le tableau en pleine largeur de manière responsive
+            st.dataframe(df, width='stretch', hide_index=True)
 
             # Affichage en format carte pour plus de lisibilité
             st.markdown("### 📋 Détails par livre")
@@ -363,8 +364,8 @@ def main():
                             if books := results.get('books'):
                                 st.markdown("---")
 
-                                # Centrer la section de visualisation
-                                col_left_viz, col_center_viz, col_right_viz = st.columns([0.1, 0.8, 0.1])
+                                # Centrer la section de visualisation de manière plus responsive
+                                col_left_viz, col_center_viz, col_right_viz = st.columns([0.05, 0.9, 0.05])
                                 with col_center_viz:
                                     st.subheader("👁️ Visualisation des zones détectées")
 
@@ -372,7 +373,8 @@ def main():
                                     viz_image = visualize_detected_zones(temp_path, books)
 
                                     if viz_image is not None:
-                                        col1, col2 = st.columns(2)
+                                        # Utiliser des colonnes plus équilibrées pour desktop
+                                        col1, col2 = st.columns([1, 1])
 
                                         with col1:
                                             st.markdown("**📷 Image originale**")

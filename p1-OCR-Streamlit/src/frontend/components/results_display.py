@@ -187,7 +187,9 @@ def display_comparison_results(results_dict: Dict[str, Dict],
                              global_confidence: float = None,
                              global_use_gpu: bool = None,
                              advanced_params: Dict = None,
-                             executed_commands: Dict[str, str] = None) -> None:
+                             executed_commands: Dict[str, str] = None,
+                             enrich_with_ol: bool = False,
+                             enriched_results: Dict[str, List[Dict]] = None) -> None:
     """
     Affiche les résultats de comparaison entre plusieurs moteurs OCR.
 
@@ -197,6 +199,9 @@ def display_comparison_results(results_dict: Dict[str, Dict],
         global_confidence (float): Seuil de confiance global
         global_use_gpu (bool): Utilisation du GPU
         advanced_params (Dict): Paramètres avancés par moteur
+        executed_commands (Dict[str, str]): Commandes exécutées
+        enrich_with_ol (bool): Si vrai, afficher les livres enrichis
+        enriched_results (Dict[str, List[Dict]]): Livres enrichis par config
     """
     # Section debug : commandes Streamlit vs Terminal
     if advanced_params:
@@ -315,27 +320,51 @@ def display_comparison_results(results_dict: Dict[str, Dict],
     # Affichage côte à côte
     cols = st.columns(len(selected_engines))
 
-    for idx, engine in enumerate(selected_engines):
+    for idx, config_name in enumerate(selected_engines):
         with cols[idx]:
-            st.markdown(f"### {engine}")
-            res = results_dict[engine]
+            st.markdown(f"### {config_name}")
+            res = results_dict[config_name]
+
+            # Utiliser les livres enrichis si disponibles
+            if enrich_with_ol and enriched_results and config_name in enriched_results and enriched_results[config_name]:
+                books = enriched_results[config_name]
+            else:
+                books = res.get('books', [])
 
             # Métriques principales
             st.write(f"**Texte OCR :** {res.get('text', 'N/A')}")
             st.write(f"**Confiance moyenne :** {res.get('confidence', 0):.1%}")
-            st.write(f"**Livres détectés :** {len(res.get('books', []))}")
+            st.write(f"**Livres détectés :** {len(books)}")
 
             # Tableau des livres pour ce moteur
-            books = res.get('books', [])
             if books:
                 books_data = []
                 for i, book in enumerate(books, 1):
+                    enriched = book.get('enriched', False)
+                    ol_url = book.get('openlibrary_url') if enriched else None
                     books_data.append({
                         "N°": i,
                         "Texte": book.get('text', 'N/A'),
                         "Confiance": f"{book.get('confidence', 0):.1%}",
+                        "Lien Open Library": ol_url if ol_url else ""
                     })
-                st.dataframe(books_data)
+                # Fonction helper pour créer les liens HTML
+                def make_link(url: str) -> str:
+                    if url:
+                        return f'<a href="{html.escape(url)}" target="_blank">🔗 Open Library</a>'
+                    return ""
+                # Création du tableau HTML pour les liens cliquables
+                table_html = "<table style='width:100%; border-collapse:collapse;'>"
+                headers = ["N°", "Texte", "Confiance", "Lien Open Library"]
+                table_html += "<tr>" + "".join([f"<th style='border:1px solid #ccc; padding:4px'>{h}</th>" for h in headers]) + "</tr>"
+                for row in books_data:
+                    table_html += "<tr>"
+                    for h in headers[:-1]:
+                        table_html += f"<td style='border:1px solid #ccc; padding:4px'>{html.escape(str(row[h]))}</td>"
+                    table_html += f"<td style='border:1px solid #ccc; padding:4px'>{make_link(row['Lien Open Library'])}</td>"
+                    table_html += "</tr>"
+                table_html += "</table>"
+                st.markdown(table_html, unsafe_allow_html=True)
             else:
                 st.warning("Aucun livre détecté.")
 

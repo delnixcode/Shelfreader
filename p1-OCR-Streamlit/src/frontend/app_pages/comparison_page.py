@@ -12,6 +12,7 @@ from PIL import Image
 from components.results_display import display_comparison_results, display_comparison_charts
 from components.visualization import display_comparison_visualizations
 from utils.ocr_processing import ocr_processor
+from utils.openlibrary_enrichment import openlibrary_enricher
 
 
 def show():
@@ -245,6 +246,13 @@ def show():
             help="Affiche les analyses détaillées (plus lent)"
         )
 
+        # Option enrichissement Open Library (cochée par défaut)
+        enrich_with_ol = st.checkbox(
+            "Enrichir avec Open Library",
+            value=True,
+            help="Ajoute les métadonnées Open Library pour chaque livre détecté (recommandé)"
+        )
+
         # Bouton de comparaison
         if st.button("🚀 Comparer les moteurs OCR", type="primary", use_container_width=True):
             # Barre de progression
@@ -329,17 +337,13 @@ def show():
                 # Traitement de chaque configuration individuellement
                 with st.spinner("🔍 Comparaison en cours..."):
                     config_results = {}
-                    
+                    enriched_results = {}
                     for config in engine_configs:
                         engine = config['engine']
                         config_name = config['name']
-                        
-                        # Paramètres pour cette configuration spécifique
                         config_adv_params = advanced_params.get(config_name, {}).copy()
                         config_confidence = config_adv_params.pop('confidence', 0.3)
                         config_use_gpu = config_adv_params.pop('use_gpu', True)
-                        
-                        # Traiter cette configuration individuellement
                         result, processing_time = ocr_processor.process_image(
                             temp_path,
                             engine,
@@ -348,10 +352,16 @@ def show():
                             debug=debug_mode,
                             advanced_params=config_adv_params
                         )
-                        
                         if result:
                             result['processing_time'] = processing_time
                             config_results[config_name] = result
+                            # Enrichissement Open Library si demandé
+                            if enrich_with_ol and result.get('books'):
+                                with st.spinner(f"🔍 Enrichissement OL pour {config_name}..."):
+                                    enriched_books = openlibrary_enricher.enrich_books(result['books'])
+                                    enriched_results[config_name] = enriched_books
+                            else:
+                                enriched_results[config_name] = None
                         else:
                             config_results[config_name] = {
                                 'books': [],
@@ -360,6 +370,7 @@ def show():
                                 'processing_time': processing_time,
                                 'engine': engine
                             }
+                            enriched_results[config_name] = None
 
                 # Progression terminée
                 progress_bar.progress(100)
@@ -372,11 +383,14 @@ def show():
                 display_comparison_visualizations(config_results, config_names, temp_path)
 
                 # Affichage des résultats détaillés
+                # On passe les livres enrichis à l'affichage
                 display_comparison_results(config_results, config_names,
-                                        global_confidence=None,  # Plus de paramètres globaux
-                                        global_use_gpu=None,     # Plus de paramètres globaux
+                                        global_confidence=None,
+                                        global_use_gpu=None,
                                         advanced_params=advanced_params,
-                                        executed_commands=executed_commands)
+                                        executed_commands=executed_commands,
+                                        enrich_with_ol=enrich_with_ol,
+                                        enriched_results=enriched_results)
 
                 # Graphiques de comparaison avancés
                 display_comparison_charts(config_results, config_names)

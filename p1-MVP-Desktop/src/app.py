@@ -35,20 +35,24 @@ st.title("📚 ShelfReader P1 - OCR Adaptatif")
 st.markdown("**Détection automatique de livres sur étagères avec OCR intelligent**")
 st.markdown("---")
 
-# Sidebar avec informations
+
+# Sidebar navigation always at the top
 with st.sidebar:
+    page = st.radio(
+        "Navigation",
+        ["Analyse OCR", "Comparaison OCR"],
+        index=0
+    )
+    st.markdown("---")
     st.header("ℹ️ Informations")
     st.markdown("**Algorithme :** OCR Adaptatif Multi-échelle")
     st.markdown("**Précision :** 93% (14/15 livres)")
     st.markdown("**GPU :** Support automatique")
     st.markdown("**Enrichissement :** Open Library intégré")
-
     st.markdown("---")
     st.markdown("**Paramètres recommandés :**")
     st.markdown("- **GPU** : Activé si disponible")
     st.markdown("- **Confiance** : 0.3 (optimisé)")
-    # (Supprimé : Méthode Shelfie)
-
     st.markdown("---")
     st.markdown("**Testé sur :**")
     st.markdown("- books1.jpg : 14/15 livres (93%)")
@@ -436,6 +440,7 @@ def ocr_comparison_page():
             help="Affiche les analyses détaillées (plus lent)"
         )
         if st.button("🚀 Comparer les moteurs OCR", type="primary", use_container_width=True):
+            progress_bar = st.progress(0)
             with tempfile.NamedTemporaryFile(delete=False, suffix='.jpg') as tmp_file:
                 if image.mode == 'RGBA':
                     background = Image.new('RGB', image.size, (255, 255, 255))
@@ -447,7 +452,9 @@ def ocr_comparison_page():
                 temp_path = tmp_file.name
             try:
                 results_dict = {}
-                for engine in selected_engines:
+                images_with_boxes = {}
+                for idx, engine in enumerate(selected_engines):
+                    progress_bar.progress(int((idx/len(selected_engines))*100))
                     if engine == "EasyOCR":
                         processor = EasyOCRProcessor(['en'], confidence, use_gpu)
                         pil_image = Image.open(temp_path)
@@ -482,9 +489,29 @@ def ocr_comparison_page():
                         'books': boxes,
                         'text': text,
                         'confidence': avg_confidence,
-                        'processing_time': None  # Optionally add timing
+                        'processing_time': None
                     }
+                    # Générer image avec bounding boxes
+                    img_cv = cv2.imread(temp_path)
+                    img_rgb = cv2.cvtColor(img_cv, cv2.COLOR_BGR2RGB)
+                    for i, book in enumerate(boxes):
+                        x = int(book.get('x', 0))
+                        y = int(book.get('y', 0))
+                        w = int(book.get('width', 0))
+                        h = int(book.get('height', 0))
+                        color = (255, 0, 0) if engine=="EasyOCR" else (0,255,0) if engine=="Tesseract" else (0,0,255)
+                        cv2.rectangle(img_rgb, (x, y), (x + w, y + h), color, 3)
+                        cv2.putText(img_rgb, f"{i+1}", (x + 5, y + 30), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2)
+                    images_with_boxes[engine] = img_rgb
+                progress_bar.progress(100)
                 st.success("Comparaison terminée !")
+
+                # Affichage des images avec bounding boxes côte à côte
+                st.markdown("## Visualisation des bounding boxes par moteur")
+                img_cols = st.columns(len(selected_engines))
+                for idx, engine in enumerate(selected_engines):
+                    with img_cols[idx]:
+                        st.image(images_with_boxes[engine], caption=f"{engine}", use_container_width=True)
 
                 # Display results side-by-side
                 st.markdown("## Résultats par moteur")
@@ -509,11 +536,9 @@ def ocr_comparison_page():
                         else:
                             st.warning("Aucun livre détecté.")
 
-                # Add comparison graphs
-                st.markdown("## Graphiques de comparaison")
-                import matplotlib.pyplot as plt
+                # Graphiques avancés
+                st.markdown("## Graphiques de comparaison avancés")
                 import pandas as pd
-                # Bar chart: confidence
                 confs = [results_dict[e]['confidence'] for e in selected_engines]
                 nb_books = [len(results_dict[e]['books']) for e in selected_engines]
                 df = pd.DataFrame({
@@ -522,15 +547,22 @@ def ocr_comparison_page():
                     'Livres détectés': nb_books
                 })
                 st.bar_chart(df.set_index('Moteur')[['Confiance moyenne', 'Livres détectés']])
+                # Distribution des confiances
+                st.markdown("### Distribution des confiances par moteur")
+                for engine in selected_engines:
+                    confs_list = [book.get('confidence', 0) for book in results_dict[engine]['books']]
+                    st.line_chart(confs_list, height=150)
+                # Heatmap du nombre de livres détectés (si pertinent)
+                st.markdown("### Heatmap Livres détectés")
+                import numpy as np
+                heatmap_data = np.array(nb_books).reshape(1, -1)
+                st.dataframe(heatmap_data)
             finally:
                 os.unlink(temp_path)
 
 if __name__ == "__main__":
-    page = st.sidebar.radio(
-        "Navigation",
-        ["Analyse OCR", "Comparaison OCR"],
-        index=0
-    )
+    if 'page' not in locals():
+        page = "Analyse OCR"
     if page == "Analyse OCR":
         main()
     elif page == "Comparaison OCR":

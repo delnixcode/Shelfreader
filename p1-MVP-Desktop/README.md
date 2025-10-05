@@ -1,4 +1,12 @@
+
 # 🏗️ **ShelfReader P1 - MVP Desktop**
+
+## 📚 Documentation
+- [Nouveautés et fonctionnalités](docs/FEATURES.md)
+- [Installation](docs/INSTALL.md)
+- [Utilisation](docs/USAGE.md)
+- [Techniques et architecture](docs/TECH.md)
+- [FAQ](docs/FAQ.md)
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)](https://streamlit.io/)

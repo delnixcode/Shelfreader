@@ -143,7 +143,7 @@ def display_results(results, processing_time):
             })
 
         df = pd.DataFrame(books_data)
-        st.dataframe(df, use_container_width=True)
+        st.dataframe(df, width='stretch')
 
         # Affichage en format carte pour plus de lisibilité
         st.markdown("### 📋 Détails par livre")
@@ -217,7 +217,7 @@ def main():
 
         with col1:
             st.subheader("📷 Image originale")
-            st.image(image, use_column_width=True)
+            st.image(image, width='stretch')
 
         with col2:
             st.subheader("⚙️ Paramètres de traitement")
@@ -249,7 +249,16 @@ def main():
                 with st.spinner("🔍 Analyse en cours avec algorithme adaptatif..."):
                     # Sauvegarder temporairement l'image
                     with tempfile.NamedTemporaryFile(delete=False, suffix='.jpg') as tmp_file:
-                        image.save(tmp_file.name, 'JPEG')
+                        # Convertir RGBA vers RGB si nécessaire (pour JPEG)
+                        if image.mode == 'RGBA':
+                            # Créer un fond blanc et coller l'image transparente
+                            background = Image.new('RGB', image.size, (255, 255, 255))
+                            background.paste(image, mask=image.split()[-1])  # Utiliser le canal alpha comme masque
+                            background.save(tmp_file.name, 'JPEG')
+                        else:
+                            # Convertir vers RGB si nécessaire
+                            rgb_image = image.convert('RGB')
+                            rgb_image.save(tmp_file.name, 'JPEG')
                         temp_path = tmp_file.name
 
                     try:
@@ -279,11 +288,11 @@ def main():
 
                                     with col1:
                                         st.markdown("**📷 Image originale**")
-                                        st.image(image, use_column_width=True)
+                                        st.image(image, width='stretch')
 
                                     with col2:
                                         st.markdown("**🎯 Zones détectées**")
-                                        st.image(viz_image, caption=f"{len(books)} livres détectés", use_column_width=True)
+                                        st.image(viz_image, caption=f"{len(books)} livres détectés", width='stretch')
 
                                     st.info("💡 **Légende :** Chaque rectangle coloré représente un livre détecté avec son numéro")
                                 else:

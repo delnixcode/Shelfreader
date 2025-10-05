@@ -112,6 +112,88 @@ streamlit run src/frontend/streamlit_app.py
 - Comparaison multi-moteurs (page dédiée)
 - Visualisations avec bounding boxes
 
+### 💡 Conseils pour les images
+
+- **Qualité** : Bien éclairées, perpendiculaires à l'étagère
+- **Taille** : Minimum 1000px de largeur
+- **Formats** : JPG, PNG
+- **Contenu** : Titres de livres visibles
+
+### ⚡ Performance par moteur
+
+| Moteur | Précision | Vitesse | GPU |
+|--------|-----------|---------|-----|
+| EasyOCR | 93.3% | 3-5s | ✅ |
+| Tesseract | 73.3% | 1-2s | ❌ |
+| TrOCR | 80.7% | 8-15s | ✅ |
+
+### 🛠️ Technologies utilisées
+
+- **OCR** : EasyOCR, Tesseract, TrOCR
+- **IA** : Transformers (Hugging Face)
+- **Interface** : Streamlit
+- **API** : Open Library
+- **Langage** : Python 3.8+
+
+### 💻 Prérequis système
+
+- **OS** : Linux, macOS, Windows
+- **RAM** : 8GB minimum (16GB recommandé)
+- **GPU** : NVIDIA avec CUDA (optionnel mais recommandé)
+- **Stockage** : 2GB pour les modèles
+
+### 🏗️ Architecture
+
+```
+src/
+├── engines/          # Moteurs OCR
+│   ├── ocr_easyocr.py
+│   ├── ocr_tesseract.py
+│   └── ocr_trocr.py
+├── services/         # Services métier
+│   └── api_client.py
+├── frontend/         # Interface utilisateur
+│   └── app.py
+└── core/            # Noyau applicatif
+    └── __init__.py
+```
+
+### 📦 Modules
+
+- **engines** : Classes OCR spécialisées
+- **services** : Client API Open Library
+- **frontend** : Interface Streamlit
+- **core** : Configuration et utilitaires
+
+### 🧪 Tests
+
+```bash
+# Tests unitaires
+python -m pytest tests/
+
+# Test GPU
+python test_gpu_usage.py
+```
+
+### 🤝 Contribution
+
+1. Fork le projet
+2. Créer une branche (`git checkout -b feature/AmazingFeature`)
+3. Commit (`git commit -m 'Add some AmazingFeature'`)
+4. Push (`git push origin feature/AmazingFeature`)
+5. Ouvrir une Pull Request
+
+### 📄 Licence
+
+Distribué sous licence MIT. Voir `LICENSE` pour plus d'informations.
+
+### 🙏 Remerciements
+
+- **Open Library** pour l'API de données bibliographiques
+- **Hugging Face** pour les modèles TrOCR
+- **Streamlit** pour le framework d'interface
+- **EasyOCR** et **Tesseract** pour les moteurs OCR
+
 ## 🚀 Démarrage rapide
 
 ```bash

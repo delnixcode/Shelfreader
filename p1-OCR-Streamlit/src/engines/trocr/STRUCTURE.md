@@ -34,10 +34,10 @@ src/engines/trocr/
 
 ```mermaid
 flowchart TD
-    A[Image d'entrée] --> B[Prétraitement (preprocessing/)]
-    B --> C[Détection (detection/)]
-    C --> D[OCR principal (processor.py)]
-    D --> E[Regroupement (grouping/)]
+    A[Image d'entrée] --> B[Prétraitement]
+    B --> C[Détection]
+    C --> D[OCR principal]
+    D --> E[Regroupement]
     E --> F[Résultat final]
 ```
 

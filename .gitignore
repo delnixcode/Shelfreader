@@ -10,10 +10,7 @@ ENV/
 .venv
 
 # Project specific virtual environments
-env-p1/
-env-p2/
-env-p3/
-env-p4/
+
 
 # IDEs
 .vscode/
@@ -26,11 +23,7 @@ env-p4/
 Thumbs.db
 
 # Project specific
-*.jpg
-*.png
-*.jpeg
-test_images/
-models/
+
 
 # Distribution
 build/

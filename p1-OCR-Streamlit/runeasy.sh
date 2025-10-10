@@ -17,7 +17,7 @@ fi
 
 # Lancement d'EasyOCR avec paramètres par défaut
 echo "📚 Démarrage d'EasyOCR..."
-echo "   Paramètres: --gpu --confidence 0.1 --spine-method shelfie"
+echo "   Paramètres: --gpu --confidence 0.1 --spine-method vertical_lines"
 echo ""
 
-python src/engines/easyocr/main.py "$@" --gpu --confidence 0.1 --spine-method shelfie
+python src/engines/easyocr/main.py "$@" --gpu --confidence 0.1 --spine-method vertical_lines

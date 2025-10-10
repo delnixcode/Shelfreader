@@ -276,9 +276,10 @@ python test_gpu_usage.py
 ## 📦 Installation
 
 ### Prérequis
-- Python 3.8+
+- **Python 3.12** (version spécifique requise)
 - pip
 - Un GPU (optionnel, recommandé)
+- **Tesseract OCR** (requis pour le moteur Tesseract)
 
 ### Étapes
 
@@ -288,7 +289,32 @@ git clone https://github.com/delnixcode/Shelfreader.git
 cd Shelfreader/p1-OCR-Streamlit
 ```
 
-#### 2. Activer l'environnement virtuel
+#### 1.5. Créer l'environnement virtuel (Python 3.12 requis)
+```bash
+# Créer l'environnement virtuel avec Python 3.12
+python3.12 -m venv env-p1
+
+# Activer l'environnement virtuel
+source env-p1/bin/activate  # Linux/macOS
+# ou
+env-p1\Scripts\activate     # Windows
+```
+
+#### 2. Installer Tesseract (requis pour le moteur Tesseract)
+```bash
+# Ubuntu/Debian
+sudo apt update && sudo apt install -y tesseract-ocr tesseract-ocr-fra
+
+# Arch Linux
+sudo pacman -S tesseract tesseract-data-fra
+
+# macOS (avec Homebrew)
+brew install tesseract tesseract-lang
+
+# Windows : Télécharger depuis https://github.com/UB-Mannheim/tesseract/wiki
+```
+
+#### 4. Activer l'environnement virtuel
 ```bash
 # Linux/macOS
 source env-p1/bin/activate
@@ -296,12 +322,12 @@ source env-p1/bin/activate
 env-p1\Scripts\activate
 ```
 
-#### 3. Installer les dépendances
+#### 5. Installer les dépendances
 ```bash
 pip install -r requirements.txt
 ```
 
-#### 4. Lancer l'application
+#### 6. Lancer l'application
 ```bash
 streamlit run src/frontend/main.py
 ```
@@ -315,6 +341,15 @@ Ouvrir http://localhost:8501 dans votre navigateur.
 # Cloner le projet
 git clone https://github.com/delnixcode/Shelfreader.git
 cd Shelfreader/p1-OCR-Streamlit
+
+# Créer l'environnement virtuel avec Python 3.12
+python3.12 -m venv env-p1
+
+# Installer Tesseract (requis pour le moteur Tesseract)
+# Ubuntu/Debian :
+sudo apt update && sudo apt install -y tesseract-ocr tesseract-ocr-fra
+# Arch Linux :
+sudo pacman -S tesseract tesseract-data-fra
 
 # Activer l'environnement virtuel
 source env-p1/bin/activate  # Linux/macOS
@@ -418,8 +453,11 @@ python main.py ../test_images/books1.jpg --device cuda --benchmark
 # Depuis le dossier tesseract
 cd src/engines/tesseract
 
-# Installation préalable requise sur Linux :
-# sudo apt-get install tesseract-ocr tesseract-ocr-eng tesseract-ocr-fra
+# Installation préalable requise :
+# Ubuntu/Debian :
+sudo apt update && sudo apt install -y tesseract-ocr tesseract-ocr-fra
+# Arch Linux :
+sudo pacman -S tesseract tesseract-data-fra
 
 python main.py ../test_images/books1.jpg --lang eng
 

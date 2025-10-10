@@ -316,27 +316,19 @@ brew install tesseract tesseract-lang
 
 #### 3. Activer l'environnement virtuel
 ```bash
-# Méthode 1 : Script automatique (recommandé)
+# Script simple (recommandé)
 ./env.sh
 
-# Méthode 2 : Manuel
+# Ou manuellement
 source env-p1/bin/activate  # Linux/macOS
 # ou
 env-p1\Scripts\activate     # Windows
 ```
 
-##### 💡 Script `env.sh` - Activation automatique
-Le script `env.sh` facilite l'activation de l'environnement virtuel :
-- ✅ Vérifie l'existence de l'environnement
-- ✅ Active automatiquement Python 3.12
-- ✅ Affiche les commandes disponibles
-- ✅ Lance un shell interactif ou exécute une commande
-
-**Utilisation :**
+##### 💡 Script `env.sh` - Activation simple
+Le script `env.sh` active simplement l'environnement virtuel :
 ```bash
-./env.sh                          # Shell interactif dans l'environnement
-./env.sh streamlit run src/frontend/main.py    # Lancer Streamlit directement
-./env.sh python --version         # Exécuter une commande Python
+./env.sh  # Active env-p1 et affiche confirmation
 ```
 
 #### 5. Installer les dépendances
@@ -369,7 +361,7 @@ sudo apt update && sudo apt install -y tesseract-ocr tesseract-ocr-fra
 sudo pacman -S tesseract tesseract-data-fra
 
 # Activer l'environnement virtuel
-./env.sh  # Script automatique recommandé
+./env.sh  # Script simple recommandé
 # ou manuellement :
 # source env-p1/bin/activate  # Linux/macOS
 # env-p1\Scripts\activate     # Windows

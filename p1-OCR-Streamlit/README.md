@@ -316,20 +316,28 @@ brew install tesseract tesseract-lang
 
 #### 3. Activer l'environnement virtuel
 ```bash
-# Script simple (recommandé)
-./env.sh
+# Méthode recommandée (fonctionne comme source)
+source env.sh
+# ou
+. env.sh
+
+# Alternative : script exécutable
+./env.sh  # Active dans un sous-shell (prompt ne change pas)
 
 # Ou manuellement
 source env-p1/bin/activate  # Linux/macOS
-# ou
-env-p1\Scripts\activate     # Windows
 ```
 
 ##### 💡 Script `env.sh` - Activation simple
 Le script `env.sh` active simplement l'environnement virtuel :
+
+**⚠️ Important :** Utilisez `source env.sh` (pas `sh env.sh`) pour que l'environnement soit activé dans votre shell actuel :
 ```bash
-./env.sh  # Active env-p1 et affiche confirmation
+source env.sh  # ✅ Active dans le shell actuel (prompt change)
+sh env.sh      # ❌ Active dans un sous-shell (prompt ne change pas)
 ```
+
+**Pourquoi ?** Les scripts shell s'exécutent dans un sous-shell. `source` exécute le script dans le shell actuel.
 
 #### 5. Installer les dépendances
 ```bash
@@ -361,10 +369,11 @@ sudo apt update && sudo apt install -y tesseract-ocr tesseract-ocr-fra
 sudo pacman -S tesseract tesseract-data-fra
 
 # Activer l'environnement virtuel
-./env.sh  # Script simple recommandé
+source env.sh  # Recommandé - fonctionne comme source env-p1/bin/activate
+# ou
+. env.sh       # Alternative avec point
 # ou manuellement :
 # source env-p1/bin/activate  # Linux/macOS
-# env-p1\Scripts\activate     # Windows
 
 # Installer les dépendances
 pip install -r requirements.txt
